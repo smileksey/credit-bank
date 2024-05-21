@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @RestController
@@ -32,13 +33,16 @@ public class CalculatorController {
     public List<LoanOfferDto> getOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                         BindingResult bindingResult) {
 
-        //TODO добавить валидацию возраста и формата даты
         loanStatementRequestValidator.validate(loanStatementRequestDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
             String errorMessage = PrescoringErrorMessage.createMessage(bindingResult.getFieldErrors());
             throw new PrescoringException(errorMessage);
         }
+
+        System.out.println(loanStatementRequestDto);
+
+        //FIXME
         return List.of(new LoanOfferDto());
     }
 
@@ -48,10 +52,20 @@ public class CalculatorController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(PrescoringException e) {
+    private ResponseEntity<ErrorResponse> handlePrescoringException(PrescoringException e) {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleDateTimeException(DateTimeParseException e) {
+
+        ErrorResponse response = new ErrorResponse("Дата рождения должна быть в формате гггг-мм-дд");
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+
 }

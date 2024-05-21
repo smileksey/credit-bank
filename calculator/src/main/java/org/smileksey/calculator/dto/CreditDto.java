@@ -10,11 +10,11 @@ import java.util.List;
 @Setter
 public class CreditDto {
     private BigDecimal amount;
-    private int term;
+    private Integer term;
     private BigDecimal monthlyPayment;
     private BigDecimal rate;
     private BigDecimal psk;
-    private boolean isInsuranceEnabled;
-    private boolean isSalaryClient;
+    private Boolean isInsuranceEnabled;
+    private Boolean isSalaryClient;
     private List<PaymentScheduleElementDto> paymentSchedule;
 }

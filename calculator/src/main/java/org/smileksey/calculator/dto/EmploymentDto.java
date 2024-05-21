@@ -14,6 +14,6 @@ public class EmploymentDto {
     private String employerINN;
     private BigDecimal salary;
     private Position position;
-    private int workExperienceTotal;
-    private int workExperienceCurrent;
+    private Integer workExperienceTotal;
+    private Integer workExperienceCurrent;
 }

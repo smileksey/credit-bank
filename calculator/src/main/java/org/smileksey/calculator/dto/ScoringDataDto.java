@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Setter
 public class ScoringDataDto {
     private BigDecimal amount;
-    private int term;
+    private Integer term;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -23,9 +23,9 @@ public class ScoringDataDto {
     private LocalDate passportIssueDate;
     private String passportIssueBranch;
     private MaritalStatus maritalStatus;
-    private int dependentAmount;
+    private Integer dependentAmount;
     private EmploymentDto employment;
     private String accountNumber;
-    private boolean isInsuranceEnabled;
-    private boolean isSalaryClient;
+    private Boolean isInsuranceEnabled;
+    private Boolean isSalaryClient;
 }

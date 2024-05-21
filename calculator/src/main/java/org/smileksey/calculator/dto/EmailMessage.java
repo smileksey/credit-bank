@@ -9,5 +9,5 @@ import org.smileksey.calculator.dto.enums.Theme;
 public class EmailMessage {
     private String address;
     private Theme theme;
-    private long statementId;
+    private Long statementId;
 }

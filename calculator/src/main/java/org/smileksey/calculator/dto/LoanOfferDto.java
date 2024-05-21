@@ -12,10 +12,10 @@ public class LoanOfferDto {
     private UUID statementId;
     private BigDecimal requestedAmount;
     private BigDecimal totalAmount;
-    private int term;
+    private Integer term;
     private BigDecimal monthlyPayment;
     private BigDecimal rate;
-    private boolean isInsuranceEnabled;
-    private boolean isSalaryClient;
+    private Boolean isInsuranceEnabled;
+    private Boolean isSalaryClient;
 
 }

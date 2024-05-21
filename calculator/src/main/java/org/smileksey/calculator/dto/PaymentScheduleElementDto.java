@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class PaymentScheduleElementDto {
-    private int number;
+    private Integer number;
     private LocalDate date;
     private BigDecimal totalPayment;
     private BigDecimal interestPayment;
