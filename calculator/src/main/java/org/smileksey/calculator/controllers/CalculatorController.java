@@ -36,11 +36,13 @@ public class CalculatorController {
         this.loanOfferServiceImpl = loanOfferServiceImpl;
     }
 
+
+
     @PostMapping("/offers")
     public List<LoanOfferDto> getOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                         BindingResult bindingResult) {
 
-        logger.info("LoanStatementRequestDto = {}", loanStatementRequestDto );
+        logger.info("Входящие данные: {}", loanStatementRequestDto );
 
         loanStatementRequestValidator.validate(loanStatementRequestDto, bindingResult);
 
@@ -51,6 +53,8 @@ public class CalculatorController {
 
         return loanOfferServiceImpl.getLoanOffers(loanStatementRequestDto);
     }
+
+
 
     @PostMapping("/calc")
     public CreditDto getCreditDetails(@RequestBody ScoringDataDto scoringDataDto) {
