@@ -1,10 +1,13 @@
 package org.smileksey.calculator.controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
 import org.smileksey.calculator.exeptions.PrescoringException;
+import org.smileksey.calculator.services.LoanOfferServiceImpl;
 import org.smileksey.calculator.utils.ErrorResponse;
 import org.smileksey.calculator.utils.LoanStatementRequestValidator;
 import org.smileksey.calculator.utils.PrescoringErrorMessage;
@@ -22,16 +25,22 @@ import java.util.List;
 @RequestMapping("/calculator")
 public class CalculatorController {
 
+    private final static Logger logger = LogManager.getLogger(CalculatorController.class);
+
     private final LoanStatementRequestValidator loanStatementRequestValidator;
+    private final LoanOfferServiceImpl loanOfferServiceImpl;
 
     @Autowired
-    public CalculatorController(LoanStatementRequestValidator loanStatementRequestValidator) {
+    public CalculatorController(LoanStatementRequestValidator loanStatementRequestValidator, LoanOfferServiceImpl loanOfferServiceImpl) {
         this.loanStatementRequestValidator = loanStatementRequestValidator;
+        this.loanOfferServiceImpl = loanOfferServiceImpl;
     }
 
     @PostMapping("/offers")
     public List<LoanOfferDto> getOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                         BindingResult bindingResult) {
+
+        logger.info("LoanStatementRequestDto = {}", loanStatementRequestDto );
 
         loanStatementRequestValidator.validate(loanStatementRequestDto, bindingResult);
 
@@ -40,10 +49,7 @@ public class CalculatorController {
             throw new PrescoringException(errorMessage);
         }
 
-        System.out.println(loanStatementRequestDto);
-
-        //FIXME
-        return List.of(new LoanOfferDto());
+        return loanOfferServiceImpl.getLoanOffers(loanStatementRequestDto);
     }
 
     @PostMapping("/calc")
@@ -56,13 +62,18 @@ public class CalculatorController {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
+        logger.error("Ошибка прескоринга: {}", e.getMessage());
+
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleDateTimeException(DateTimeParseException e) {
 
-        ErrorResponse response = new ErrorResponse("Дата рождения должна быть в формате гггг-мм-дд");
+        String message = "Дата рождения должна быть в формате гггг-мм-дд";
+        ErrorResponse response = new ErrorResponse(message);
+
+        logger.error("Ошибка прескоринга: {}", message);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
