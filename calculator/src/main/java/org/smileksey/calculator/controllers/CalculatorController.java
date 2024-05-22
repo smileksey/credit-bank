@@ -6,7 +6,7 @@ import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
-import org.smileksey.calculator.exeptions.PrescoringException;
+import org.smileksey.calculator.exceptions.PrescoringException;
 import org.smileksey.calculator.services.LoanOfferServiceImpl;
 import org.smileksey.calculator.utils.ErrorResponse;
 import org.smileksey.calculator.utils.LoanStatementRequestValidator;

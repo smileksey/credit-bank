@@ -1,4 +1,4 @@
-package org.smileksey.calculator.exeptions;
+package org.smileksey.calculator.exceptions;
 
 
 public class PrescoringException extends RuntimeException {
