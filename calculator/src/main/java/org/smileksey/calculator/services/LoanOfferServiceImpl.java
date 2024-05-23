@@ -56,7 +56,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     }
 
 
-
+    //FIXME разделить метод
     private LoanOfferDto createLoanOffer(LoanStatementRequestDto loanStatementRequestDto ,Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
         logger.info("====================================================");

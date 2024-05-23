@@ -6,11 +6,14 @@ import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
+import org.smileksey.calculator.exceptions.LoanRefusedException;
 import org.smileksey.calculator.exceptions.PrescoringException;
+import org.smileksey.calculator.services.CreditServiceImpl;
 import org.smileksey.calculator.services.LoanOfferServiceImpl;
 import org.smileksey.calculator.utils.ErrorResponse;
-import org.smileksey.calculator.utils.LoanStatementRequestValidator;
+import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.calculator.utils.PrescoringErrorMessage;
+import org.smileksey.calculator.utils.validation.ScoringDataDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +31,17 @@ public class CalculatorController {
     private final static Logger logger = LogManager.getLogger(CalculatorController.class);
 
     private final LoanStatementRequestValidator loanStatementRequestValidator;
+    private final ScoringDataDtoValidator scoringDataDtoValidator;
     private final LoanOfferServiceImpl loanOfferServiceImpl;
+    private final CreditServiceImpl creditServiceImpl;
+
 
     @Autowired
-    public CalculatorController(LoanStatementRequestValidator loanStatementRequestValidator, LoanOfferServiceImpl loanOfferServiceImpl) {
+    public CalculatorController(LoanStatementRequestValidator loanStatementRequestValidator, ScoringDataDtoValidator scoringDataDtoValidator, LoanOfferServiceImpl loanOfferServiceImpl, CreditServiceImpl creditServiceImpl) {
         this.loanStatementRequestValidator = loanStatementRequestValidator;
+        this.scoringDataDtoValidator = scoringDataDtoValidator;
         this.loanOfferServiceImpl = loanOfferServiceImpl;
+        this.creditServiceImpl = creditServiceImpl;
     }
 
 
@@ -42,7 +50,7 @@ public class CalculatorController {
     public List<LoanOfferDto> getOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                         BindingResult bindingResult) {
 
-        logger.info("Входящие данные: {}", loanStatementRequestDto );
+        logger.info("Входящие данные по /calculator/offers: {}", loanStatementRequestDto );
 
         loanStatementRequestValidator.validate(loanStatementRequestDto, bindingResult);
 
@@ -57,16 +65,27 @@ public class CalculatorController {
 
 
     @PostMapping("/calc")
-    public CreditDto getCreditDetails(@RequestBody ScoringDataDto scoringDataDto) {
-        return null;
+    public CreditDto getCreditDetails(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult bindingResult) {
+
+        logger.info("Входящие данные по /calculator/calc: {}", scoringDataDto);
+
+        scoringDataDtoValidator.validate(scoringDataDto, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = PrescoringErrorMessage.createMessage(bindingResult.getFieldErrors());
+            throw new PrescoringException(errorMessage);
+        }
+
+        return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(LoanRefusedException::new);
     }
+
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handlePrescoringException(PrescoringException e) {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
-        logger.error("Ошибка прескоринга: {}", e.getMessage());
+        logger.error("Ошибка валидации: {}", e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -78,6 +97,17 @@ public class CalculatorController {
         ErrorResponse response = new ErrorResponse(message);
 
         logger.error("Ошибка прескоринга: {}", message);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleLoanRefusedException(LoanRefusedException e) {
+
+        String message = "В кредите отказано";
+        ErrorResponse response = new ErrorResponse(message);
+
+        logger.error(message);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

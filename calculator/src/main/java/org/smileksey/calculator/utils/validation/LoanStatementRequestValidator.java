@@ -1,4 +1,4 @@
-package org.smileksey.calculator.utils;
+package org.smileksey.calculator.utils.validation;
 
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.springframework.stereotype.Component;
