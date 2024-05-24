@@ -29,10 +29,10 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
         //Для вычислений переводим процентную ставку в десятичнуб дробь
         monthlyRate = monthlyRate.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_UP);
 
-        //Выделил в переменную повторяющийся фрагмент из последующей формулы коэффициента аннуитета
+        //Вычисляем коэффициент аннуитета по формуле (monthlyRate x (1 + monthlyRate)^term) / ((1 + monthlyRate)^term - 1)
+        //Выделил в отдельную переменную повторяющийся фрагмент (1 + monthlyRate)^term
         BigDecimal pow = (monthlyRate.add(new BigDecimal("1.00"))).pow(term);
 
-        //Вычисляем коэффициент аннуитета
         BigDecimal annuityCoefficient = (monthlyRate.multiply(pow))
                 .divide(pow.subtract(new BigDecimal("1.00")), 8, RoundingMode.HALF_UP);
 
@@ -132,13 +132,13 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         BigDecimal pskPerYear = (totalAmount.divide(amount, 4, RoundingMode.HALF_UP).subtract(BigDecimal.valueOf(1)))
                                             .divide(termInYears, 4, RoundingMode.HALF_UP)
-                                            .multiply(BigDecimal.valueOf(100));
+                                            .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
 
-        BigDecimal totalPsk = pskPerYear.multiply(termInYears).setScale(2, RoundingMode.HALF_UP);
+//        BigDecimal totalPsk = pskPerYear.multiply(termInYears).setScale(2, RoundingMode.HALF_UP);
 
-        logger.info("Размер ПСК = {} %", totalPsk);
+        logger.info("Размер ПСК = {} % в год", pskPerYear);
 
-        return totalPsk;
+        return pskPerYear;
     }
 
     @Override
