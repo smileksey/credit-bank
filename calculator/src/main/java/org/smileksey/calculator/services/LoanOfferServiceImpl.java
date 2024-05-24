@@ -2,7 +2,7 @@ package org.smileksey.calculator.services;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.smileksey.calculator.calculators.CreditParamsCalculator;
+import org.smileksey.calculator.calculators.CreditParamsCalculatorImpl;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.utils.LoanOfferDtoComparator;
@@ -24,10 +24,10 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     @Value("${base.rate}")
     private String stringBaseRate;
 
-    private final CreditParamsCalculator creditParamsCalculator;
+    private final CreditParamsCalculatorImpl creditParamsCalculator;
 
     @Autowired
-    public LoanOfferServiceImpl(CreditParamsCalculator creditParamsCalculator) {
+    public LoanOfferServiceImpl(CreditParamsCalculatorImpl creditParamsCalculator) {
         this.creditParamsCalculator = creditParamsCalculator;
     }
 
