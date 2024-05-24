@@ -85,12 +85,9 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         //Рассчитываем ежемесячныйы платеж
         BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(amount, rate, term, insurancePrice);
 
-        logger.info("Ежемесячный платеж = {}", monthlyPayment);
-
         //Вычисляем полную стоимость кредита в денежном выражении
         BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, term);
 
-        logger.info("Полная стоимость кредита = {}", totalAmount);
         logger.info("====================================================");
 
         //Создаем объект LoanOfferDto и заполняем его поля вычисленными значениями

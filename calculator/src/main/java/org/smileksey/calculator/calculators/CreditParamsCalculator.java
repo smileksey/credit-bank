@@ -13,4 +13,6 @@ public interface CreditParamsCalculator {
     BigDecimal calculateAmount(BigDecimal initialAmount, Boolean isInsuranceEnabled);
 
     BigDecimal calculateInsurancePrice(BigDecimal amount, Boolean isInsuranceEnabled, Boolean isSalaryClient);
+
+    BigDecimal calculatePSK(BigDecimal totalAmount, BigDecimal amount, Integer term);
 }

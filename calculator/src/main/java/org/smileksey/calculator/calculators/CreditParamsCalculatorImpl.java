@@ -18,27 +18,29 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
     public BigDecimal calculateMonthlyPayment(BigDecimal amount, BigDecimal rate, Integer term, BigDecimal insurancePrice) {
 
         //Вычисляем месячную ставку
-        BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(12), 4, RoundingMode.HALF_UP);
+        BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(12), 8, RoundingMode.HALF_UP);
 
-        logger.info("Месячная ствка = {}", monthlyRate);
+        logger.info("Месячная ставка = {}", monthlyRate);
 
         //Для вычислений переводим процентную ставку в десятичнуб дробь
-        monthlyRate = monthlyRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+        monthlyRate = monthlyRate.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_UP);
 
         //Выделил в переменную повторяющийся фрагмент из последующей формулы коэффициента аннуитета
         BigDecimal pow = (monthlyRate.add(new BigDecimal("1.00"))).pow(term);
 
         //Вычисляем коэффициент аннуитета
         BigDecimal annuityCoefficient = (monthlyRate.multiply(pow))
-                .divide(pow.subtract(new BigDecimal("1.00")), 4, RoundingMode.HALF_UP);
+                .divide(pow.subtract(new BigDecimal("1.00")), 8, RoundingMode.HALF_UP);
 
         logger.info("Коэффициент аннуитета = {}", annuityCoefficient);
 
         //Вычисляем ежемесячный платеж с учетом стоимости страховки (включаем ее в сумму платежа равными долями)
         BigDecimal monthlyPayment = annuityCoefficient
                 .multiply(amount)
-                .add(insurancePrice.divide(BigDecimal.valueOf(term), 2, RoundingMode.HALF_UP))
+                .add(insurancePrice.divide(BigDecimal.valueOf(term), 4, RoundingMode.HALF_UP))
                 .setScale(2, RoundingMode.HALF_UP);
+
+        logger.info("Ежемесячный платеж = {}", monthlyPayment);
 
         return monthlyPayment;
     }
@@ -46,12 +48,20 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
     @Override
     public BigDecimal calculateTotalAmount(BigDecimal monthlyPayment, Integer term) {
-        return monthlyPayment.multiply(BigDecimal.valueOf(term));
+
+        BigDecimal totalAmount = monthlyPayment.multiply(BigDecimal.valueOf(term));
+
+        logger.info("Сумма всех выплат по кредиту = {}", totalAmount);
+
+        return totalAmount;
+
     }
 
 
     @Override
     public BigDecimal calculateRate(BigDecimal initialRate, Boolean isInsuranceEnabled, Boolean isSalaryClient) {
+
+        logger.info("Исходная базовая ставка (initialRate) = {} %", initialRate);
 
         BigDecimal rate = initialRate;
 
@@ -63,10 +73,16 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             rate = rate.add(new BigDecimal("1.00"));
         }
 
+        logger.info("Поле isInsuranceEnabled = {}, новая cтавка (rate) = {} %", isInsuranceEnabled, rate);
+
         //Если получатель - зарплатный клиент, уменьшаем ставку на 1%
         if(isSalaryClient) {
             rate = rate.subtract(new BigDecimal("1.00"));
         }
+
+        logger.info("Поле isSalaryClient = {}, новая cтавка (rate) = {} %", isSalaryClient, rate);
+
+        logger.info("Предварительная ставка (rate) = {} %", rate);
 
         return rate;
     }
@@ -82,6 +98,8 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             amount = amount.add(amount.multiply(new BigDecimal("0.10"))).setScale(2, RoundingMode.HALF_UP);
         }
 
+        logger.info("Поле isInsuranceEnabled = {}, новая сумма кредита (amount) = {} %", isInsuranceEnabled, amount);
+
         return amount;
     }
 
@@ -96,6 +114,26 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             insurancePrice = amount.multiply(new BigDecimal("0.05")).setScale(2, RoundingMode.HALF_UP);
         }
 
+        logger.info("Стоимость страховки = {}", insurancePrice);
+
         return insurancePrice;
+    }
+
+    @Override
+    public BigDecimal calculatePSK(BigDecimal totalAmount, BigDecimal amount, Integer term) {
+
+        //Рассчет ПСК выполняется по формуле ПСК = (S/S0-1)/n * 100
+
+        BigDecimal termInYears = BigDecimal.valueOf(term).divide(BigDecimal.valueOf(12), 4, RoundingMode.HALF_UP);
+
+        BigDecimal pskPerYear = (totalAmount.divide(amount, 4, RoundingMode.HALF_UP).subtract(BigDecimal.valueOf(1)))
+                                            .divide(termInYears, 4, RoundingMode.HALF_UP)
+                                            .multiply(BigDecimal.valueOf(100));
+
+        BigDecimal totalPsk = pskPerYear.multiply(termInYears).setScale(2, RoundingMode.HALF_UP);
+
+        logger.info("Размер ПСК = {} %", totalPsk);
+
+        return totalPsk;
     }
 }

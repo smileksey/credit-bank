@@ -2,12 +2,14 @@ package org.smileksey.calculator.services;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.smileksey.calculator.calculators.CreditParamsCalculatorImpl;
 import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
 import org.smileksey.calculator.dto.enums.EmploymentStatus;
 import org.smileksey.calculator.dto.enums.Gender;
 import org.smileksey.calculator.dto.enums.MaritalStatus;
 import org.smileksey.calculator.dto.enums.Position;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,12 @@ public class CreditServiceImpl implements CreditService{
     @Value("${base.rate}")
     private String stringBaseRate;
 
+    private final CreditParamsCalculatorImpl creditParamsCalculator;
+
+    @Autowired
+    public CreditServiceImpl(CreditParamsCalculatorImpl creditParamsCalculator) {
+        this.creditParamsCalculator = creditParamsCalculator;
+    }
 
     //TODO
     @Override
@@ -32,19 +40,32 @@ public class CreditServiceImpl implements CreditService{
 
         BigDecimal rate = executeScoringAndGetRate(scoringDataDto);
 
+        //Если executeScoringAndGetRate вернул rate == 0, значит в кредите отказано, возвращаем в контроллер пустой Optional
         if (rate.compareTo(BigDecimal.ZERO) == 0) {
             return Optional.empty();
         }
 
-        logger.info("Итоговая ставка (rate) = {} %", rate);
+        //Рассчет стоимости страховки, если есть
+        BigDecimal insurancePrice = creditParamsCalculator.calculateInsurancePrice(scoringDataDto.getAmount(), scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
+
+        //Рассчет суммы ежемесячного платежа
+        BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(scoringDataDto.getAmount(), rate, scoringDataDto.getTerm(), insurancePrice);
+
+        //Рассчет общей суммы выплат
+        BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, scoringDataDto.getTerm());
+
+        //Рассчет полной стоимости кредита (ПСК)
+        BigDecimal psk = creditParamsCalculator.calculatePSK(totalAmount, scoringDataDto.getAmount(), scoringDataDto.getTerm());
 
         CreditDto creditDto = new CreditDto();
 
         creditDto.setAmount(scoringDataDto.getAmount());
         creditDto.setTerm(scoringDataDto.getTerm());
+        creditDto.setMonthlyPayment(monthlyPayment);
         creditDto.setRate(rate);
-        scoringDataDto.setIsInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled());
-        scoringDataDto.setIsSalaryClient(scoringDataDto.getIsSalaryClient());
+        creditDto.setPsk(psk);
+        creditDto.setIsInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled());
+        creditDto.setIsSalaryClient(scoringDataDto.getIsSalaryClient());
 
         return Optional.of(creditDto);
     }
@@ -52,7 +73,7 @@ public class CreditServiceImpl implements CreditService{
 
     private BigDecimal executeScoringAndGetRate(ScoringDataDto scoringDataDto) {
 
-        BigDecimal rate = new BigDecimal(stringBaseRate);
+        BigDecimal initialRate = new BigDecimal(stringBaseRate);
         BigDecimal amount = scoringDataDto.getAmount();
         EmploymentStatus employmentStatus = scoringDataDto.getEmployment().getEmploymentStatus();
         Position position = scoringDataDto.getEmployment().getPosition();
@@ -66,20 +87,22 @@ public class CreditServiceImpl implements CreditService{
         //Минимально допустимое значение ставки
         BigDecimal minRate = new BigDecimal("9.00");
 
-        logger.info("Исходная ставка (rate) = {} %", rate);
+        //Рассчет предварительной ставки исходя из наличия страховки и зарплатной карты
+        BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
+
 
         if (age < 20 || age > 65) {
-            logger.info("Поле age = {} не соответствует критериям", age);
+            logger.info("Поле age = {} не соответствует критериям - отказ", age);
             return BigDecimal.ZERO;
         }
 
         if (workExperienceTotal < 18) {
-            logger.info("Поле workExperienceTotal = {} не соответствует критериям", workExperienceTotal);
+            logger.info("Поле workExperienceTotal = {} не соответствует критериям - отказ", workExperienceTotal);
             return BigDecimal.ZERO;
         }
 
         if (workExperienceCurrent < 3) {
-            logger.info("Поле workExperienceCurrent = {} не соответствует критериям", workExperienceCurrent);
+            logger.info("Поле workExperienceCurrent = {} не соответствует критериям - отказ", workExperienceCurrent);
             return BigDecimal.ZERO;
         }
 
@@ -87,7 +110,7 @@ public class CreditServiceImpl implements CreditService{
         BigDecimal salary25x = salary.multiply(BigDecimal.valueOf(25));
 
         if (amount.compareTo(salary25x) > 0) {
-            logger.info("Поле amount = {} превышает salary x 25 = {}", amount, salary25x);
+            logger.info("Поле amount = {} превышает salary x 25 = {} - отказ", amount, salary25x);
             return BigDecimal.ZERO;
         }
 
@@ -150,12 +173,15 @@ public class CreditServiceImpl implements CreditService{
 
         //Если в результате рассчетов ставка опустилась ниже минимального значения, усталиваем ей это значение
         if (rate.compareTo(minRate) < 0) {
+
             logger.info("Размер ставки (rate) = {} % опустился ниже минимального (minRate) = {} %", rate, minRate);
 
             rate = minRate;
 
             logger.info("Установлен минимально возможный размер ставки (rate) = {} %", rate);
         }
+
+        logger.info("Итоговая ставка (rate) = {} %", rate);
 
         return rate;
     }
