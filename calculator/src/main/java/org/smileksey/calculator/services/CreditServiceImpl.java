@@ -2,6 +2,7 @@ package org.smileksey.calculator.services;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.calculators.CreditParamsCalculatorImpl;
 import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.PaymentScheduleElementDto;
@@ -29,10 +30,10 @@ public class CreditServiceImpl implements CreditService{
     @Value("${base.rate}")
     private String stringBaseRate;
 
-    private final CreditParamsCalculatorImpl creditParamsCalculator;
+    private final CreditParamsCalculator creditParamsCalculator;
 
     @Autowired
-    public CreditServiceImpl(CreditParamsCalculatorImpl creditParamsCalculator) {
+    public CreditServiceImpl(CreditParamsCalculator creditParamsCalculator) {
         this.creditParamsCalculator = creditParamsCalculator;
     }
 

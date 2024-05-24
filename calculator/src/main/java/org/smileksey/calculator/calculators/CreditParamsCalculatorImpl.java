@@ -173,6 +173,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             BigDecimal debtPayment = totalPayment.subtract(interestPayment);
             remainingDebt = remainingDebt.subtract(debtPayment);
 
+            //Корректировка суммы для уплаты основного долга для последнего платежа (добавляем переплату или недоплату из remainingDebt в debtPayment)
             if (number.equals(term) && remainingDebt.compareTo(BigDecimal.ZERO) != 0) {
                 debtPayment = debtPayment.add(remainingDebt);
                 remainingDebt = BigDecimal.ZERO;

@@ -8,7 +8,9 @@ import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
 import org.smileksey.calculator.exceptions.LoanRefusedException;
 import org.smileksey.calculator.exceptions.PrescoringException;
+import org.smileksey.calculator.services.CreditService;
 import org.smileksey.calculator.services.CreditServiceImpl;
+import org.smileksey.calculator.services.LoanOfferService;
 import org.smileksey.calculator.services.LoanOfferServiceImpl;
 import org.smileksey.calculator.utils.ErrorResponse;
 import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
@@ -32,12 +34,12 @@ public class CalculatorController {
 
     private final LoanStatementRequestValidator loanStatementRequestValidator;
     private final ScoringDataDtoValidator scoringDataDtoValidator;
-    private final LoanOfferServiceImpl loanOfferServiceImpl;
-    private final CreditServiceImpl creditServiceImpl;
+    private final LoanOfferService loanOfferServiceImpl;
+    private final CreditService creditServiceImpl;
 
 
     @Autowired
-    public CalculatorController(LoanStatementRequestValidator loanStatementRequestValidator, ScoringDataDtoValidator scoringDataDtoValidator, LoanOfferServiceImpl loanOfferServiceImpl, CreditServiceImpl creditServiceImpl) {
+    public CalculatorController(LoanStatementRequestValidator loanStatementRequestValidator, ScoringDataDtoValidator scoringDataDtoValidator, LoanOfferService loanOfferServiceImpl, CreditService creditServiceImpl) {
         this.loanStatementRequestValidator = loanStatementRequestValidator;
         this.scoringDataDtoValidator = scoringDataDtoValidator;
         this.loanOfferServiceImpl = loanOfferServiceImpl;
