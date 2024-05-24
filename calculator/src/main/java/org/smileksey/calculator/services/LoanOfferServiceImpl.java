@@ -2,14 +2,15 @@ package org.smileksey.calculator.services;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.utils.LoanOfferDtoComparator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,13 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     //Базовая кредитная ставка
     @Value("${base.rate}")
     private String stringBaseRate;
+
+    private final CreditParamsCalculator creditParamsCalculator;
+
+    @Autowired
+    public LoanOfferServiceImpl(CreditParamsCalculator creditParamsCalculator) {
+        this.creditParamsCalculator = creditParamsCalculator;
+    }
 
 
     @Override
@@ -56,71 +64,31 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     }
 
 
-    //FIXME разделить метод
     private LoanOfferDto createLoanOffer(LoanStatementRequestDto loanStatementRequestDto ,Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
         logger.info("====================================================");
         logger.info("Loan offer для: страховка - {}, зарплатный клиент - {}", isInsuranceEnabled, isSalaryClient);
 
-        BigDecimal rate = new BigDecimal(stringBaseRate);
-        BigDecimal amount = loanStatementRequestDto.getAmount();
-        BigDecimal insurancePrice = new BigDecimal("0.00");
+        BigDecimal initialRate = new BigDecimal(stringBaseRate);
+        BigDecimal initialAmount = loanStatementRequestDto.getAmount();
         Integer term = loanStatementRequestDto.getTerm();
 
-        logger.info("Исходные данные: сумма кредита = {}, срок = {}, ставка = {}", amount, term, rate);
+        logger.info("Исходные данные: сумма кредита = {}, срок = {}, ставка = {}", initialAmount, term, initialRate);
 
-        //Если есть страховка, уменьшаем ставку на 3%, увеличиваем сумму кредита на 10%
-        //Если нет, увеличиваем ставку на 1%
-
-        if(isInsuranceEnabled) {
-            rate = rate.subtract(new BigDecimal("3.00"));
-            amount = amount.add(amount.multiply(new BigDecimal("0.10"))).setScale(2, RoundingMode.HALF_UP);
-
-            //Стоимость страховки включаем в стоимость кредита только в том случае, если получатель не является зарплатным клиентом. Если является, страховка - бесплатная.
-            if (!isSalaryClient) {
-                insurancePrice = amount.multiply(new BigDecimal("0.05")).setScale(2, RoundingMode.HALF_UP);
-            }
-
-        } else {
-            rate = rate.add(new BigDecimal("1.00"));
-        }
-
-        //Если получатель - зарплатный клиент, уменьшаем ставку на 1%
-        if(isSalaryClient) {
-            rate = rate.subtract(new BigDecimal("1.00"));
-        }
+        //Пересчитываем сумму кредита, ставку и стоимость страховки
+        BigDecimal amount = creditParamsCalculator.calculateAmount(initialAmount, isInsuranceEnabled);
+        BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, isInsuranceEnabled, isSalaryClient);
+        BigDecimal insurancePrice = creditParamsCalculator.calculateInsurancePrice(amount, isInsuranceEnabled, isSalaryClient);
 
         logger.info("Данные после пересчета: сумма кредита = {}, срок = {}, ставка = {}, стоимость страховки = {}", amount, term, rate, insurancePrice);
 
-
-        //==============================================================================================
-        //Вычисляем месячную ставку
-        BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(12), 4, RoundingMode.HALF_UP);
-
-        logger.info("Месячная ствка = {}", monthlyRate);
-
-        //Для вычислений переводим процентную ставку в десятичнуб дробь
-        monthlyRate = monthlyRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
-
-        //Выделил в переменную повторяющийся фрагмент из последующей формулы коэффициента аннуитета
-        BigDecimal pow = (monthlyRate.add(new BigDecimal("1.00"))).pow(term);
-
-        //Вычисляем коэффициент аннуитета
-        BigDecimal annuityCoefficient = (monthlyRate.multiply(pow))
-                                        .divide(pow.subtract(new BigDecimal("1.00")), 4, RoundingMode.HALF_UP);
-
-        logger.info("Коэффициент аннуитета = {}", annuityCoefficient);
-
-        //Вычисляем ежемесячный платеж с учетом стоимости страховки (включаем ее в сумму платежа равными долями)
-        BigDecimal monthlyPayment = annuityCoefficient
-                .multiply(amount)
-                .add(insurancePrice.divide(BigDecimal.valueOf(term), 2, RoundingMode.HALF_UP))
-                .setScale(2, RoundingMode.HALF_UP);
+        //Рассчитываем ежемесячныйы платеж
+        BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(amount, rate, term, insurancePrice);
 
         logger.info("Ежемесячный платеж = {}", monthlyPayment);
 
-        //Вычисляем полную стоимость кредита
-        BigDecimal totalAmount = monthlyPayment.multiply(BigDecimal.valueOf(term));
+        //Вычисляем полную стоимость кредита в денежном выражении
+        BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, term);
 
         logger.info("Полная стоимость кредита = {}", totalAmount);
         logger.info("====================================================");
@@ -139,4 +107,5 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         return loanOfferDto;
     }
+
 }
