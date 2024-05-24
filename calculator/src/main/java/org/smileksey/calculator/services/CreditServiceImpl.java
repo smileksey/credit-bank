@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.calculators.CreditParamsCalculatorImpl;
 import org.smileksey.calculator.dto.CreditDto;
+import org.smileksey.calculator.dto.PaymentScheduleElementDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
 import org.smileksey.calculator.dto.enums.EmploymentStatus;
 import org.smileksey.calculator.dto.enums.Gender;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,6 +59,10 @@ public class CreditServiceImpl implements CreditService{
         //Рассчет полной стоимости кредита (ПСК)
         BigDecimal psk = creditParamsCalculator.calculatePSK(totalAmount, scoringDataDto.getAmount(), scoringDataDto.getTerm());
 
+        //Рассчет графика платежей
+        List<PaymentScheduleElementDto> paymentSchedule = creditParamsCalculator.getPaymentSchedule(monthlyPayment, scoringDataDto.getAmount(), rate, scoringDataDto.getTerm());
+
+        //Создаем объект CreditDto и заполняем его поля вычисленными значениями
         CreditDto creditDto = new CreditDto();
 
         creditDto.setAmount(scoringDataDto.getAmount());
@@ -66,6 +72,7 @@ public class CreditServiceImpl implements CreditService{
         creditDto.setPsk(psk);
         creditDto.setIsInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled());
         creditDto.setIsSalaryClient(scoringDataDto.getIsSalaryClient());
+        creditDto.setPaymentSchedule(paymentSchedule);
 
         return Optional.of(creditDto);
     }

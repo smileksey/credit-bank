@@ -2,11 +2,15 @@ package org.smileksey.calculator.calculators;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.smileksey.calculator.dto.PaymentScheduleElementDto;
 import org.smileksey.calculator.services.LoanOfferServiceImpl;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
@@ -136,4 +140,64 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         return totalPsk;
     }
+
+    @Override
+    public List<PaymentScheduleElementDto> getPaymentSchedule(BigDecimal monthlyPayment, BigDecimal amount, BigDecimal rate, Integer term) {
+
+        logger.info("====== Рассчет графика платежей ======");
+
+        List<PaymentScheduleElementDto> paymentScheduleElementDtos = new ArrayList<>();
+
+        //Исходные данные перед первой итерацией
+        Integer number = 0;
+        LocalDate date = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
+        BigDecimal remainingDebt = amount;
+        BigDecimal totalPayment = monthlyPayment;
+
+        //Рассчитываем значения каждого платежа
+        while (number < term) {
+
+            number = number + 1;
+
+            logger.info("*** Платеж № {} ***", number);
+
+            date = date.plusMonths(1);
+
+            logger.info("Дата: {}", date);
+
+            BigDecimal interestPayment = remainingDebt.multiply(rate).multiply(new BigDecimal("0.01")).multiply(BigDecimal.valueOf(date.lengthOfMonth()))
+                    .divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP);
+
+            logger.info("Сумма для уплаты процентов: {}", interestPayment);
+
+            BigDecimal debtPayment = totalPayment.subtract(interestPayment);
+            remainingDebt = remainingDebt.subtract(debtPayment);
+
+            if (number.equals(term) && remainingDebt.compareTo(BigDecimal.ZERO) != 0) {
+                debtPayment = debtPayment.add(remainingDebt);
+                remainingDebt = BigDecimal.ZERO;
+            }
+
+            logger.info("Сумма для уплаты основного долга: {}", debtPayment);
+            logger.info("Сумма оставшегося основного долга: {}", remainingDebt);
+
+            totalPayment = debtPayment.add(interestPayment);
+
+            logger.info("Общая сумма платежа: {}", totalPayment);
+
+            PaymentScheduleElementDto paymentScheduleElementDto = new PaymentScheduleElementDto();
+
+            paymentScheduleElementDto.setNumber(number);
+            paymentScheduleElementDto.setDate(date);
+            paymentScheduleElementDto.setTotalPayment(totalPayment);
+            paymentScheduleElementDto.setInterestPayment(interestPayment);
+            paymentScheduleElementDto.setDebtPayment(debtPayment);
+            paymentScheduleElementDto.setRemainingDebt(remainingDebt);
+
+            paymentScheduleElementDtos.add(paymentScheduleElementDto);
+        }
+
+        return paymentScheduleElementDtos;
+    }
+
 }
