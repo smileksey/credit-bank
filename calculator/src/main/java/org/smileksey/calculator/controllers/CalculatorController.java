@@ -1,5 +1,10 @@
 package org.smileksey.calculator.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.dto.CreditDto;
@@ -23,6 +28,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.awt.print.Book;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -48,6 +54,13 @@ public class CalculatorController {
 
 
 
+    @Operation(summary = "Get 4 credit options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "4 credit options generated",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoanOfferDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid field values",
+                    content = @Content) })
     @PostMapping("/offers")
     public List<LoanOfferDto> getOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                         BindingResult bindingResult) {
@@ -65,7 +78,15 @@ public class CalculatorController {
     }
 
 
-
+    @Operation(summary = "Get personal credit details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Personal credit details generated",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CreditDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid field values",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Loan refused",
+                    content = @Content) })
     @PostMapping("/calc")
     public CreditDto getCreditDetails(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult bindingResult) {
 
@@ -111,7 +132,7 @@ public class CalculatorController {
 
         logger.error(message);
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 
