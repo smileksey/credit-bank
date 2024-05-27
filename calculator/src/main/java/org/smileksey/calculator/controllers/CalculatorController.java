@@ -14,9 +14,7 @@ import org.smileksey.calculator.dto.ScoringDataDto;
 import org.smileksey.calculator.exceptions.LoanRefusedException;
 import org.smileksey.calculator.exceptions.PrescoringException;
 import org.smileksey.calculator.services.CreditService;
-import org.smileksey.calculator.services.CreditServiceImpl;
 import org.smileksey.calculator.services.LoanOfferService;
-import org.smileksey.calculator.services.LoanOfferServiceImpl;
 import org.smileksey.calculator.utils.ErrorResponse;
 import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.calculator.utils.PrescoringErrorMessage;
@@ -28,7 +26,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.awt.print.Book;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -51,7 +48,6 @@ public class CalculatorController {
         this.loanOfferServiceImpl = loanOfferServiceImpl;
         this.creditServiceImpl = creditServiceImpl;
     }
-
 
 
     @Operation(summary = "Get 4 credit options")
@@ -102,7 +98,7 @@ public class CalculatorController {
         return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(LoanRefusedException::new);
     }
 
-
+    /** Метод перехватывает исключение PrescoringException и возвращает клиенту ответ с ошибкой */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handlePrescoringException(PrescoringException e) {
 
@@ -113,6 +109,7 @@ public class CalculatorController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    /** Метод перехватывает исключение DateTimeParseException в случае некорректного ввода даты и возвращает клиенту ответ с ошибкой */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleDateTimeException(DateTimeParseException e) {
 
@@ -124,6 +121,7 @@ public class CalculatorController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    /** Метод перехватывает исключение LoanRefusedException в случае отказа в кредите и возвращает клиенту ответ с ошибкой */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleLoanRefusedException(LoanRefusedException e) {
 

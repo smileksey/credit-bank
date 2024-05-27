@@ -3,7 +3,6 @@ package org.smileksey.calculator.services;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
-import org.smileksey.calculator.calculators.CreditParamsCalculatorImpl;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.utils.LoanOfferDtoComparator;
@@ -21,7 +20,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
     private final static Logger logger = LogManager.getLogger(LoanOfferServiceImpl.class);
 
-    //Базовая кредитная ставка
+    /** Базовая кредитная ставка */
     @Value("${base.rate}")
     private String stringBaseRate;
 
@@ -33,6 +32,11 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     }
 
 
+    /**
+     * Метод формирует список из 4 предварительных кредитных предложений
+     * @param loanStatementRequestDto - входящие данные от клиента
+     * @return возвращает список из 4 кредитных предложений LoanOfferDto
+     */
     @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 
@@ -64,7 +68,13 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         return loanOffers;
     }
 
-
+    /**
+     * Метод выполняет прескоринг и расчет предварительного кредитного предложения в зависимости от того, есть ли у клиента страхова и является ли он зарплатным клиентом
+     * @param loanStatementRequestDto - входящие данные от клиента
+     * @param isInsuranceEnabled - наличие страховки
+     * @param isSalaryClient - является ли зарплатным клиентом
+     * @return возвращает кредитное предложение LoanOfferDto
+     */
     private LoanOfferDto createLoanOffer(LoanStatementRequestDto loanStatementRequestDto ,Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
         logger.info("====================================================");

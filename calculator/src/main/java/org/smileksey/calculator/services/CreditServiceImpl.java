@@ -26,7 +26,7 @@ public class CreditServiceImpl implements CreditService{
 
     private final static Logger logger = LogManager.getLogger(CreditServiceImpl.class);
 
-    //Базовая кредитная ставка
+    /** Базовая кредитная ставка */
     @Value("${base.rate}")
     private String stringBaseRate;
 
@@ -37,7 +37,11 @@ public class CreditServiceImpl implements CreditService{
         this.creditParamsCalculator = creditParamsCalculator;
     }
 
-    //TODO
+    /**
+     * Метод выполняет окончательный расчет параметров кредита, либо формирует отказ
+     * @param scoringDataDto - входящие данные от клиента
+     * @return возвращает объект Optional c вложенным CreditDto с параметрами кредита, либо Optional.empty() в случае отказа
+     */
     @Override
     public Optional<CreditDto> getCreditDto(ScoringDataDto scoringDataDto) {
 
@@ -78,7 +82,11 @@ public class CreditServiceImpl implements CreditService{
         return Optional.of(creditDto);
     }
 
-
+    /**
+     * Метод выполняет скоринг и расчет итоговой ставки кредита
+     * @param scoringDataDto - входящие данные от клиента
+     * @return возвращает итоговую ставку кредита в процентах
+     */
     private BigDecimal executeScoringAndGetRate(ScoringDataDto scoringDataDto) {
 
         BigDecimal initialRate = new BigDecimal(stringBaseRate);

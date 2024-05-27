@@ -4,6 +4,7 @@ import org.springframework.validation.FieldError;
 
 import java.util.List;
 
+/** Класс для составления строки сообщения об ошибке валидации полей */
 public class PrescoringErrorMessage {
 
     public static String createMessage(List<FieldError> errors) {

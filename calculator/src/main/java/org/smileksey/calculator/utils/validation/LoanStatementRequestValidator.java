@@ -8,6 +8,7 @@ import org.springframework.validation.Validator;
 import java.time.LocalDate;
 import java.time.Period;
 
+/** Валидатор для входящих объектов LoanStatementRequestDto */
 @Component
 public class LoanStatementRequestValidator implements Validator {
 
