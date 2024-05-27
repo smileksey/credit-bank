@@ -75,7 +75,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         logger.info("Исходные данные: сумма кредита = {}, срок = {}, ставка = {}", initialAmount, term, initialRate);
 
         //Пересчитываем сумму кредита, ставку и стоимость страховки
-        BigDecimal amount = creditParamsCalculator.calculateAmount(initialAmount, isInsuranceEnabled);
+        BigDecimal amount = creditParamsCalculator.calculateAmount(loanStatementRequestDto.getAmount(), isInsuranceEnabled);
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, isInsuranceEnabled, isSalaryClient);
         BigDecimal insurancePrice = creditParamsCalculator.calculateInsurancePrice(amount, isInsuranceEnabled, isSalaryClient);
 
