@@ -1,9 +1,9 @@
 package org.smileksey.calculator.services;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
-import org.smileksey.calculator.calculators.CreditParamsCalculatorImpl;
 import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.PaymentScheduleElementDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
@@ -11,7 +11,6 @@ import org.smileksey.calculator.dto.enums.EmploymentStatus;
 import org.smileksey.calculator.dto.enums.Gender;
 import org.smileksey.calculator.dto.enums.MaritalStatus;
 import org.smileksey.calculator.dto.enums.Position;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CreditServiceImpl implements CreditService{
 
     private final static Logger logger = LogManager.getLogger(CreditServiceImpl.class);
@@ -31,11 +31,6 @@ public class CreditServiceImpl implements CreditService{
     private String stringBaseRate;
 
     private final CreditParamsCalculator creditParamsCalculator;
-
-    @Autowired
-    public CreditServiceImpl(CreditParamsCalculator creditParamsCalculator) {
-        this.creditParamsCalculator = creditParamsCalculator;
-    }
 
     /**
      * Метод выполняет окончательный расчет параметров кредита, либо формирует отказ

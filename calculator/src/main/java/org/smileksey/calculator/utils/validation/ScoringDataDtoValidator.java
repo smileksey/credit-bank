@@ -11,6 +11,7 @@ import java.time.Period;
 /** Валидатор для входящих объектов ScoringDataDto */
 @Component
 public class ScoringDataDtoValidator implements Validator {
+
     @Override
     public boolean supports(Class<?> clazz) {
         return ScoringDataDto.class.equals(clazz);

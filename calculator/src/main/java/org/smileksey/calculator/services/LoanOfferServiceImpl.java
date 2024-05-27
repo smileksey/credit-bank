@@ -1,12 +1,12 @@
 package org.smileksey.calculator.services;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
 import org.smileksey.calculator.utils.LoanOfferDtoComparator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class LoanOfferServiceImpl implements LoanOfferService {
 
     private final static Logger logger = LogManager.getLogger(LoanOfferServiceImpl.class);
@@ -26,11 +27,6 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
     private final CreditParamsCalculator creditParamsCalculator;
 
-    @Autowired
-    public LoanOfferServiceImpl(CreditParamsCalculator creditParamsCalculator) {
-        this.creditParamsCalculator = creditParamsCalculator;
-    }
-
 
     /**
      * Метод формирует список из 4 предварительных кредитных предложений
@@ -40,21 +36,13 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 
-        List<LoanOfferDto> loanOffers = new ArrayList<>();
-
         //Создаем 4 кредитных предложения в зависимости от того, является ли получатель зарплатным клиентом и оформляет ли страховку
-
-        LoanOfferDto loanOfferNoInsuranceNoClient = createLoanOffer(loanStatementRequestDto, false, false);
-        loanOffers.add(loanOfferNoInsuranceNoClient);
-
-        LoanOfferDto loanOfferNoInsuranceClient = createLoanOffer(loanStatementRequestDto, false, true);
-        loanOffers.add(loanOfferNoInsuranceClient);
-
-        LoanOfferDto loanOfferInsuranceNoClient = createLoanOffer(loanStatementRequestDto, true, false);
-        loanOffers.add(loanOfferInsuranceNoClient);
-
-        LoanOfferDto loanOfferInsuranceClient = createLoanOffer(loanStatementRequestDto, true, true);
-        loanOffers.add(loanOfferInsuranceClient);
+        List<LoanOfferDto> loanOffers = new ArrayList<>(List.of(
+                createLoanOffer(loanStatementRequestDto, false, false),
+                createLoanOffer(loanStatementRequestDto, false, true),
+                createLoanOffer(loanStatementRequestDto, true, false),
+                createLoanOffer(loanStatementRequestDto, true, true)
+        ));
 
         //сортируем список в порядке от набольшей ставки к наименьшей
         loanOffers.sort(new LoanOfferDtoComparator());

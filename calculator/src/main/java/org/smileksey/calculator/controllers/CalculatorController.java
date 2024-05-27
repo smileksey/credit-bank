@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.dto.CreditDto;
@@ -19,7 +20,6 @@ import org.smileksey.calculator.utils.ErrorResponse;
 import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.calculator.utils.PrescoringErrorMessage;
 import org.smileksey.calculator.utils.validation.ScoringDataDtoValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,6 +31,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/calculator")
+@RequiredArgsConstructor
 public class CalculatorController {
 
     private final static Logger logger = LogManager.getLogger(CalculatorController.class);
@@ -39,15 +40,6 @@ public class CalculatorController {
     private final ScoringDataDtoValidator scoringDataDtoValidator;
     private final LoanOfferService loanOfferServiceImpl;
     private final CreditService creditServiceImpl;
-
-
-    @Autowired
-    public CalculatorController(LoanStatementRequestValidator loanStatementRequestValidator, ScoringDataDtoValidator scoringDataDtoValidator, LoanOfferService loanOfferServiceImpl, CreditService creditServiceImpl) {
-        this.loanStatementRequestValidator = loanStatementRequestValidator;
-        this.scoringDataDtoValidator = scoringDataDtoValidator;
-        this.loanOfferServiceImpl = loanOfferServiceImpl;
-        this.creditServiceImpl = creditServiceImpl;
-    }
 
 
     @Operation(summary = "Get 4 credit options")
