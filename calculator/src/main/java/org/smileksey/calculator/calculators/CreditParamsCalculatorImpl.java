@@ -126,8 +126,10 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         //Если есть страховка, увеличиваем сумму кредита на 10%
         if(isInsuranceEnabled) {
-            amount = amount.add(amount.multiply(new BigDecimal("0.10"))).setScale(2, RoundingMode.HALF_UP);
+            amount = amount.add(amount.multiply(new BigDecimal("0.10")));
         }
+
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
 
         logger.info("Поле isInsuranceEnabled = {}, новая сумма кредита (amount) = {} %", isInsuranceEnabled, amount);
 

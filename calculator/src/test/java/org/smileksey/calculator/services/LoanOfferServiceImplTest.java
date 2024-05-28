@@ -24,9 +24,6 @@ class LoanOfferServiceImplTest {
     @Mock
     private CreditParamsCalculator creditParamsCalculator;
 
-    @Mock
-    private LoanOfferDtoComparator loanOfferDtoComparator;
-
     @InjectMocks
     private LoanOfferServiceImpl loanOfferService;
 

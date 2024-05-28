@@ -3,12 +3,14 @@ package org.smileksey.calculator.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class CreditDto {
     @Schema(description = "Сумма кредита")
     private BigDecimal amount;
