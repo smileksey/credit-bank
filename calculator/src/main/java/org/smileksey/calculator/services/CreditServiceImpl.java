@@ -32,6 +32,7 @@ public class CreditServiceImpl implements CreditService{
 
     private final CreditParamsCalculator creditParamsCalculator;
 
+
     /**
      * Метод выполняет окончательный расчет параметров кредита, либо формирует отказ
      * @param scoringDataDto - входящие данные от клиента
@@ -76,6 +77,7 @@ public class CreditServiceImpl implements CreditService{
 
         return Optional.of(creditDto);
     }
+
 
     /**
      * Метод выполняет скоринг и расчет итоговой ставки кредита

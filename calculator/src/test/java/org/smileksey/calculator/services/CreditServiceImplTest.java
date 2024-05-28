@@ -73,6 +73,7 @@ class CreditServiceImplTest {
         assertEquals(Optional.empty(), creditServiceImpl.getCreditDto(scoringDataDto));
     }
 
+
     @Test
     void getCreditDtoAgeMoreThan65ShouldReturnZero() {
 
@@ -81,6 +82,7 @@ class CreditServiceImplTest {
         assertEquals(Optional.empty(), creditServiceImpl.getCreditDto(scoringDataDto));
     }
 
+
     @Test
     void getCreditDtoTotalExpLessThan18ShouldReturnZero() {
 
@@ -88,6 +90,7 @@ class CreditServiceImplTest {
 
         assertEquals(Optional.empty(), creditServiceImpl.getCreditDto(scoringDataDto));
     }
+
 
     @Test
     void getCreditDtoCurrentExpLessThan3ShouldReturnZero() {
@@ -106,6 +109,7 @@ class CreditServiceImplTest {
         assertEquals(Optional.empty(), creditServiceImpl.getCreditDto(scoringDataDto));
     }
 
+
     @Test
     void getCreditDtoUnemployedShouldReturnZero() {
 
@@ -113,6 +117,7 @@ class CreditServiceImplTest {
 
         assertEquals(Optional.empty(), creditServiceImpl.getCreditDto(scoringDataDto));
     }
+
 
     @Test
     void getCreditDtoSelfEmployedShouldIncrRateBy2() {
@@ -124,6 +129,7 @@ class CreditServiceImplTest {
         assertEquals(baseRate.add(new BigDecimal("2")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
 
+
     @Test
     void getCreditDtoBusinessOwnerShouldIncrRateBy3() {
 
@@ -133,6 +139,7 @@ class CreditServiceImplTest {
 
         assertEquals(baseRate.add(new BigDecimal("3")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
+
 
     @Test
     void getCreditDtoMiddleManagerShouldReduceRateBy1() {
@@ -144,6 +151,7 @@ class CreditServiceImplTest {
         assertEquals(baseRate.subtract(new BigDecimal("1")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
 
+
     @Test
     void getCreditDtoTopManagerShouldReduceRateBy2() {
 
@@ -154,6 +162,7 @@ class CreditServiceImplTest {
         assertEquals(baseRate.subtract(new BigDecimal("2")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
 
+
     @Test
     void getCreditDtoMarriedShouldReduceRateBy3() {
 
@@ -163,6 +172,7 @@ class CreditServiceImplTest {
 
         assertEquals(baseRate.subtract(new BigDecimal("3")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
+
 
     @Test
     void getCreditDtoFemale40ShouldReduceRateBy2() {
@@ -175,6 +185,7 @@ class CreditServiceImplTest {
         assertEquals(baseRate.subtract(new BigDecimal("2")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
 
+
     @Test
     void getCreditDtoMale40ShouldReduceRateBy2() {
 
@@ -186,6 +197,7 @@ class CreditServiceImplTest {
         assertEquals(baseRate.subtract(new BigDecimal("2")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
 
+
     @Test
     void getCreditDtoNonBinaryShouldIncrRateBy8() {
 
@@ -196,6 +208,7 @@ class CreditServiceImplTest {
         assertEquals(baseRate.add(new BigDecimal("8")), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
 
+
     @Test
     void getCreditDtoRateLessThanMinShouldSetRate9() {
 
@@ -203,6 +216,7 @@ class CreditServiceImplTest {
 
         assertEquals(new BigDecimal("9.00"), creditServiceImpl.getCreditDto(scoringDataDto).get().getRate());
     }
+
 
     @Test
     void getCreditDtoShouldReturnNonEmpty() {
@@ -214,6 +228,7 @@ class CreditServiceImplTest {
         assertTrue(creditDtoOptional.isPresent());
 
     }
+
 
     @Test
     void getCreditDtoShouldReturnFilledObject() {

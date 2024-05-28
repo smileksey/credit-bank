@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
-import org.smileksey.calculator.utils.LoanOfferDtoComparator;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;

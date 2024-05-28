@@ -90,6 +90,7 @@ public class CalculatorController {
         return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(LoanRefusedException::new);
     }
 
+
     /** Метод перехватывает исключение PrescoringException и возвращает клиенту ответ с ошибкой */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handlePrescoringException(PrescoringException e) {
@@ -100,6 +101,7 @@ public class CalculatorController {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 
     /** Метод перехватывает исключение DateTimeParseException в случае некорректного ввода даты и возвращает клиенту ответ с ошибкой */
     @ExceptionHandler
@@ -112,6 +114,7 @@ public class CalculatorController {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 
     /** Метод перехватывает исключение LoanRefusedException в случае отказа в кредите и возвращает клиенту ответ с ошибкой */
     @ExceptionHandler

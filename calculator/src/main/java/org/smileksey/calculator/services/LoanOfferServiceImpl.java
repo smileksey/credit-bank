@@ -56,6 +56,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         return loanOffers;
     }
 
+
     /**
      * Метод выполняет прескоринг и расчет предварительного кредитного предложения в зависимости от того, есть ли у клиента страхова и является ли он зарплатным клиентом
      * @param loanStatementRequestDto - входящие данные от клиента
