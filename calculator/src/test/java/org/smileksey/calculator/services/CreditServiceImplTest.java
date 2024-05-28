@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.EmploymentDto;
-import org.smileksey.calculator.dto.PaymentScheduleElementDto;
 import org.smileksey.calculator.dto.ScoringDataDto;
 import org.smileksey.calculator.dto.enums.EmploymentStatus;
 import org.smileksey.calculator.dto.enums.Gender;
@@ -20,7 +19,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,8 +41,9 @@ class CreditServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(creditServiceImpl, "stringBaseRate", "21.00");
-        baseRate = new BigDecimal(String.valueOf(ReflectionTestUtils.getField(creditServiceImpl, "stringBaseRate")));
+        String stringBaseRate = "21.00";
+        ReflectionTestUtils.setField(creditServiceImpl, "stringBaseRate", stringBaseRate);
+        baseRate = new BigDecimal(stringBaseRate);
 
         scoringDataDto = new ScoringDataDto();
 

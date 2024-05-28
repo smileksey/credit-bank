@@ -1,8 +1,10 @@
 package org.smileksey.calculator.calculators;
 
 import org.junit.jupiter.api.Test;
+import org.smileksey.calculator.dto.PaymentScheduleElementDto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,5 +69,23 @@ class CreditParamsCalculatorImplTest {
         BigDecimal psk = creditParamsCalculator.calculatePSK(new BigDecimal("1138770.29"), new BigDecimal("1000000"), 12);
 
         assertEquals(new BigDecimal("13.88"), psk);
+    }
+
+    @Test
+    void getPaymentSchedule() {
+
+        int term = 12;
+
+        List<PaymentScheduleElementDto> paymentSchedule = creditParamsCalculator.getPaymentSchedule(
+                new BigDecimal("87915.89"), new BigDecimal("1000000"), new BigDecimal("10"), term);
+
+        assertEquals(term, paymentSchedule.size());
+
+        PaymentScheduleElementDto lastPayment = paymentSchedule.get(paymentSchedule.size() - 1);
+
+        assertEquals(term, lastPayment.getNumber());
+        assertEquals(paymentSchedule.get(0).getDate().plusMonths(term - 1), lastPayment.getDate());
+        assertEquals(new BigDecimal("0"), lastPayment.getRemainingDebt());
+        assertEquals(lastPayment.getTotalPayment(), lastPayment.getDebtPayment().add(lastPayment.getInterestPayment()));
     }
 }
