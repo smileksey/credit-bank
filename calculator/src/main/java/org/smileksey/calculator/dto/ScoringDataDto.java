@@ -115,6 +115,9 @@ public class ScoringDataDto {
     private EmploymentDto employment;
 
     @NotNull(message = "Не указано поле accountNumber")
+    @Schema(
+            description = "Номер счета",
+            example = "123456789")
     private String accountNumber;
 
     @NotNull(message = "Не указано поле isInsuranceEnabled")
