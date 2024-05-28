@@ -12,6 +12,7 @@ class CreditParamsCalculatorImplTest {
 
     private final CreditParamsCalculatorImpl creditParamsCalculator = new CreditParamsCalculatorImpl();
 
+
     @Test
     void calculateMonthlyPaymen() {
         BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(
@@ -20,12 +21,14 @@ class CreditParamsCalculatorImplTest {
         assertEquals(new BigDecimal("88332.56"), monthlyPayment);
     }
 
+
     @Test
     void calculateTotalAmount() {
         BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(new BigDecimal("10000"), 12);
 
         assertEquals(new BigDecimal("120000"), totalAmount);
     }
+
 
     @Test
     void calculateRate() {
@@ -42,6 +45,7 @@ class CreditParamsCalculatorImplTest {
         assertEquals(new BigDecimal("17.00"), rateInsTrueSalTrue);
     }
 
+
     @Test
     void calculateAmount() {
         BigDecimal amountInsTrue = creditParamsCalculator.calculateAmount(new BigDecimal("1000000"), true);
@@ -50,6 +54,7 @@ class CreditParamsCalculatorImplTest {
         assertEquals(new BigDecimal("1100000.00"), amountInsTrue);
         assertEquals(new BigDecimal("1000000.00"), amountInsFalse);
     }
+
 
     @Test
     void calculateInsurancePrice() {
@@ -64,12 +69,14 @@ class CreditParamsCalculatorImplTest {
         assertEquals(new BigDecimal("0.00"), insurancePriceInsTrueSalTrue);
     }
 
+
     @Test
     void calculatePSK() {
         BigDecimal psk = creditParamsCalculator.calculatePSK(new BigDecimal("1138770.29"), new BigDecimal("1000000"), 12);
 
         assertEquals(new BigDecimal("13.88"), psk);
     }
+
 
     @Test
     void getPaymentSchedule() {
