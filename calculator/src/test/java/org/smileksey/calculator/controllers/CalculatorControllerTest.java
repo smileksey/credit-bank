@@ -1,83 +1,182 @@
 package org.smileksey.calculator.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.smileksey.calculator.dto.CreditDto;
-import org.smileksey.calculator.dto.LoanOfferDto;
-import org.smileksey.calculator.dto.LoanStatementRequestDto;
-import org.smileksey.calculator.services.LoanOfferServiceImpl;
+import org.smileksey.calculator.dto.*;
+import org.smileksey.calculator.dto.enums.EmploymentStatus;
+import org.smileksey.calculator.dto.enums.Gender;
+import org.smileksey.calculator.dto.enums.MaritalStatus;
+import org.smileksey.calculator.dto.enums.Position;
+import org.smileksey.calculator.services.CreditService;
+import org.smileksey.calculator.services.LoanOfferService;
 import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
+import org.smileksey.calculator.utils.validation.ScoringDataDtoValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(CalculatorController.class)
+@Import({LoanStatementRequestValidator.class, ScoringDataDtoValidator.class})
 class CalculatorControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    ObjectWriter objectWriter = objectMapper.writer();
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @Mock
-    private LoanOfferServiceImpl loanOfferService;
+    @MockBean
+    private LoanOfferService loanOfferService;
 
-    @Mock
-    private BindingResult bindingResult;
+    @MockBean
+    private CreditService creditService;
 
-    @Mock
-    private LoanStatementRequestValidator loanStatementRequestValidator;
 
-    @InjectMocks
-    private CalculatorController calculatorController;
-
-    //TODO
     @Test
-    void getOffers() {
-//        MockHttpServletRequest request = new MockHttpServletRequest();
-//        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+    void getOffersShouldReturn200() throws Exception {
 
-//        LoanStatementRequestDto loanStatementRequestDto = new LoanStatementRequestDto();
-//        loanStatementRequestDto.setAmount(new BigDecimal("100000"));
-//        loanStatementRequestDto.setTerm(12);
-//        loanStatementRequestDto.setFirstName("Ivan");
-//        loanStatementRequestDto.setLastName("Ivanov");
-//        loanStatementRequestDto.setBirthdate(LocalDate.of(1990, 1, 1));
-//        loanStatementRequestDto.setEmail("ivanov@gmail.com");
-//        loanStatementRequestDto.setPassportSeries("1234");
-//        loanStatementRequestDto.setPassportNumber("123456");
+        LoanStatementRequestDto loanStatementRequestDto = createLoanStatementRequestDto();
+
+        String loanStatementRequestDtoJson = objectMapper.writeValueAsString(loanStatementRequestDto);
 
         when(loanOfferService.getLoanOffers(any())).thenReturn(new ArrayList<LoanOfferDto>());
-        when(bindingResult.hasErrors()).thenReturn(false);
-
-        List<LoanOfferDto> loanOfferDtos = calculatorController.getOffers(new LoanStatementRequestDto(), bindingResult);
 
 
+        mockMvc.perform(post("/calculator/offers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loanStatementRequestDtoJson))
+                .andExpect(status().isOk());
+
+        verify(loanOfferService, times(1)).getLoanOffers(any());
     }
 
-    //TODO
+
     @Test
-    void getCreditDetails() {
+    void getOffersShouldReturn400() throws Exception {
+        LoanStatementRequestDto loanStatementRequestDto = new LoanStatementRequestDto();
+
+        String loanStatementRequestDtoJson = objectMapper.writeValueAsString(loanStatementRequestDto);
+
+        when(loanOfferService.getLoanOffers(any())).thenReturn(new ArrayList<LoanOfferDto>());
+
+        mockMvc.perform(post("/calculator/offers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loanStatementRequestDtoJson))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void getCreditDetailsShouldReturn200() throws Exception {
+
+        ScoringDataDto scoringDataDto = createScoringDataDto();
+
+        String scoringDataDtoJson = objectMapper.writeValueAsString(scoringDataDto);
+
+        when(creditService.getCreditDto(any())).thenReturn(Optional.of(new CreditDto()));
+
+        mockMvc.perform(post("/calculator/calc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(scoringDataDtoJson))
+                .andExpect(status().isOk());
+
+        verify(creditService, times(1)).getCreditDto(any());
+    }
+
+
+    @Test
+    void getCreditDetailsShouldReturn400() throws Exception {
+
+        ScoringDataDto scoringDataDto = new ScoringDataDto();
+
+        String scoringDataDtoJson = objectMapper.writeValueAsString(scoringDataDto);
+
+        when(creditService.getCreditDto(any())).thenReturn(Optional.of(new CreditDto()));
+
+        mockMvc.perform(post("/calculator/calc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(scoringDataDtoJson))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void getCreditDetailsShouldReturn404() throws Exception {
+
+        ScoringDataDto scoringDataDto = createScoringDataDto();
+
+        String scoringDataDtoJson = objectMapper.writeValueAsString(scoringDataDto);
+
+        when(creditService.getCreditDto(any())).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/calculator/calc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(scoringDataDtoJson))
+                .andExpect(status().isNotFound());
+
+        verify(creditService, times(1)).getCreditDto(any());
+    }
+
+
+    private LoanStatementRequestDto createLoanStatementRequestDto() {
+
+        LoanStatementRequestDto loanStatementRequestDto = new LoanStatementRequestDto();
+
+        loanStatementRequestDto.setAmount(new BigDecimal("100000"));
+        loanStatementRequestDto.setTerm(12);
+        loanStatementRequestDto.setFirstName("Ivan");
+        loanStatementRequestDto.setLastName("Ivanov");
+        loanStatementRequestDto.setBirthdate(LocalDate.of(1990, 1, 1));
+        loanStatementRequestDto.setEmail("ivanov@gmail.com");
+        loanStatementRequestDto.setPassportSeries("1234");
+        loanStatementRequestDto.setPassportNumber("123456");
+
+        return loanStatementRequestDto;
+    }
+
+
+    private ScoringDataDto createScoringDataDto() {
+
+        ScoringDataDto scoringDataDto = new ScoringDataDto();
+
+        EmploymentDto employmentDto = new EmploymentDto();
+        employmentDto.setEmploymentStatus(EmploymentStatus.EMPLOYED);
+        employmentDto.setSalary(new BigDecimal("100000.00"));
+        employmentDto.setPosition(Position.EMPLOYEE);
+        employmentDto.setWorkExperienceTotal(50);
+        employmentDto.setWorkExperienceCurrent(12);
+        employmentDto.setEmployerINN("1234567890");
+
+        scoringDataDto.setAmount(new BigDecimal("1000000"));
+        scoringDataDto.setTerm(12);
+        scoringDataDto.setFirstName("Ivan");
+        scoringDataDto.setLastName("Ivanov");
+        scoringDataDto.setPassportSeries("1234");
+        scoringDataDto.setPassportNumber("123456");
+        scoringDataDto.setAccountNumber("123456789");
+        scoringDataDto.setPassportIssueDate(LocalDate.of(2020, 1, 1));
+        scoringDataDto.setPassportIssueBranch("issue branch");
+        scoringDataDto.setDependentAmount(0);
+        scoringDataDto.setGender(Gender.MALE);
+        scoringDataDto.setBirthdate(LocalDate.of(2004, 1, 1));
+        scoringDataDto.setMaritalStatus(MaritalStatus.NOT_MARRIED);
+        scoringDataDto.setIsInsuranceEnabled(false);
+        scoringDataDto.setIsSalaryClient(false);
+        scoringDataDto.setEmployment(employmentDto);
+
+        return scoringDataDto;
     }
 }
