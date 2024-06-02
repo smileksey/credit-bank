@@ -12,28 +12,28 @@ import java.util.UUID;
 @Setter
 @ToString
 public class LoanOfferDto {
-    @Schema(description = "Уникальный идентификатор")
+    @Schema(description = "Unique identificator")
     private UUID statementId;
 
-    @Schema(description = "Запрошенная сумма кредита")
+    @Schema(description = "Offered loan amount")
     private BigDecimal requestedAmount;
 
-    @Schema(description = "Предлагаемая сумма кредита")
+    @Schema(description = "Total amount of all loan payments")
     private BigDecimal totalAmount;
 
-    @Schema(description = "Срок кредита, мес.")
+    @Schema(description = "Loan term, months")
     private Integer term;
 
-    @Schema(description = "Размер ежемесячного платежа")
+    @Schema(description = "Monthly payment amount")
     private BigDecimal monthlyPayment;
 
-    @Schema(description = "Ставка, %")
+    @Schema(description = "Loan rate, %")
     private BigDecimal rate;
 
-    @Schema(description = "Наличие страховки")
+    @Schema(description = "Having insurance")
     private Boolean isInsuranceEnabled;
 
-    @Schema(description = "Является ли зарплатным клиентом")
+    @Schema(description = "Is a salary client")
     private Boolean isSalaryClient;
 
 }

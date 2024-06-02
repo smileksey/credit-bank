@@ -17,43 +17,43 @@ import java.math.BigDecimal;
 @Setter
 @ToString
 public class EmploymentDto {
-    @NotNull(message = "Не указано поле employmentStatus")
+    @NotNull(message = "'employmentStatus' is not specified")
     @Schema(
-            description = "Тип занятости",
+            description = "Employment status",
             example = "EMPLOYED")
     private EmploymentStatus employmentStatus;
 
-    @NotNull(message = "Не указано поле employerINN")
-    @Pattern(regexp = "^(?=[0-9]*$)(?:.{10}|.{12})$", message = "ИНН должен состоять из 10 или 12 цифр")
+    @NotNull(message = "'employerINN' is not specified")
+    @Pattern(regexp = "^(?=[0-9]*$)(?:.{10}|.{12})$", message = "INN must consist of 10 or 12 digits")
     @Schema(
-            description = "ИНН работодателя",
+            description = "Employer's taxpayer identification number (INN)",
             example = "1234567890")
     private String employerINN;
 
-    @NotNull(message = "Не указано поле salary")
-    @PositiveOrZero(message = "Зарплата не может быть меньше 0")
+    @NotNull(message = "'salary' is not specified")
+    @PositiveOrZero(message = "Salary amount must be positive or zero")
     @Schema(
-            description = "Ежемесячная зарплата",
+            description = "Monthly salary amount",
             example = "50000")
     private BigDecimal salary;
 
-    @NotNull(message = "Не указано поле position")
+    @NotNull(message = "'position' is not specified")
     @Schema(
-            description = "Должность",
+            description = "Job position",
             example = "MIDDLE_MANAGER")
     private Position position;
 
-    @NotNull(message = "Не указано поле workExperienceTotal")
+    @NotNull(message = "'workExperienceTotal' is not specified")
     @PositiveOrZero
     @Schema(
-            description = "Общий трудовой стаж, мес.",
+            description = "Total work experience, months",
             example = "60")
     private Integer workExperienceTotal;
 
-    @NotNull(message = "Не указано поле workExperienceCurrent")
+    @NotNull(message = "'workExperienceCurrent' is not specified")
     @PositiveOrZero
     @Schema(
-            description = "Стаж на текущем месте работы, мес.",
+            description = "Work experience at current job, months",
             example = "5")
     private Integer workExperienceCurrent;
 }

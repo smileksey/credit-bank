@@ -12,19 +12,19 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Класс с методами для рассчета отдельных параметров кредита */
+/** Class for credit parameters calculation */
 @Component
 public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
     private final static Logger logger = LogManager.getLogger(LoanOfferServiceImpl.class);
 
     /**
-     * Метод для расчета ежемесячного платежа
-     * @param amount - запрашиваемая сумма кредита
-     * @param rate - ставка, %
-     * @param term - срок кредита, мес
-     * @param insurancePrice - стоимость страховки
-     * @return возвращает сумму ежемесячного платежа
+     * Method for monthly payment calculation
+     * @param amount - required loan amount
+     * @param rate - loan rate, %
+     * @param term - loan term, months
+     * @param insurancePrice - insurance price
+     * @return amount of the monthly payment
      */
     @Override
     public BigDecimal calculateMonthlyPayment(BigDecimal amount, BigDecimal rate, Integer term, BigDecimal insurancePrice) {
@@ -56,10 +56,10 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
 
     /**
-     * Метод для расчета полной суммы кредита
-     * @param monthlyPayment - сумма ежемесячного платежа
-     * @param term - срок кредита, мес
-     * @return возвращает сумму всех платажей по кредиту
+     * Method for total amount of all loan payments calculation
+     * @param monthlyPayment - monthly payment amount
+     * @param term - loan term, months
+     * @return total amount of all loan payments
      */
     @Override
     public BigDecimal calculateTotalAmount(BigDecimal monthlyPayment, Integer term) {
@@ -74,11 +74,11 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
 
     /**
-     * Метод для расчета кредитной ставки
-     * @param initialRate - исходная ставка (базовая)
-     * @param isInsuranceEnabled - наличие страховки
-     * @param isSalaryClient - является ли зарплатным клиентом
-     * @return возвращает кредитную ставку в процентах
+     * Method for loan rate calculation
+     * @param initialRate - initial (base) rate
+     * @param isInsuranceEnabled - having insurance
+     * @param isSalaryClient - is a salary client
+     * @return loan rate, %
      */
     @Override
     public BigDecimal calculateRate(BigDecimal initialRate, Boolean isInsuranceEnabled, Boolean isSalaryClient) {
@@ -108,10 +108,10 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
 
     /**
-     * Метод для перерасчета предлагаемой суммы кредита в зависимости от наличия страховки
-     * @param initialAmount - запрашиваемая (изначальная) сумма кредита
-     * @param isInsuranceEnabled - наличие страховки
-     * @return возвращает новую предлагаему сумму кредита
+     * Method for offered loan amount calculation depending on the insurance enabled
+     * @param initialAmount - required loan amount
+     * @param isInsuranceEnabled - having insurance
+     * @return offered loan amount
      */
     @Override
     public BigDecimal calculateAmount(BigDecimal initialAmount, Boolean isInsuranceEnabled) {
@@ -131,11 +131,11 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
 
     /**
-     * Метод для расчета стоимости страховки
-     * @param amount - сумма кредита
-     * @param isInsuranceEnabled - наличие страховки
-     * @param isSalaryClient - является ли зарплатным клиентом
-     * @return возвращает стоимость страховки
+     * Method for insurance price calculation
+     * @param amount - loan amount
+     * @param isInsuranceEnabled - having insurance
+     * @param isSalaryClient - is a salary client
+     * @return insurance price
      */
     @Override
     public BigDecimal calculateInsurancePrice(BigDecimal amount, Boolean isInsuranceEnabled, Boolean isSalaryClient) {
@@ -153,11 +153,11 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
 
     /**
-     * Метод для расчета полной стоимости кредита (ПСК)
-     * @param totalAmount - сумма всех платежей по кредиту
-     * @param amount - сумма кредита
-     * @param term - срок кредита, мес
-     * @return возвращает полную стоимость кредита (ПСК) в процентах
+     * Method for total loan cost calculation
+     * @param totalAmount - total amount of all loan payments
+     * @param amount - loan amount
+     * @param term - loan term, months
+     * @return total loan cost, %
      */
     @Override
     public BigDecimal calculatePSK(BigDecimal totalAmount, BigDecimal amount, Integer term) {
@@ -176,12 +176,12 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
 
     /**
-     * Метод для расчета графика платежей
-     * @param monthlyPayment - сумма ежемесячного платежа
-     * @param amount - сумма кредита
-     * @param rate - ставка, %
-     * @param term - срок кредита, мес
-     * @return возвращает список всех платежей по кредиту в порядке выплаты
+     * Method for payment schedule calculation
+     * @param monthlyPayment - monthly payment amount
+     * @param amount - loan amount
+     * @param rate - loan rate, %
+     * @param term - loan term, months
+     * @return list of all payments in order of payment
      */
     @Override
     public List<PaymentScheduleElementDto> getPaymentSchedule(BigDecimal monthlyPayment, BigDecimal amount, BigDecimal rate, Integer term) {

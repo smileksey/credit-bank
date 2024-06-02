@@ -12,27 +12,27 @@ import java.util.List;
 @Setter
 @ToString
 public class CreditDto {
-    @Schema(description = "Сумма кредита")
+    @Schema(description = "Loan amount")
     private BigDecimal amount;
 
-    @Schema(description = "Срок кредита, мес.")
+    @Schema(description = "Loan term, months")
     private Integer term;
 
-    @Schema(description = "Размер ежемесячного платежа")
+    @Schema(description = "Monthly payment amount")
     private BigDecimal monthlyPayment;
 
-    @Schema(description = "Ставка, %")
+    @Schema(description = "Loan rate, %")
     private BigDecimal rate;
 
-    @Schema(description = "Полная стоимость кредита (ПСК), %")
+    @Schema(description = "Total loan cost, %")
     private BigDecimal psk;
 
-    @Schema(description = "Наличие страховки")
+    @Schema(description = "Having insurance")
     private Boolean isInsuranceEnabled;
 
-    @Schema(description = "Является ли зарплатным клиентом")
+    @Schema(description = "Is a salary client")
     private Boolean isSalaryClient;
 
-    @Schema(description = "График платежей")
+    @Schema(description = "Payment schedule")
     private List<PaymentScheduleElementDto> paymentSchedule;
 }

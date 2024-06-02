@@ -26,7 +26,7 @@ public class CreditServiceImpl implements CreditService{
 
     private final static Logger logger = LogManager.getLogger(CreditServiceImpl.class);
 
-    /** Базовая кредитная ставка */
+    /** Base loan rate */
     @Value("${base.rate}")
     private String stringBaseRate;
 
@@ -34,9 +34,9 @@ public class CreditServiceImpl implements CreditService{
 
 
     /**
-     * Метод выполняет окончательный расчет параметров кредита, либо формирует отказ
-     * @param scoringDataDto - входящие данные от клиента
-     * @return возвращает объект Optional c вложенным CreditDto с параметрами кредита, либо Optional.empty() в случае отказа
+     * Method performs final calculation of the loan parameters or generates refusal
+     * @param scoringDataDto - input data from client
+     * @return Optional with nested CreditDto in case of approval, or Optional.empty() in case of refusal
      */
     @Override
     public Optional<CreditDto> getCreditDto(ScoringDataDto scoringDataDto) {
@@ -48,22 +48,12 @@ public class CreditServiceImpl implements CreditService{
             return Optional.empty();
         }
 
-        //Рассчет стоимости страховки, если есть
         BigDecimal insurancePrice = creditParamsCalculator.calculateInsurancePrice(scoringDataDto.getAmount(), scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
-
-        //Рассчет суммы ежемесячного платежа
         BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(scoringDataDto.getAmount(), rate, scoringDataDto.getTerm(), insurancePrice);
-
-        //Рассчет общей суммы выплат
         BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, scoringDataDto.getTerm());
-
-        //Рассчет полной стоимости кредита (ПСК)
         BigDecimal psk = creditParamsCalculator.calculatePSK(totalAmount, scoringDataDto.getAmount(), scoringDataDto.getTerm());
-
-        //Рассчет графика платежей
         List<PaymentScheduleElementDto> paymentSchedule = creditParamsCalculator.getPaymentSchedule(monthlyPayment, scoringDataDto.getAmount(), rate, scoringDataDto.getTerm());
 
-        //Создаем объект CreditDto и заполняем его поля вычисленными значениями
         CreditDto creditDto = new CreditDto();
 
         creditDto.setAmount(scoringDataDto.getAmount());
@@ -80,9 +70,9 @@ public class CreditServiceImpl implements CreditService{
 
 
     /**
-     * Метод выполняет скоринг и расчет итоговой ставки кредита
-     * @param scoringDataDto - входящие данные от клиента
-     * @return возвращает итоговую ставку кредита в процентах
+     * Method performs scoring and final loan rate calculation
+     * @param scoringDataDto - input data from client
+     * @return final loan rate, %
      */
     private BigDecimal executeScoringAndGetRate(ScoringDataDto scoringDataDto) {
 

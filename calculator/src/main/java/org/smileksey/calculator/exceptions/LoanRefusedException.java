@@ -1,6 +1,6 @@
 package org.smileksey.calculator.exceptions;
 
-/** Исключение для отказа в кредите */
+/** Exception for loan refusal */
 public class LoanRefusedException extends RuntimeException {
 
 }

@@ -8,7 +8,7 @@ import org.springframework.validation.Validator;
 import java.time.LocalDate;
 import java.time.Period;
 
-/** Валидатор для входящих объектов ScoringDataDto */
+/** Validator for ScoringDataDto */
 @Component
 public class ScoringDataDtoValidator implements Validator {
 

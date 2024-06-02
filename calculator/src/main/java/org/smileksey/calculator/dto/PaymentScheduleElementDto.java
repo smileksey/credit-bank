@@ -10,21 +10,21 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class PaymentScheduleElementDto {
-    @Schema(description = "Порядковый номер платежа")
+    @Schema(description = "Number of payment")
     private Integer number;
 
-    @Schema(description = "Дата платежа")
+    @Schema(description = "Date of payment")
     private LocalDate date;
 
-    @Schema(description = "Общая сумма платежа")
+    @Schema(description = "Total amount of payment")
     private BigDecimal totalPayment;
 
-    @Schema(description = "Часть платежа на погашение процентов")
+    @Schema(description = "Interest part of payment")
     private BigDecimal interestPayment;
 
-    @Schema(description = "Часть платежа на погашение основного долга")
+    @Schema(description = "Debt part of payment")
     private BigDecimal debtPayment;
 
-    @Schema(description = "Сумма оставшегося основного долга")
+    @Schema(description = "Amount of remaining debt")
     private BigDecimal remainingDebt;
 }

@@ -18,68 +18,68 @@ import java.time.LocalDate;
 @Setter
 @ToString
 public class LoanStatementRequestDto {
-    @NotNull(message = "Не указано поле amount")
-    @Min(value = 30000, message = "Минимальная сумма кредита - 30000")
+    @NotNull(message = "'amount' is not specified")
+    @Min(value = 30000, message = "Minimum loan amount is 30000")
     @Schema(
-            description = "Сумма кредита",
+            description = "Loan amount",
             example = "500000")
     private BigDecimal amount;
 
-    @NotNull(message = "Не указано поле term")
-    @Min(value = 6, message = "Минимальный срок кредита - 6 месяцев")
+    @NotNull(message = "'term' is not specified")
+    @Min(value = 6, message = "Minimum loan term is 6 months")
     @Schema(
-            description = "Срок кредита, мес.",
+            description = "Loan term, months",
             example = "12")
     private Integer term;
 
-    @NotNull(message = "Не указано поле firstName")
-    @Size(min = 2, max = 30, message = "Имя должно содержать от 2 до 30 символов")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Имя должно состоять только из латинских букв")
+    @NotNull(message = "'firstName' is not specified")
+    @Size(min = 2, max = 30, message = "First name must contain 2 to 30 symbols")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only latin letters")
     @Schema(
-            description = "Имя",
+            description = "First name",
             example = "Ivan")
     private String firstName;
 
-    @NotNull(message = "Не указано поле lastName")
-    @Size(min = 2, max = 30, message = "Фамилия должна содержать от 2 до 30 символов")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Фамилия должна состоять только из латинских букв")
+    @NotNull(message = "'lastName' is not specified")
+    @Size(min = 2, max = 30, message = "Last name must contain 2 to 30 symbols")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only latin letters")
     @Schema(
-            description = "Фамилия",
+            description = "Last name",
             example = "Ivanov")
     private String lastName;
 
-    @Size(min = 2, max = 30, message = "Отчество должно содержать от 2 до 30 символов")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Отчество должно состоять только из латинских букв")
+    @Size(min = 2, max = 30, message = "Middle name must contain 2 to 30 symbols")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Middle name must contain only latin letters")
     @Schema(
-            description = "Отчество (при наличии)",
+            description = "Middle name (if exists)",
             example = "Ivanovich")
     private String middleName;
 
-    @NotNull(message = "Не указано поле email")
-    @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "Email введен некорректно")
+    @NotNull(message = "'email' is not specified")
+    @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "Email address is invalid")
     @Schema(
-            description = "Адрес электронной почты",
+            description = "Email address",
             example = "ivanov@mail.ru")
     private String email;
 
-    @NotNull(message = "Не указано поле birthdate")
+    @NotNull(message = "'birthdate' is not specified")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(
-            description = "Дата рождения",
+            description = "Date of birth",
             example = "1990-01-10")
     private LocalDate birthdate;
 
-    @NotNull(message = "Не указано поле passportSeries")
-    @Pattern(regexp = "^\\d{4}$", message = "Серия паспорта должна состоять из 4 цифр")
+    @NotNull(message = "'passportSeries' is not specified")
+    @Pattern(regexp = "^\\d{4}$", message = "Passport series must consist of 4 digits")
     @Schema(
-            description = "Серия паспорта",
+            description = "Passport series",
             example = "1122")
     private String passportSeries;
 
-    @NotNull(message = "Не указано поле passportNumber")
-    @Pattern(regexp = "^\\d{6}$", message = "Номер паспорта должен состоять из 6 цифр")
+    @NotNull(message = "'passportNumber' is not specified")
+    @Pattern(regexp = "^\\d{6}$", message = "Passport number must consist of 6 digits")
     @Schema(
-            description = "Номер паспорта",
+            description = "Passport number",
             example = "123456")
     private String passportNumber;
 }

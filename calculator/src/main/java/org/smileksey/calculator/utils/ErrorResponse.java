@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-/** Класс объекта, который возвращается клиенту в теле ответа в случае ошибки */
+/** Placed in the response body in case of an error */
 @Getter
 @Setter
 @AllArgsConstructor

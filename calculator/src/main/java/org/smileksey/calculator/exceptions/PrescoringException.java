@@ -1,6 +1,6 @@
 package org.smileksey.calculator.exceptions;
 
-/** Исключение для ошибок прескоринга */
+/** Exception for prescoring errors */
 public class PrescoringException extends RuntimeException {
 
     public PrescoringException(String message) {

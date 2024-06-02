@@ -91,7 +91,7 @@ public class CalculatorController {
     }
 
 
-    /** Метод перехватывает исключение PrescoringException и возвращает клиенту ответ с ошибкой */
+    /** This method intercepts PrescoringException and returns an error response to a client  */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handlePrescoringException(PrescoringException e) {
 
@@ -103,11 +103,11 @@ public class CalculatorController {
     }
 
 
-    /** Метод перехватывает исключение DateTimeParseException в случае некорректного ввода даты и возвращает клиенту ответ с ошибкой */
+    /** This method intercepts DateTimeParseException in case of invalid date input and returns an error response to a client */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleDateTimeException(DateTimeParseException e) {
 
-        String message = "Дата рождения должна быть в формате гггг-мм-дд";
+        String message = "Birthdate must be in yyyy-mm-dd format";
         ErrorResponse response = new ErrorResponse(message);
 
         logger.error("Ошибка прескоринга: {}", message);
@@ -116,11 +116,11 @@ public class CalculatorController {
     }
 
 
-    /** Метод перехватывает исключение LoanRefusedException в случае отказа в кредите и возвращает клиенту ответ с ошибкой */
+    /** This method intercepts LoanRefusedException in case of loan refusal and returns an error response to a client */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleLoanRefusedException(LoanRefusedException e) {
 
-        String message = "В кредите отказано";
+        String message = "Loan refused";
         ErrorResponse response = new ErrorResponse(message);
 
         logger.error(message);

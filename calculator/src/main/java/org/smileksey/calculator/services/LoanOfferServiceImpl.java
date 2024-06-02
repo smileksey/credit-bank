@@ -29,9 +29,9 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
 
     /**
-     * Метод формирует список из 4 предварительных кредитных предложений
-     * @param loanStatementRequestDto - входящие данные от клиента
-     * @return возвращает список из 4 кредитных предложений LoanOfferDto
+     * Method creates a list of 4 preliminary loan offers
+     * @param loanStatementRequestDto - input data from client
+     * @return list of 4 preliminary loan offers
      */
     @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
@@ -56,11 +56,11 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
 
     /**
-     * Метод выполняет прескоринг и расчет предварительного кредитного предложения в зависимости от того, есть ли у клиента страхова и является ли он зарплатным клиентом
-     * @param loanStatementRequestDto - входящие данные от клиента
-     * @param isInsuranceEnabled - наличие страховки
-     * @param isSalaryClient - является ли зарплатным клиентом
-     * @return возвращает кредитное предложение LoanOfferDto
+     * Method performs prescoring and calculation of a preliminary loan offer depending on whether the client has insurance and whether he is a salary client
+     * @param loanStatementRequestDto - input data from client
+     * @param isInsuranceEnabled - having insurance
+     * @param isSalaryClient - is a salary client
+     * @return preliminary loan offer
      */
     private LoanOfferDto createLoanOffer(LoanStatementRequestDto loanStatementRequestDto ,Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
@@ -80,7 +80,6 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         logger.info("Данные после пересчета: сумма кредита = {}, срок = {}, ставка = {}, стоимость страховки = {}", amount, term, rate, insurancePrice);
 
         BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(amount, rate, term, insurancePrice);
-
         BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, term);
 
         logger.info("====================================================");

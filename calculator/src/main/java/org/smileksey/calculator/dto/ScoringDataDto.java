@@ -19,116 +19,115 @@ import java.time.LocalDate;
 @ToString
 public class ScoringDataDto {
 
-    @NotNull(message = "Не указано поле amount")
-    @Min(value = 30000, message = "Минимальная сумма кредита - 30000")
+    @NotNull(message = "'amount' is not specified")
+    @Min(value = 30000, message = "Minimum loan amount is 30000")
     @Schema(
-            description = "Сумма кредита",
+            description = "Loan amount",
             example = "500000")
     private BigDecimal amount;
 
-    @NotNull(message = "Не указано поле term")
-    @Min(value = 6, message = "Минимальный срок кредита - 6 месяцев")
+    @NotNull(message = "'term' is not specified")
+    @Min(value = 6, message = "Minimum loan term is 6 months")
     @Schema(
-            description = "Срок кредита, мес.",
+            description = "Loan term, months",
             example = "12")
     private Integer term;
 
-    @NotNull(message = "Не указано поле firstName")
-    @Size(min = 2, max = 30, message = "Имя должно содержать от 2 до 30 символов")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Имя должно состоять только из латинских букв")
+    @NotNull(message = "'firstName' is not specified")
+    @Size(min = 2, max = 30, message = "First name must contain 2 to 30 symbols")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only latin letters")
     @Schema(
-            description = "Имя",
+            description = "First name",
             example = "Ivan")
     private String firstName;
 
-    @NotNull(message = "Не указано поле lastName")
-    @Size(min = 2, max = 30, message = "Фамилия должна содержать от 2 до 30 символов")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Фамилия должна состоять только из латинских букв")
+    @NotNull(message = "'lastName' is not specified")
+    @Size(min = 2, max = 30, message = "Last name must contain 2 to 30 symbols")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only latin letters")
     @Schema(
-            description = "Фамилия",
+            description = "Last name",
             example = "Ivanov")
     private String lastName;
 
-    @Size(min = 2, max = 30, message = "Отчество должно содержать от 2 до 30 символов")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Отчество должно состоять только из латинских букв")
+    @Size(min = 2, max = 30, message = "Middle name must contain 2 to 30 symbols")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Middle name must contain only latin letters")
     @Schema(
-            description = "Отчество (при наличии)",
+            description = "Middle name (if exists)",
             example = "Ivanovich")
     private String middleName;
 
-    @NotNull(message = "Не указано поле gender")
-//    @GenderSubset(anyOf = {Gender.MALE, Gender.FEMALE, Gender.NON_BINARY})
+    @NotNull(message = "'gender' is not specified")
     @Schema(
-            description = "Пол",
+            description = "Gender",
             example = "MALE")
     private Gender gender;
 
-    @NotNull(message = "Не указано поле birthdate")
+    @NotNull(message = "'birthdate' is not specified")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(
-            description = "Дата рождения",
+            description = "Date of birth",
             example = "1990-01-10")
     private LocalDate birthdate;
 
-    @NotNull(message = "Не указано поле passportSeries")
-    @Pattern(regexp = "^\\d{4}$", message = "Серия паспорта должна состоять из 4 цифр")
+    @NotNull(message = "'passportSeries' is not specified")
+    @Pattern(regexp = "^\\d{4}$", message = "Passport series must consist of 4 digits")
     @Schema(
-            description = "Серия паспорта",
+            description = "Passport series",
             example = "1122")
     private String passportSeries;
 
-    @NotNull(message = "Не указано поле passportNumber")
-    @Pattern(regexp = "^\\d{6}$", message = "Номер паспорта должен состоять из 6 цифр")
+    @NotNull(message = "'passportNumber' is not specified")
+    @Pattern(regexp = "^\\d{6}$", message = "Passport number must consist of 6 digits")
     @Schema(
-            description = "Номер паспорта",
+            description = "Passport number",
             example = "123456")
     private String passportNumber;
 
-    @NotNull(message = "Не указано поле passportIssueDate")
+    @NotNull(message = "'passportIssueDate' is not specified")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(
-            description = "Дата выдачи паспорта",
+            description = "Passport issue date",
             example = "2020-01-10")
     private LocalDate passportIssueDate;
 
-    @NotNull(message = "Не указано поле passportIssueBranch")
-    @Size(min = 10, max = 100, message = "Поле passportIssueBranch должно содержать от 10 до 100 символов")
+    @NotNull(message = "'passportIssueBranch' is not specified")
+    @Size(min = 10, max = 100, message = "'passportIssueBranch' must contain 10 to 100 symbols")
     @Schema(
-            description = "Кем выдан паспорт",
+            description = "Branch issued the passport",
             example = "УВД Советского р-на гор. Нижнего Новгорода")
     private String passportIssueBranch;
 
-    @NotNull(message = "Не указано поле maritalStatus")
+    @NotNull(message = "'maritalStatus' is not specified")
     @Schema(
-            description = "Семейное положение",
+            description = "Martial status",
             example = "MARRIED")
     private MaritalStatus maritalStatus;
 
-    @NotNull(message = "Не указано поле dependentAmount")
+    @NotNull(message = "'dependentAmount' is not specified")
     @Schema(
-            description = "Количество иждивенцев",
+            description = "Amount of dependents",
             example = "0")
     private Integer dependentAmount;
 
-    @NotNull(message = "Не указано поле employment")
+    @NotNull(message = "'employment' is not specified")
     @Valid
     private EmploymentDto employment;
 
-    @NotNull(message = "Не указано поле accountNumber")
+    @NotNull(message = "'accountNumber' is not specified")
     @Schema(
-            description = "Номер счета",
+            description = "Account number",
             example = "123456789")
     private String accountNumber;
 
-    @NotNull(message = "Не указано поле isInsuranceEnabled")
+    @NotNull(message = "'isInsuranceEnabled' is not specified")
     @Schema(
-            description = "Наличие страховки",
+            description = "Having insurance",
             example = "true")
     private Boolean isInsuranceEnabled;
 
-    @NotNull(message = "Не указано поле isSalaryClient")
+    @NotNull(message = "'isSalaryClient' is not specified")
     @Schema(
-            description = "Является ли зарплатным клиентом банка",
+            description = "Is a salary client",
             example = "false")
     private Boolean isSalaryClient;
 }
