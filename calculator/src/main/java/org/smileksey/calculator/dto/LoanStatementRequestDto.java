@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -32,7 +29,7 @@ public class LoanStatementRequestDto {
             example = "12")
     private Integer term;
 
-    @NotNull(message = "'firstName' is not specified")
+    @NotBlank(message = "'firstName' is not specified")
     @Size(min = 2, max = 30, message = "First name must contain 2 to 30 symbols")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only latin letters")
     @Schema(
@@ -40,7 +37,7 @@ public class LoanStatementRequestDto {
             example = "Ivan")
     private String firstName;
 
-    @NotNull(message = "'lastName' is not specified")
+    @NotBlank(message = "'lastName' is not specified")
     @Size(min = 2, max = 30, message = "Last name must contain 2 to 30 symbols")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only latin letters")
     @Schema(
@@ -55,7 +52,7 @@ public class LoanStatementRequestDto {
             example = "Ivanovich")
     private String middleName;
 
-    @NotNull(message = "'email' is not specified")
+    @NotBlank(message = "'email' is not specified")
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "Email address is invalid")
     @Schema(
             description = "Email address",
@@ -69,14 +66,14 @@ public class LoanStatementRequestDto {
             example = "1990-01-10")
     private LocalDate birthdate;
 
-    @NotNull(message = "'passportSeries' is not specified")
+    @NotBlank(message = "'passportSeries' is not specified")
     @Pattern(regexp = "^\\d{4}$", message = "Passport series must consist of 4 digits")
     @Schema(
             description = "Passport series",
             example = "1122")
     private String passportSeries;
 
-    @NotNull(message = "'passportNumber' is not specified")
+    @NotBlank(message = "'passportNumber' is not specified")
     @Pattern(regexp = "^\\d{6}$", message = "Passport number must consist of 6 digits")
     @Schema(
             description = "Passport number",

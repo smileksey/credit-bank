@@ -7,10 +7,7 @@ import lombok.ToString;
 import org.smileksey.calculator.dto.enums.EmploymentStatus;
 import org.smileksey.calculator.dto.enums.Position;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 @Getter
@@ -23,7 +20,7 @@ public class EmploymentDto {
             example = "EMPLOYED")
     private EmploymentStatus employmentStatus;
 
-    @NotNull(message = "'employerINN' is not specified")
+    @NotBlank(message = "'employerINN' is not specified")
     @Pattern(regexp = "^(?=[0-9]*$)(?:.{10}|.{12})$", message = "INN must consist of 10 or 12 digits")
     @Schema(
             description = "Employer's taxpayer identification number (INN)",

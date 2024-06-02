@@ -33,7 +33,7 @@ public class ScoringDataDto {
             example = "12")
     private Integer term;
 
-    @NotNull(message = "'firstName' is not specified")
+    @NotBlank(message = "'firstName' is not specified")
     @Size(min = 2, max = 30, message = "First name must contain 2 to 30 symbols")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only latin letters")
     @Schema(
@@ -41,7 +41,7 @@ public class ScoringDataDto {
             example = "Ivan")
     private String firstName;
 
-    @NotNull(message = "'lastName' is not specified")
+    @NotBlank(message = "'lastName' is not specified")
     @Size(min = 2, max = 30, message = "Last name must contain 2 to 30 symbols")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only latin letters")
     @Schema(
@@ -69,14 +69,14 @@ public class ScoringDataDto {
             example = "1990-01-10")
     private LocalDate birthdate;
 
-    @NotNull(message = "'passportSeries' is not specified")
+    @NotBlank(message = "'passportSeries' is not specified")
     @Pattern(regexp = "^\\d{4}$", message = "Passport series must consist of 4 digits")
     @Schema(
             description = "Passport series",
             example = "1122")
     private String passportSeries;
 
-    @NotNull(message = "'passportNumber' is not specified")
+    @NotBlank(message = "'passportNumber' is not specified")
     @Pattern(regexp = "^\\d{6}$", message = "Passport number must consist of 6 digits")
     @Schema(
             description = "Passport number",
@@ -90,7 +90,7 @@ public class ScoringDataDto {
             example = "2020-01-10")
     private LocalDate passportIssueDate;
 
-    @NotNull(message = "'passportIssueBranch' is not specified")
+    @NotBlank(message = "'passportIssueBranch' is not specified")
     @Size(min = 10, max = 100, message = "'passportIssueBranch' must contain 10 to 100 symbols")
     @Schema(
             description = "Branch issued the passport",
@@ -113,7 +113,7 @@ public class ScoringDataDto {
     @Valid
     private EmploymentDto employment;
 
-    @NotNull(message = "'accountNumber' is not specified")
+    @NotBlank(message = "'accountNumber' is not specified")
     @Schema(
             description = "Account number",
             example = "123456789")
