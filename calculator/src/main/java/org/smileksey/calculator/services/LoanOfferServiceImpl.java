@@ -20,9 +20,9 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
     private final static Logger logger = LogManager.getLogger(LoanOfferServiceImpl.class);
 
-    /** Базовая кредитная ставка */
+    /** Loan base rate */
     @Value("${base.rate}")
-    private String stringBaseRate;
+    private String baseRate;
 
     private final CreditParamsCalculator creditParamsCalculator;
 
@@ -66,7 +66,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         logger.info("====================================================");
         logger.info("Loan offer для: страховка - {}, зарплатный клиент - {}", isInsuranceEnabled, isSalaryClient);
 
-        BigDecimal initialRate = new BigDecimal(stringBaseRate);
+        BigDecimal initialRate = new BigDecimal(baseRate);
         BigDecimal initialAmount = loanStatementRequestDto.getAmount();
         Integer term = loanStatementRequestDto.getTerm();
 

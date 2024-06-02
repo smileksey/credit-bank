@@ -26,9 +26,9 @@ public class CreditServiceImpl implements CreditService{
 
     private final static Logger logger = LogManager.getLogger(CreditServiceImpl.class);
 
-    /** Base loan rate */
+    /** Loan base rate */
     @Value("${base.rate}")
-    private String stringBaseRate;
+    private String baseRate;
 
     private final CreditParamsCalculator creditParamsCalculator;
 
@@ -76,7 +76,7 @@ public class CreditServiceImpl implements CreditService{
      */
     private BigDecimal executeScoringAndGetRate(ScoringDataDto scoringDataDto) {
 
-        BigDecimal initialRate = new BigDecimal(stringBaseRate);
+        BigDecimal initialRate = new BigDecimal(baseRate);
         BigDecimal amount = scoringDataDto.getAmount();
         EmploymentStatus employmentStatus = scoringDataDto.getEmployment().getEmploymentStatus();
         Position position = scoringDataDto.getEmployment().getPosition();
