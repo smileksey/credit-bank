@@ -22,7 +22,6 @@ public class LoanStatementRequestValidator implements Validator {
 
         LoanStatementRequestDto loanStatementRequestDto = (LoanStatementRequestDto) target;
 
-        //Проверяем, что возраст клиента не менее 18 лет
         LocalDate birthdate = loanStatementRequestDto.getBirthdate();
 
         if (birthdate == null) {

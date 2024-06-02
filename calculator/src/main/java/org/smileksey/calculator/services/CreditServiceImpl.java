@@ -97,12 +97,9 @@ public class CreditServiceImpl implements CreditService{
         Integer workExperienceTotal = scoringDataDto.getEmployment().getWorkExperienceTotal();
         Integer workExperienceCurrent = scoringDataDto.getEmployment().getWorkExperienceCurrent();
 
-        //Минимально допустимое значение ставки
         BigDecimal minRate = new BigDecimal("9.00");
 
-        //Рассчет предварительной ставки исходя из наличия страховки и зарплатной карты
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
-
 
         if (age < 20 || age > 65) {
             logger.info("Поле age = {} не соответствует критериям - отказ", age);
@@ -119,7 +116,6 @@ public class CreditServiceImpl implements CreditService{
             return BigDecimal.ZERO;
         }
 
-        //Если сумма кредита больше 25 зарплат - отказ
         BigDecimal salary25x = salary.multiply(BigDecimal.valueOf(25));
 
         if (amount.compareTo(salary25x) > 0) {
@@ -127,7 +123,6 @@ public class CreditServiceImpl implements CreditService{
             return BigDecimal.ZERO;
         }
 
-        //Проверяем employmentStatus
         switch (employmentStatus) {
             case UNEMPLOYED:
                 return BigDecimal.ZERO;
@@ -141,7 +136,6 @@ public class CreditServiceImpl implements CreditService{
 
         logger.info("Поле employmentStatus = {}, новая cтавка (rate) = {} %", employmentStatus, rate);
 
-        //Проверяем position
         switch (position) {
             case MIDDLE_MANAGER:
                 rate = rate.subtract(new BigDecimal("2.00"));
@@ -153,7 +147,6 @@ public class CreditServiceImpl implements CreditService{
 
         logger.info("Поле position = {}, новая cтавка (rate) = {} %", position, rate);
 
-        //Проверяем maritalStatus
         switch (maritalStatus) {
             case MARRIED:
                 rate = rate.subtract(new BigDecimal("3.00"));
@@ -165,7 +158,6 @@ public class CreditServiceImpl implements CreditService{
 
         logger.info("maritalStatus = {}, новая cтавка (rate) = {} %", maritalStatus, rate);
 
-        //Проверяем gender
         switch (gender) {
             case FEMALE:
                 if (age >= 32 && age < 60) {
@@ -184,13 +176,10 @@ public class CreditServiceImpl implements CreditService{
 
         logger.info("Поле gender = {}, поле age = {}, новая cтавка (rate) = {} %", gender, age, rate);
 
-        //Если в результате рассчетов ставка опустилась ниже минимального значения, усталиваем ей это значение
         if (rate.compareTo(minRate) < 0) {
 
             logger.info("Размер ставки (rate) = {} % опустился ниже минимального (minRate) = {} %", rate, minRate);
-
             rate = minRate;
-
             logger.info("Установлен минимально возможный размер ставки (rate) = {} %", rate);
         }
 

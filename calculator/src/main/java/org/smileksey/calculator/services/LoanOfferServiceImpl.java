@@ -36,7 +36,6 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 
-        //Создаем 4 кредитных предложения в зависимости от того, является ли получатель зарплатным клиентом и оформляет ли страховку
         List<LoanOfferDto> loanOffers = new ArrayList<>(List.of(
                 createLoanOffer(loanStatementRequestDto, false, false),
                 createLoanOffer(loanStatementRequestDto, false, true),
@@ -44,7 +43,6 @@ public class LoanOfferServiceImpl implements LoanOfferService {
                 createLoanOffer(loanStatementRequestDto, true, true)
         ));
 
-        //сортируем список в порядке от набольшей ставки к наименьшей
         loanOffers.sort(new LoanOfferDtoComparator());
 
         logger.info("**** Итоговые LoanOfferDto: ****");
@@ -75,22 +73,18 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         logger.info("Исходные данные: сумма кредита = {}, срок = {}, ставка = {}", initialAmount, term, initialRate);
 
-        //Пересчитываем сумму кредита, ставку и стоимость страховки
         BigDecimal amount = creditParamsCalculator.calculateAmount(loanStatementRequestDto.getAmount(), isInsuranceEnabled);
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, isInsuranceEnabled, isSalaryClient);
         BigDecimal insurancePrice = creditParamsCalculator.calculateInsurancePrice(amount, isInsuranceEnabled, isSalaryClient);
 
         logger.info("Данные после пересчета: сумма кредита = {}, срок = {}, ставка = {}, стоимость страховки = {}", amount, term, rate, insurancePrice);
 
-        //Рассчитываем ежемесячныйы платеж
         BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(amount, rate, term, insurancePrice);
 
-        //Вычисляем полную стоимость кредита в денежном выражении
         BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, term);
 
         logger.info("====================================================");
 
-        //Создаем объект LoanOfferDto и заполняем его поля вычисленными значениями
         LoanOfferDto loanOfferDto = new LoanOfferDto();
 
         loanOfferDto.setStatementId(UUID.randomUUID());

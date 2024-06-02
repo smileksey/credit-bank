@@ -21,7 +21,6 @@ public class ScoringDataDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         ScoringDataDto scoringDataDto = (ScoringDataDto) target;
 
-        //Проверяем, что возраст клиента не менее 18 лет
         LocalDate birthdate = scoringDataDto.getBirthdate();
 
         if (birthdate == null) {
