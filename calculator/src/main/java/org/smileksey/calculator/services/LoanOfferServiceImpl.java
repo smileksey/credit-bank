@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
-import org.smileksey.calculator.utils.LoanOfferDtoComparator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +42,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
                 createLoanOffer(loanStatementRequestDto, true, true)
         ));
 
-        loanOffers.sort(new LoanOfferDtoComparator());
+        loanOffers.sort((o1, o2) -> o2.getRate().compareTo(o1.getRate()));
 
         logger.info("**** Итоговые LoanOfferDto: ****");
 
