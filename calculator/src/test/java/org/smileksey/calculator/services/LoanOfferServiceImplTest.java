@@ -29,7 +29,7 @@ class LoanOfferServiceImplTest {
     @Test
     void getLoanOffers() {
 
-        ReflectionTestUtils.setField(loanOfferService, "stringBaseRate", "21.00");
+        ReflectionTestUtils.setField(loanOfferService, "baseRate", "21.00");
 
         LoanStatementRequestDto requestDto = new LoanStatementRequestDto();
 

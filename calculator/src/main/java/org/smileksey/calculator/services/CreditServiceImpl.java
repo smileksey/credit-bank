@@ -30,6 +30,9 @@ public class CreditServiceImpl implements CreditService{
     @Value("${base.rate}")
     private String baseRate;
 
+    /** Minimum acceptable loan rate */
+    private final BigDecimal MIN_RATE = new BigDecimal("9.00");
+
     private final CreditParamsCalculator creditParamsCalculator;
 
 
@@ -86,8 +89,6 @@ public class CreditServiceImpl implements CreditService{
         Gender gender = scoringDataDto.getGender();
         Integer workExperienceTotal = scoringDataDto.getEmployment().getWorkExperienceTotal();
         Integer workExperienceCurrent = scoringDataDto.getEmployment().getWorkExperienceCurrent();
-
-        BigDecimal minRate = new BigDecimal("9.00");
 
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
 
@@ -166,10 +167,10 @@ public class CreditServiceImpl implements CreditService{
 
         logger.info("Поле gender = {}, поле age = {}, новая cтавка (rate) = {} %", gender, age, rate);
 
-        if (rate.compareTo(minRate) < 0) {
+        if (rate.compareTo(MIN_RATE) < 0) {
 
-            logger.info("Размер ставки (rate) = {} % опустился ниже минимального (minRate) = {} %", rate, minRate);
-            rate = minRate;
+            logger.info("Размер ставки (rate) = {} % опустился ниже минимального (minRate) = {} %", rate, MIN_RATE);
+            rate = MIN_RATE;
             logger.info("Установлен минимально возможный размер ставки (rate) = {} %", rate);
         }
 

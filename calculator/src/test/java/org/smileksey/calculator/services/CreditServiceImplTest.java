@@ -41,9 +41,9 @@ class CreditServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        String stringBaseRate = "21.00";
-        ReflectionTestUtils.setField(creditServiceImpl, "stringBaseRate", stringBaseRate);
-        baseRate = new BigDecimal(stringBaseRate);
+        String baseRate = "21.00";
+        ReflectionTestUtils.setField(creditServiceImpl, "baseRate", baseRate);
+        this.baseRate = new BigDecimal(baseRate);
 
         scoringDataDto = new ScoringDataDto();
 
