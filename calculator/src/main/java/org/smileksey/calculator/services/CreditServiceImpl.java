@@ -33,6 +33,30 @@ public class CreditServiceImpl implements CreditService{
     /** Minimum acceptable loan rate */
     private final BigDecimal MIN_RATE = new BigDecimal("9.00");
 
+    /** Minimum acceptable age */
+    private final int MIN_AGE = 20;
+
+    /** Maximum acceptable age */
+    private final int MAX_AGE = 65;
+
+    /** Minimum acceptable total experience */
+    private final int MIN_EXP_TOTAL = 18;
+
+    /** Minimum acceptable current experience */
+    private final int MIN_EXP_CURRENT = 3;
+
+    /** Minimum eligible female age */
+    private final int FEMALE_MIN_ELIGIBLE_AGE = 32;
+
+    /** Maximum eligible female age */
+    private final int FEMALE_MAX_ELIGIBLE_AGE = 60;
+
+    /** Minimum eligible male age */
+    private final int MALE_MIN_ELIGIBLE_AGE = 30;
+
+    /** Maximum eligible male age */
+    private final int MALE_MAX_ELIGIBLE_AGE = 55;
+
     private final CreditParamsCalculator creditParamsCalculator;
 
 
@@ -92,17 +116,17 @@ public class CreditServiceImpl implements CreditService{
 
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
 
-        if (age < 20 || age > 65) {
+        if (age < MIN_AGE || age > MAX_AGE) {
             logger.info("Поле age = {} не соответствует критериям - отказ", age);
             return BigDecimal.ZERO;
         }
 
-        if (workExperienceTotal < 18) {
+        if (workExperienceTotal < MIN_EXP_TOTAL) {
             logger.info("Поле workExperienceTotal = {} не соответствует критериям - отказ", workExperienceTotal);
             return BigDecimal.ZERO;
         }
 
-        if (workExperienceCurrent < 3) {
+        if (workExperienceCurrent < MIN_EXP_CURRENT) {
             logger.info("Поле workExperienceCurrent = {} не соответствует критериям - отказ", workExperienceCurrent);
             return BigDecimal.ZERO;
         }
@@ -151,12 +175,12 @@ public class CreditServiceImpl implements CreditService{
 
         switch (gender) {
             case FEMALE:
-                if (age >= 32 && age < 60) {
+                if (age >= FEMALE_MIN_ELIGIBLE_AGE && age < FEMALE_MAX_ELIGIBLE_AGE) {
                     rate = rate.subtract(new BigDecimal("3.00"));
                 }
                 break;
             case MALE:
-                if (age >= 30 && age < 55) {
+                if (age >= MALE_MIN_ELIGIBLE_AGE && age < MALE_MAX_ELIGIBLE_AGE) {
                     rate = rate.subtract(new BigDecimal("3.00"));
                 }
                 break;
