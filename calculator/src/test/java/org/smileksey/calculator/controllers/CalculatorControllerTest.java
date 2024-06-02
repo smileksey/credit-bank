@@ -46,7 +46,7 @@ class CalculatorControllerTest {
 
 
     @Test
-    void getOffersShouldReturn200() throws Exception {
+    void calculateOffersShouldReturn200() throws Exception {
 
         LoanStatementRequestDto loanStatementRequestDto = createLoanStatementRequestDto();
 
@@ -65,7 +65,7 @@ class CalculatorControllerTest {
 
 
     @Test
-    void getOffersShouldReturn400() throws Exception {
+    void calculateOffersShouldReturn400() throws Exception {
         LoanStatementRequestDto loanStatementRequestDto = new LoanStatementRequestDto();
 
         String loanStatementRequestDtoJson = objectMapper.writeValueAsString(loanStatementRequestDto);
@@ -80,7 +80,7 @@ class CalculatorControllerTest {
 
 
     @Test
-    void getCreditDetailsShouldReturn200() throws Exception {
+    void calculateCreditDetailsShouldReturn200() throws Exception {
 
         ScoringDataDto scoringDataDto = createScoringDataDto();
 
@@ -98,7 +98,7 @@ class CalculatorControllerTest {
 
 
     @Test
-    void getCreditDetailsShouldReturn400() throws Exception {
+    void calculateCreditDetailsShouldReturn400() throws Exception {
 
         ScoringDataDto scoringDataDto = new ScoringDataDto();
 
@@ -114,7 +114,7 @@ class CalculatorControllerTest {
 
 
     @Test
-    void getCreditDetailsShouldReturn404() throws Exception {
+    void calculateCreditDetailsShouldReturn404() throws Exception {
 
         ScoringDataDto scoringDataDto = createScoringDataDto();
 

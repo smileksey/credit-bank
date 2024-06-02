@@ -42,7 +42,7 @@ public class CalculatorController {
     private final CreditService creditServiceImpl;
 
 
-    @Operation(summary = "Get 4 credit options")
+    @Operation(summary = "Calculate 4 credit options")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "4 credit options generated",
                     content = { @Content(mediaType = "application/json",
@@ -50,8 +50,8 @@ public class CalculatorController {
             @ApiResponse(responseCode = "400", description = "Invalid field values",
                     content = @Content) })
     @PostMapping("/offers")
-    public List<LoanOfferDto> getOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
-                                        BindingResult bindingResult) {
+    public List<LoanOfferDto> calculateOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
+                                              BindingResult bindingResult) {
 
         logger.info("Входящие данные по /calculator/offers: {}", loanStatementRequestDto );
 
@@ -66,7 +66,7 @@ public class CalculatorController {
     }
 
 
-    @Operation(summary = "Get personal credit details")
+    @Operation(summary = "Calculate personal credit details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Personal credit details generated",
                     content = { @Content(mediaType = "application/json",
@@ -76,7 +76,7 @@ public class CalculatorController {
             @ApiResponse(responseCode = "404", description = "Loan refused",
                     content = @Content) })
     @PostMapping("/calc")
-    public CreditDto getCreditDetails(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult bindingResult) {
+    public CreditDto calculateCreditDetails(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult bindingResult) {
 
         logger.info("Входящие данные по /calculator/calc: {}", scoringDataDto);
 
