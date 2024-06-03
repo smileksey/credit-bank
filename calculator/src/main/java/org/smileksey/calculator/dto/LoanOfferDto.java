@@ -1,9 +1,7 @@
 package org.smileksey.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -11,6 +9,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoanOfferDto {
     @Schema(description = "Unique identificator")
     private UUID statementId;

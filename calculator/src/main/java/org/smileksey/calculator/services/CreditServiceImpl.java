@@ -80,16 +80,16 @@ public class CreditServiceImpl implements CreditService{
         BigDecimal psk = creditParamsCalculator.calculatePSK(totalAmount, scoringDataDto.getAmount(), scoringDataDto.getTerm());
         List<PaymentScheduleElementDto> paymentSchedule = creditParamsCalculator.getPaymentSchedule(monthlyPayment, scoringDataDto.getAmount(), rate, scoringDataDto.getTerm());
 
-        CreditDto creditDto = new CreditDto();
-
-        creditDto.setAmount(scoringDataDto.getAmount());
-        creditDto.setTerm(scoringDataDto.getTerm());
-        creditDto.setMonthlyPayment(monthlyPayment);
-        creditDto.setRate(rate);
-        creditDto.setPsk(psk);
-        creditDto.setIsInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled());
-        creditDto.setIsSalaryClient(scoringDataDto.getIsSalaryClient());
-        creditDto.setPaymentSchedule(paymentSchedule);
+        CreditDto creditDto = CreditDto.builder()
+                .amount(scoringDataDto.getAmount())
+                .term(scoringDataDto.getTerm())
+                .monthlyPayment(monthlyPayment)
+                .rate(rate)
+                .psk(psk)
+                .isInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled())
+                .isSalaryClient(scoringDataDto.getIsSalaryClient())
+                .paymentSchedule(paymentSchedule)
+                .build();
 
         return Optional.of(creditDto);
     }

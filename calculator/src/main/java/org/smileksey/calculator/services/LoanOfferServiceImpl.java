@@ -82,18 +82,16 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         log.info("====================================================");
 
-        LoanOfferDto loanOfferDto = new LoanOfferDto();
-
-        loanOfferDto.setStatementId(UUID.randomUUID());
-        loanOfferDto.setRequestedAmount(amount);
-        loanOfferDto.setTotalAmount(totalAmount);
-        loanOfferDto.setTerm(term);
-        loanOfferDto.setMonthlyPayment(monthlyPayment);
-        loanOfferDto.setRate(rate);
-        loanOfferDto.setIsInsuranceEnabled(isInsuranceEnabled);
-        loanOfferDto.setIsSalaryClient(isSalaryClient);
-
-        return loanOfferDto;
+        return LoanOfferDto.builder()
+                        .statementId(UUID.randomUUID())
+                        .requestedAmount(amount)
+                        .totalAmount(totalAmount)
+                        .term(term)
+                        .monthlyPayment(monthlyPayment)
+                        .rate(rate)
+                        .isInsuranceEnabled(isInsuranceEnabled)
+                        .isSalaryClient(isSalaryClient)
+                        .build();
     }
 
 }

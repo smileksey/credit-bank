@@ -1,14 +1,16 @@
 package org.smileksey.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentScheduleElementDto {
     @Schema(description = "Number of payment")
     private Integer number;

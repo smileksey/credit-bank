@@ -225,14 +225,14 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
             log.info("Total amount of payment: {}", totalPayment);
 
-            PaymentScheduleElementDto paymentScheduleElementDto = new PaymentScheduleElementDto();
-
-            paymentScheduleElementDto.setNumber(number);
-            paymentScheduleElementDto.setDate(date);
-            paymentScheduleElementDto.setTotalPayment(totalPayment);
-            paymentScheduleElementDto.setInterestPayment(interestPayment);
-            paymentScheduleElementDto.setDebtPayment(debtPayment);
-            paymentScheduleElementDto.setRemainingDebt(remainingDebt);
+            PaymentScheduleElementDto paymentScheduleElementDto = PaymentScheduleElementDto.builder()
+                    .number(number)
+                    .date(date)
+                    .totalPayment(totalPayment)
+                    .interestPayment(interestPayment)
+                    .debtPayment(debtPayment)
+                    .remainingDebt(remainingDebt)
+                    .build();
 
             paymentScheduleElementDtos.add(paymentScheduleElementDto);
         }
