@@ -1,8 +1,7 @@
 package org.smileksey.calculator.services;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.PaymentScheduleElementDto;
@@ -22,9 +21,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CreditServiceImpl implements CreditService{
 
-    private final static Logger logger = LogManager.getLogger(CreditServiceImpl.class);
 
     /** Loan base rate */
     @Value("${base.rate}")
@@ -117,24 +116,24 @@ public class CreditServiceImpl implements CreditService{
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
 
         if (age < MIN_AGE || age > MAX_AGE) {
-            logger.info("Поле age = {} не соответствует критериям - отказ", age);
+            log.info("Поле age = {} не соответствует критериям - отказ", age);
             return BigDecimal.ZERO;
         }
 
         if (workExperienceTotal < MIN_EXP_TOTAL) {
-            logger.info("Поле workExperienceTotal = {} не соответствует критериям - отказ", workExperienceTotal);
+            log.info("Поле workExperienceTotal = {} не соответствует критериям - отказ", workExperienceTotal);
             return BigDecimal.ZERO;
         }
 
         if (workExperienceCurrent < MIN_EXP_CURRENT) {
-            logger.info("Поле workExperienceCurrent = {} не соответствует критериям - отказ", workExperienceCurrent);
+            log.info("Поле workExperienceCurrent = {} не соответствует критериям - отказ", workExperienceCurrent);
             return BigDecimal.ZERO;
         }
 
         BigDecimal salary25x = salary.multiply(BigDecimal.valueOf(25));
 
         if (amount.compareTo(salary25x) > 0) {
-            logger.info("Поле amount = {} превышает salary x 25 = {} - отказ", amount, salary25x);
+            log.info("Поле amount = {} превышает salary x 25 = {} - отказ", amount, salary25x);
             return BigDecimal.ZERO;
         }
 
@@ -149,7 +148,7 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        logger.info("Поле employmentStatus = {}, новая cтавка (rate) = {} %", employmentStatus, rate);
+        log.info("Поле employmentStatus = {}, новая cтавка (rate) = {} %", employmentStatus, rate);
 
         switch (position) {
             case MIDDLE_MANAGER:
@@ -160,7 +159,7 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        logger.info("Поле position = {}, новая cтавка (rate) = {} %", position, rate);
+        log.info("Поле position = {}, новая cтавка (rate) = {} %", position, rate);
 
         switch (maritalStatus) {
             case MARRIED:
@@ -171,7 +170,7 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        logger.info("maritalStatus = {}, новая cтавка (rate) = {} %", maritalStatus, rate);
+        log.info("maritalStatus = {}, новая cтавка (rate) = {} %", maritalStatus, rate);
 
         switch (gender) {
             case FEMALE:
@@ -189,16 +188,16 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        logger.info("Поле gender = {}, поле age = {}, новая cтавка (rate) = {} %", gender, age, rate);
+        log.info("Поле gender = {}, поле age = {}, новая cтавка (rate) = {} %", gender, age, rate);
 
         if (rate.compareTo(MIN_RATE) < 0) {
 
-            logger.info("Размер ставки (rate) = {} % опустился ниже минимального (minRate) = {} %", rate, MIN_RATE);
+            log.info("Размер ставки (rate) = {} % опустился ниже минимального (minRate) = {} %", rate, MIN_RATE);
             rate = MIN_RATE;
-            logger.info("Установлен минимально возможный размер ставки (rate) = {} %", rate);
+            log.info("Установлен минимально возможный размер ставки (rate) = {} %", rate);
         }
 
-        logger.info("Итоговая ставка (rate) = {} %", rate);
+        log.info("Итоговая ставка (rate) = {} %", rate);
 
         return rate;
     }

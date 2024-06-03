@@ -1,9 +1,7 @@
 package org.smileksey.calculator.calculators;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.smileksey.calculator.dto.PaymentScheduleElementDto;
-import org.smileksey.calculator.services.LoanOfferServiceImpl;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -14,9 +12,9 @@ import java.util.List;
 
 /** Class for credit parameters calculation */
 @Component
+@Slf4j
 public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
-    private final static Logger logger = LogManager.getLogger(LoanOfferServiceImpl.class);
 
     /**
      * Method for monthly payment calculation
@@ -31,7 +29,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(12), 8, RoundingMode.HALF_UP);
 
-        logger.info("Месячная ставка = {}", monthlyRate);
+        log.info("Месячная ставка = {}", monthlyRate);
 
         monthlyRate = monthlyRate.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_UP);
 
@@ -42,14 +40,14 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
         BigDecimal annuityCoefficient = (monthlyRate.multiply(pow))
                 .divide(pow.subtract(new BigDecimal("1.00")), 8, RoundingMode.HALF_UP);
 
-        logger.info("Коэффициент аннуитета = {}", annuityCoefficient);
+        log.info("Коэффициент аннуитета = {}", annuityCoefficient);
 
         BigDecimal monthlyPayment = annuityCoefficient
                 .multiply(amount)
                 .add(insurancePrice.divide(BigDecimal.valueOf(term), 4, RoundingMode.HALF_UP))
                 .setScale(2, RoundingMode.HALF_UP);
 
-        logger.info("Ежемесячный платеж = {}", monthlyPayment);
+        log.info("Ежемесячный платеж = {}", monthlyPayment);
 
         return monthlyPayment;
     }
@@ -66,7 +64,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         BigDecimal totalAmount = monthlyPayment.multiply(BigDecimal.valueOf(term));
 
-        logger.info("Сумма всех выплат по кредиту = {}", totalAmount);
+        log.info("Сумма всех выплат по кредиту = {}", totalAmount);
 
         return totalAmount;
 
@@ -83,7 +81,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
     @Override
     public BigDecimal calculateRate(BigDecimal initialRate, Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
-        logger.info("Исходная базовая ставка (initialRate) = {} %", initialRate);
+        log.info("Исходная базовая ставка (initialRate) = {} %", initialRate);
 
         BigDecimal rate = initialRate;
 
@@ -93,15 +91,15 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             rate = rate.add(new BigDecimal("1.00"));
         }
 
-        logger.info("Поле isInsuranceEnabled = {}, новая cтавка (rate) = {} %", isInsuranceEnabled, rate);
+        log.info("Поле isInsuranceEnabled = {}, новая cтавка (rate) = {} %", isInsuranceEnabled, rate);
 
         if(isSalaryClient) {
             rate = rate.subtract(new BigDecimal("1.00"));
         }
 
-        logger.info("Поле isSalaryClient = {}, новая cтавка (rate) = {} %", isSalaryClient, rate);
+        log.info("Поле isSalaryClient = {}, новая cтавка (rate) = {} %", isSalaryClient, rate);
 
-        logger.info("Предварительная ставка (rate) = {} %", rate);
+        log.info("Предварительная ставка (rate) = {} %", rate);
 
         return rate;
     }
@@ -124,7 +122,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         amount = amount.setScale(2, RoundingMode.HALF_UP);
 
-        logger.info("Поле isInsuranceEnabled = {}, новая сумма кредита (amount) = {} %", isInsuranceEnabled, amount);
+        log.info("Поле isInsuranceEnabled = {}, новая сумма кредита (amount) = {} %", isInsuranceEnabled, amount);
 
         return amount;
     }
@@ -146,7 +144,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             insurancePrice = amount.multiply(new BigDecimal("0.05")).setScale(2, RoundingMode.HALF_UP);
         }
 
-        logger.info("Стоимость страховки = {}", insurancePrice);
+        log.info("Стоимость страховки = {}", insurancePrice);
 
         return insurancePrice;
     }
@@ -169,7 +167,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
                                             .divide(termInYears, 4, RoundingMode.HALF_UP)
                                             .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
 
-        logger.info("Размер ПСК = {} % в год", pskPerYear);
+        log.info("Размер ПСК = {} % в год", pskPerYear);
 
         return pskPerYear;
     }
@@ -186,7 +184,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
     @Override
     public List<PaymentScheduleElementDto> getPaymentSchedule(BigDecimal monthlyPayment, BigDecimal amount, BigDecimal rate, Integer term) {
 
-        logger.info("====== Рассчет графика платежей ======");
+        log.info("====== Рассчет графика платежей ======");
 
         List<PaymentScheduleElementDto> paymentScheduleElementDtos = new ArrayList<>();
 
@@ -200,16 +198,16 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
             number = number + 1;
 
-            logger.info("*** Платеж № {} ***", number);
+            log.info("*** Платеж № {} ***", number);
 
             date = date.plusMonths(1);
 
-            logger.info("Дата: {}", date);
+            log.info("Дата: {}", date);
 
             BigDecimal interestPayment = remainingDebt.multiply(rate).multiply(new BigDecimal("0.01")).multiply(BigDecimal.valueOf(date.lengthOfMonth()))
                     .divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP);
 
-            logger.info("Сумма для уплаты процентов: {}", interestPayment);
+            log.info("Сумма для уплаты процентов: {}", interestPayment);
 
             BigDecimal debtPayment = totalPayment.subtract(interestPayment);
             remainingDebt = remainingDebt.subtract(debtPayment);
@@ -220,12 +218,12 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
                 remainingDebt = BigDecimal.ZERO;
             }
 
-            logger.info("Сумма для уплаты основного долга: {}", debtPayment);
-            logger.info("Сумма оставшегося основного долга: {}", remainingDebt);
+            log.info("Сумма для уплаты основного долга: {}", debtPayment);
+            log.info("Сумма оставшегося основного долга: {}", remainingDebt);
 
             totalPayment = debtPayment.add(interestPayment);
 
-            logger.info("Общая сумма платежа: {}", totalPayment);
+            log.info("Общая сумма платежа: {}", totalPayment);
 
             PaymentScheduleElementDto paymentScheduleElementDto = new PaymentScheduleElementDto();
 

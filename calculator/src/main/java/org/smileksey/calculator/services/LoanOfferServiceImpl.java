@@ -1,8 +1,7 @@
 package org.smileksey.calculator.services;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.smileksey.calculator.calculators.CreditParamsCalculator;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
@@ -16,9 +15,9 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoanOfferServiceImpl implements LoanOfferService {
 
-    private final static Logger logger = LogManager.getLogger(LoanOfferServiceImpl.class);
 
     /** Loan base rate */
     @Value("${base.rate}")
@@ -44,10 +43,10 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         loanOffers.sort((o1, o2) -> o2.getRate().compareTo(o1.getRate()));
 
-        logger.info("**** Итоговые LoanOfferDto: ****");
+        log.info("**** Итоговые LoanOfferDto: ****");
 
         for (LoanOfferDto loanOfferDto : loanOffers) {
-            logger.info(loanOfferDto);
+            log.info(String.valueOf(loanOfferDto));
         }
 
         return loanOffers;
@@ -63,25 +62,25 @@ public class LoanOfferServiceImpl implements LoanOfferService {
      */
     private LoanOfferDto createLoanOffer(LoanStatementRequestDto loanStatementRequestDto ,Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
-        logger.info("====================================================");
-        logger.info("Loan offer для: страховка - {}, зарплатный клиент - {}", isInsuranceEnabled, isSalaryClient);
+        log.info("====================================================");
+        log.info("Loan offer для: страховка - {}, зарплатный клиент - {}", isInsuranceEnabled, isSalaryClient);
 
         BigDecimal initialRate = new BigDecimal(baseRate);
         BigDecimal initialAmount = loanStatementRequestDto.getAmount();
         Integer term = loanStatementRequestDto.getTerm();
 
-        logger.info("Исходные данные: сумма кредита = {}, срок = {}, ставка = {}", initialAmount, term, initialRate);
+        log.info("Исходные данные: сумма кредита = {}, срок = {}, ставка = {}", initialAmount, term, initialRate);
 
         BigDecimal amount = creditParamsCalculator.calculateAmount(loanStatementRequestDto.getAmount(), isInsuranceEnabled);
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, isInsuranceEnabled, isSalaryClient);
         BigDecimal insurancePrice = creditParamsCalculator.calculateInsurancePrice(amount, isInsuranceEnabled, isSalaryClient);
 
-        logger.info("Данные после пересчета: сумма кредита = {}, срок = {}, ставка = {}, стоимость страховки = {}", amount, term, rate, insurancePrice);
+        log.info("Данные после пересчета: сумма кредита = {}, срок = {}, ставка = {}, стоимость страховки = {}", amount, term, rate, insurancePrice);
 
         BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(amount, rate, term, insurancePrice);
         BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, term);
 
-        logger.info("====================================================");
+        log.info("====================================================");
 
         LoanOfferDto loanOfferDto = new LoanOfferDto();
 

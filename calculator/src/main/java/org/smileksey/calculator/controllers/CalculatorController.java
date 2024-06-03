@@ -6,8 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.smileksey.calculator.dto.CreditDto;
 import org.smileksey.calculator.dto.LoanOfferDto;
 import org.smileksey.calculator.dto.LoanStatementRequestDto;
@@ -32,9 +31,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/calculator")
 @RequiredArgsConstructor
+@Slf4j
 public class CalculatorController {
-
-    private final static Logger logger = LogManager.getLogger(CalculatorController.class);
 
     private final LoanStatementRequestValidator loanStatementRequestValidator;
     private final ScoringDataDtoValidator scoringDataDtoValidator;
@@ -53,7 +51,7 @@ public class CalculatorController {
     public List<LoanOfferDto> calculateOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                               BindingResult bindingResult) {
 
-        logger.info("Входящие данные по /calculator/offers: {}", loanStatementRequestDto );
+        log.info("Входящие данные по /calculator/offers: {}", loanStatementRequestDto );
 
         loanStatementRequestValidator.validate(loanStatementRequestDto, bindingResult);
 
@@ -78,7 +76,7 @@ public class CalculatorController {
     @PostMapping("/calc")
     public CreditDto calculateCreditDetails(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult bindingResult) {
 
-        logger.info("Входящие данные по /calculator/calc: {}", scoringDataDto);
+        log.info("Входящие данные по /calculator/calc: {}", scoringDataDto);
 
         scoringDataDtoValidator.validate(scoringDataDto, bindingResult);
 
@@ -97,7 +95,7 @@ public class CalculatorController {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
-        logger.error("Ошибка валидации: {}", e.getMessage());
+        log.error("Ошибка валидации: {}", e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -110,7 +108,7 @@ public class CalculatorController {
         String message = "Birthdate must be in yyyy-mm-dd format";
         ErrorResponse response = new ErrorResponse(message);
 
-        logger.error("Ошибка прескоринга: {}", message);
+        log.error("Ошибка прескоринга: {}", message);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -123,7 +121,7 @@ public class CalculatorController {
         String message = "Loan refused";
         ErrorResponse response = new ErrorResponse(message);
 
-        logger.error(message);
+        log.error(message);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
