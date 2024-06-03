@@ -43,7 +43,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         loanOffers.sort((o1, o2) -> o2.getRate().compareTo(o1.getRate()));
 
-        log.info("**** Итоговые LoanOfferDto: ****");
+        log.info("**** Final LoanOfferDto list: ****");
 
         for (LoanOfferDto loanOfferDto : loanOffers) {
             log.info(String.valueOf(loanOfferDto));
@@ -63,19 +63,19 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     private LoanOfferDto createLoanOffer(LoanStatementRequestDto loanStatementRequestDto ,Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
         log.info("====================================================");
-        log.info("Loan offer для: страховка - {}, зарплатный клиент - {}", isInsuranceEnabled, isSalaryClient);
+        log.info("Loan offer considering: insuranceEnabled - {}, isSalaryClient - {}", isInsuranceEnabled, isSalaryClient);
 
         BigDecimal initialRate = new BigDecimal(baseRate);
         BigDecimal initialAmount = loanStatementRequestDto.getAmount();
         Integer term = loanStatementRequestDto.getTerm();
 
-        log.info("Исходные данные: сумма кредита = {}, срок = {}, ставка = {}", initialAmount, term, initialRate);
+        log.info("Initial data: loan amount = {}, term = {}, rate = {}", initialAmount, term, initialRate);
 
         BigDecimal amount = creditParamsCalculator.calculateAmount(loanStatementRequestDto.getAmount(), isInsuranceEnabled);
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, isInsuranceEnabled, isSalaryClient);
         BigDecimal insurancePrice = creditParamsCalculator.calculateInsurancePrice(amount, isInsuranceEnabled, isSalaryClient);
 
-        log.info("Данные после пересчета: сумма кредита = {}, срок = {}, ставка = {}, стоимость страховки = {}", amount, term, rate, insurancePrice);
+        log.info("Data after calculation: loan amount = {}, term = {}, rate = {}, insurance price = {}", amount, term, rate, insurancePrice);
 
         BigDecimal monthlyPayment = creditParamsCalculator.calculateMonthlyPayment(amount, rate, term, insurancePrice);
         BigDecimal totalAmount = creditParamsCalculator.calculateTotalAmount(monthlyPayment, term);

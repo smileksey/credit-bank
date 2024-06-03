@@ -29,7 +29,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(12), 8, RoundingMode.HALF_UP);
 
-        log.info("Месячная ставка = {}", monthlyRate);
+        log.info("Monthly rate = {}", monthlyRate);
 
         monthlyRate = monthlyRate.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_UP);
 
@@ -40,14 +40,14 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
         BigDecimal annuityCoefficient = (monthlyRate.multiply(pow))
                 .divide(pow.subtract(new BigDecimal("1.00")), 8, RoundingMode.HALF_UP);
 
-        log.info("Коэффициент аннуитета = {}", annuityCoefficient);
+        log.info("Annuity coefficient = {}", annuityCoefficient);
 
         BigDecimal monthlyPayment = annuityCoefficient
                 .multiply(amount)
                 .add(insurancePrice.divide(BigDecimal.valueOf(term), 4, RoundingMode.HALF_UP))
                 .setScale(2, RoundingMode.HALF_UP);
 
-        log.info("Ежемесячный платеж = {}", monthlyPayment);
+        log.info("Monthly payment = {}", monthlyPayment);
 
         return monthlyPayment;
     }
@@ -64,7 +64,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         BigDecimal totalAmount = monthlyPayment.multiply(BigDecimal.valueOf(term));
 
-        log.info("Сумма всех выплат по кредиту = {}", totalAmount);
+        log.info("Total amount = {}", totalAmount);
 
         return totalAmount;
 
@@ -81,7 +81,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
     @Override
     public BigDecimal calculateRate(BigDecimal initialRate, Boolean isInsuranceEnabled, Boolean isSalaryClient) {
 
-        log.info("Исходная базовая ставка (initialRate) = {} %", initialRate);
+        log.info("Initial (base) loan rate = {} %", initialRate);
 
         BigDecimal rate = initialRate;
 
@@ -91,15 +91,15 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             rate = rate.add(new BigDecimal("1.00"));
         }
 
-        log.info("Поле isInsuranceEnabled = {}, новая cтавка (rate) = {} %", isInsuranceEnabled, rate);
+        log.info("isInsuranceEnabled = {}, new rate = {} %", isInsuranceEnabled, rate);
 
         if(isSalaryClient) {
             rate = rate.subtract(new BigDecimal("1.00"));
         }
 
-        log.info("Поле isSalaryClient = {}, новая cтавка (rate) = {} %", isSalaryClient, rate);
+        log.info("isSalaryClient = {}, new rate = {} %", isSalaryClient, rate);
 
-        log.info("Предварительная ставка (rate) = {} %", rate);
+        log.info("Preliminary rate = {} %", rate);
 
         return rate;
     }
@@ -122,7 +122,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
         amount = amount.setScale(2, RoundingMode.HALF_UP);
 
-        log.info("Поле isInsuranceEnabled = {}, новая сумма кредита (amount) = {} %", isInsuranceEnabled, amount);
+        log.info("isInsuranceEnabled = {}, new loan amount = {} %", isInsuranceEnabled, amount);
 
         return amount;
     }
@@ -144,7 +144,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
             insurancePrice = amount.multiply(new BigDecimal("0.05")).setScale(2, RoundingMode.HALF_UP);
         }
 
-        log.info("Стоимость страховки = {}", insurancePrice);
+        log.info("Insurance price = {}", insurancePrice);
 
         return insurancePrice;
     }
@@ -167,7 +167,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
                                             .divide(termInYears, 4, RoundingMode.HALF_UP)
                                             .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
 
-        log.info("Размер ПСК = {} % в год", pskPerYear);
+        log.info("Total loan cost (PSK) = {} % per year", pskPerYear);
 
         return pskPerYear;
     }
@@ -184,7 +184,7 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
     @Override
     public List<PaymentScheduleElementDto> getPaymentSchedule(BigDecimal monthlyPayment, BigDecimal amount, BigDecimal rate, Integer term) {
 
-        log.info("====== Рассчет графика платежей ======");
+        log.info("====== Payment schedule calculation ======");
 
         List<PaymentScheduleElementDto> paymentScheduleElementDtos = new ArrayList<>();
 
@@ -198,16 +198,16 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
 
             number = number + 1;
 
-            log.info("*** Платеж № {} ***", number);
+            log.info("*** Payment #{} ***", number);
 
             date = date.plusMonths(1);
 
-            log.info("Дата: {}", date);
+            log.info("Payment date: {}", date);
 
             BigDecimal interestPayment = remainingDebt.multiply(rate).multiply(new BigDecimal("0.01")).multiply(BigDecimal.valueOf(date.lengthOfMonth()))
                     .divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP);
 
-            log.info("Сумма для уплаты процентов: {}", interestPayment);
+            log.info("Interest part of payment: {}", interestPayment);
 
             BigDecimal debtPayment = totalPayment.subtract(interestPayment);
             remainingDebt = remainingDebt.subtract(debtPayment);
@@ -218,12 +218,12 @@ public class CreditParamsCalculatorImpl implements CreditParamsCalculator {
                 remainingDebt = BigDecimal.ZERO;
             }
 
-            log.info("Сумма для уплаты основного долга: {}", debtPayment);
-            log.info("Сумма оставшегося основного долга: {}", remainingDebt);
+            log.info("Debt part of payment: {}", debtPayment);
+            log.info("Amount of remaining debt: {}", remainingDebt);
 
             totalPayment = debtPayment.add(interestPayment);
 
-            log.info("Общая сумма платежа: {}", totalPayment);
+            log.info("Total amount of payment: {}", totalPayment);
 
             PaymentScheduleElementDto paymentScheduleElementDto = new PaymentScheduleElementDto();
 

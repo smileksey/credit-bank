@@ -51,7 +51,7 @@ public class CalculatorController {
     public List<LoanOfferDto> calculateOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                               BindingResult bindingResult) {
 
-        log.info("Входящие данные по /calculator/offers: {}", loanStatementRequestDto );
+        log.info("Input data to /calculator/offers: {}", loanStatementRequestDto );
 
         loanStatementRequestValidator.validate(loanStatementRequestDto, bindingResult);
 
@@ -76,7 +76,7 @@ public class CalculatorController {
     @PostMapping("/calc")
     public CreditDto calculateCreditDetails(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult bindingResult) {
 
-        log.info("Входящие данные по /calculator/calc: {}", scoringDataDto);
+        log.info("Input data to /calculator/calc: {}", scoringDataDto);
 
         scoringDataDtoValidator.validate(scoringDataDto, bindingResult);
 
@@ -95,7 +95,7 @@ public class CalculatorController {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
-        log.error("Ошибка валидации: {}", e.getMessage());
+        log.error("Validation error: {}", e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -108,7 +108,7 @@ public class CalculatorController {
         String message = "Birthdate must be in yyyy-mm-dd format";
         ErrorResponse response = new ErrorResponse(message);
 
-        log.error("Ошибка прескоринга: {}", message);
+        log.error("Prescoring error: {}", message);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

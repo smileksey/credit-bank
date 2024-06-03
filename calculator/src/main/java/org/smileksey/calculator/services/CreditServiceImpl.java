@@ -116,24 +116,24 @@ public class CreditServiceImpl implements CreditService{
         BigDecimal rate = creditParamsCalculator.calculateRate(initialRate, scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient());
 
         if (age < MIN_AGE || age > MAX_AGE) {
-            log.info("Поле age = {} не соответствует критериям - отказ", age);
+            log.info("age = {} does not meet requirements - loan refused", age);
             return BigDecimal.ZERO;
         }
 
         if (workExperienceTotal < MIN_EXP_TOTAL) {
-            log.info("Поле workExperienceTotal = {} не соответствует критериям - отказ", workExperienceTotal);
+            log.info("workExperienceTotal = {} does not meet requirements - loan refused", workExperienceTotal);
             return BigDecimal.ZERO;
         }
 
         if (workExperienceCurrent < MIN_EXP_CURRENT) {
-            log.info("Поле workExperienceCurrent = {} не соответствует критериям - отказ", workExperienceCurrent);
+            log.info("workExperienceCurrent = {} does not meet requirements - loan refused", workExperienceCurrent);
             return BigDecimal.ZERO;
         }
 
         BigDecimal salary25x = salary.multiply(BigDecimal.valueOf(25));
 
         if (amount.compareTo(salary25x) > 0) {
-            log.info("Поле amount = {} превышает salary x 25 = {} - отказ", amount, salary25x);
+            log.info("loan amount = {} exceeds salary x 25 = {} - loan refused", amount, salary25x);
             return BigDecimal.ZERO;
         }
 
@@ -148,7 +148,7 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        log.info("Поле employmentStatus = {}, новая cтавка (rate) = {} %", employmentStatus, rate);
+        log.info("employmentStatus = {}, new rate = {} %", employmentStatus, rate);
 
         switch (position) {
             case MIDDLE_MANAGER:
@@ -159,7 +159,7 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        log.info("Поле position = {}, новая cтавка (rate) = {} %", position, rate);
+        log.info("position = {}, new rate = {} %", position, rate);
 
         switch (maritalStatus) {
             case MARRIED:
@@ -170,7 +170,7 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        log.info("maritalStatus = {}, новая cтавка (rate) = {} %", maritalStatus, rate);
+        log.info("maritalStatus = {}, new rate = {} %", maritalStatus, rate);
 
         switch (gender) {
             case FEMALE:
@@ -188,16 +188,18 @@ public class CreditServiceImpl implements CreditService{
                 break;
         }
 
-        log.info("Поле gender = {}, поле age = {}, новая cтавка (rate) = {} %", gender, age, rate);
+        log.info("gender = {}, age = {}, new rate = {} %", gender, age, rate);
 
         if (rate.compareTo(MIN_RATE) < 0) {
 
-            log.info("Размер ставки (rate) = {} % опустился ниже минимального (minRate) = {} %", rate, MIN_RATE);
+            log.info("rate = {} % is lower than minimum = {} %", rate, MIN_RATE);
+
             rate = MIN_RATE;
-            log.info("Установлен минимально возможный размер ставки (rate) = {} %", rate);
+
+            log.info("Minimum acceptable loan rate = {} % is set", rate);
         }
 
-        log.info("Итоговая ставка (rate) = {} %", rate);
+        log.info("Final loan rate = {} %", rate);
 
         return rate;
     }
