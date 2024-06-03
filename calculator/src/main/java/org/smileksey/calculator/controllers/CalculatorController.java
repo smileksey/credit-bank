@@ -15,17 +15,13 @@ import org.smileksey.calculator.exceptions.LoanRefusedException;
 import org.smileksey.calculator.exceptions.PrescoringException;
 import org.smileksey.calculator.services.CreditService;
 import org.smileksey.calculator.services.LoanOfferService;
-import org.smileksey.calculator.utils.ErrorResponse;
 import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.calculator.utils.PrescoringErrorMessage;
 import org.smileksey.calculator.utils.validation.ScoringDataDtoValidator;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @RestController
@@ -86,44 +82,6 @@ public class CalculatorController {
         }
 
         return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(LoanRefusedException::new);
-    }
-
-
-    /** This method intercepts PrescoringException and returns an error response to a client  */
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handlePrescoringException(PrescoringException e) {
-
-        ErrorResponse response = new ErrorResponse(e.getMessage());
-
-        log.error("Validation error: {}", e.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-
-    /** This method intercepts DateTimeParseException in case of invalid date input and returns an error response to a client */
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleDateTimeException(DateTimeParseException e) {
-
-        String message = "Birthdate must be in yyyy-mm-dd format";
-        ErrorResponse response = new ErrorResponse(message);
-
-        log.error("Prescoring error: {}", message);
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-
-    /** This method intercepts LoanRefusedException in case of loan refusal and returns an error response to a client */
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleLoanRefusedException(LoanRefusedException e) {
-
-        String message = "Loan refused";
-        ErrorResponse response = new ErrorResponse(message);
-
-        log.error(message);
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 

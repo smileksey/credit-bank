@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.smileksey.calculator.dto.enums.Gender;
 import org.smileksey.calculator.dto.enums.MaritalStatus;
-import org.smileksey.calculator.utils.validation.GenderSubset;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
