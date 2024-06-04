@@ -16,6 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <openapi.version>1.8.0</openapi.version>
+        <hypersistence.version>3.7.0</hypersistence.version>
     </properties>
 
     <dependencies>
@@ -68,6 +69,18 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-55</artifactId>
+            <version>${hypersistence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.smileksey</groupId>
+            <artifactId>calculator</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
