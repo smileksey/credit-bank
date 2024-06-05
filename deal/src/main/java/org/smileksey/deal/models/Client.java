@@ -7,10 +7,7 @@ import org.hibernate.annotations.TypeDef;
 import org.smileksey.deal.models.enums.Gender;
 import org.smileksey.deal.models.enums.MaritalStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -63,6 +60,10 @@ public class Client {
 
     @Column(name = "account_number")
     private String accountNumber;
+
+    @OneToOne(mappedBy = "client")
+    private Statement statement;
+
 
 
 }
