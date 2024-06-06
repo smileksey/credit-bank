@@ -4,8 +4,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.smileksey.calculator.dto.PaymentScheduleElementDto;
-import org.smileksey.deal.models.enums.CreditStatus;
+import org.smileksey.deal.dto.PaymentScheduleElementDto;
+import org.smileksey.deal.dto.enums.CreditStatus;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

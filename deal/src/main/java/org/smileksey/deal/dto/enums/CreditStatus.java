@@ -1,4 +1,4 @@
-package org.smileksey.deal.models.enums;
+package org.smileksey.deal.dto.enums;
 
 public enum CreditStatus {
     CALCULATED,

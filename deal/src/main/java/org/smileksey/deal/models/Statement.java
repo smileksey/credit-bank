@@ -4,8 +4,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.smileksey.calculator.dto.LoanOfferDto;
-import org.smileksey.deal.models.enums.ApplicationStatus;
+import org.smileksey.deal.dto.LoanOfferDto;
+import org.smileksey.deal.dto.enums.ApplicationStatus;
 
 import javax.persistence.*;
 import java.time.LocalDate;

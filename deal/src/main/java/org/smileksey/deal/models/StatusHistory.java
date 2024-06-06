@@ -1,7 +1,7 @@
 package org.smileksey.deal.models;
 
 import lombok.*;
-import org.smileksey.deal.models.enums.ChangeType;
+import org.smileksey.deal.dto.enums.ChangeType;
 
 import java.time.LocalDateTime;
 
