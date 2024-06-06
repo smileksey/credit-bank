@@ -1,0 +1,67 @@
+package org.smileksey.deal.services;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.smileksey.deal.dto.LoanOfferDto;
+import org.smileksey.deal.dto.LoanStatementRequestDto;
+import org.smileksey.deal.exceptions.InvalidMSResponseException;
+import org.smileksey.deal.models.Client;
+import org.smileksey.deal.models.Statement;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class LoanOfferServiceImpl {
+
+    private final ClientServiceImpl clientServiceImpl;
+    private final StatementServiceImpl statementServiceImpl;
+
+    private final String OFFERS_URL = "http://localhost:8080/calculator/offers";
+
+    /**
+     * Method creates a list of 4 preliminary loan offers
+     * @return list of 4 preliminary loan offers
+     */
+    public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        ResponseEntity<List<LoanOfferDto>> response = restTemplate.exchange(OFFERS_URL, HttpMethod.POST, createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
+        List<LoanOfferDto> loanOffers = response.getBody();
+
+        if (loanOffers != null && !loanOffers.isEmpty()) {
+
+            Client client = clientServiceImpl.createAndSaveClient(loanStatementRequestDto);
+            Statement statement = statementServiceImpl.createAndSaveStatement(client);
+
+            log.info("**** Final LoanOfferDto list: ****");
+
+            for (LoanOfferDto loanOfferDto : loanOffers) {
+                loanOfferDto.setStatementId(statement.getStatementId());
+                log.info(String.valueOf(loanOfferDto));
+            }
+
+        } else {
+            throw new InvalidMSResponseException("Failed to get LoanOfferDtos from 'calculator'");
+        }
+
+        return loanOffers;
+    }
+
+
+    private HttpEntity<LoanStatementRequestDto> createHttpEntity(LoanStatementRequestDto loanStatementRequestDto) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        return new HttpEntity<>(loanStatementRequestDto ,httpHeaders);
+    }
+
+
+
+}

@@ -58,7 +58,7 @@ public class ExceptionApiHandler {
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
 
-        String message = "Enums may be invalid";
+        String message = "Some fields are invalid. Check enums and dates formatting";
         ErrorResponse response = new ErrorResponse(message);
 
         log.error(message);

@@ -1,6 +1,6 @@
-package org.smileksey.calculator.utils.validation;
+package org.smileksey.deal.utils.validation;
 
-import org.smileksey.calculator.dto.LoanStatementRequestDto;
+import org.smileksey.deal.dto.LoanStatementRequestDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

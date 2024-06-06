@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @ToString
 @Entity
 @Table(name = "statement")

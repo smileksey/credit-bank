@@ -50,6 +50,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         }
 
         return loanOffers;
+
     }
 
 
@@ -83,7 +84,6 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         log.info("====================================================");
 
         return LoanOfferDto.builder()
-                        .statementId(UUID.randomUUID())
                         .requestedAmount(amount)
                         .totalAmount(totalAmount)
                         .term(term)
