@@ -13,12 +13,13 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ClientServiceImpl {
+public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
 
 
     @Transactional
+    @Override
     public Client createAndSaveClient(LoanStatementRequestDto loanStatementRequestDto) {
 
         Client client = Client.builder()

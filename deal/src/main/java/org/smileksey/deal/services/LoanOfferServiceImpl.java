@@ -17,10 +17,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class LoanOfferServiceImpl {
+public class LoanOfferServiceImpl implements LoanOfferService {
 
-    private final ClientServiceImpl clientServiceImpl;
-    private final StatementServiceImpl statementServiceImpl;
+    private final ClientService clientService;
+    private final StatementService statementService;
 
     private final String OFFERS_URL = "http://localhost:8080/calculator/offers";
 
@@ -28,6 +28,7 @@ public class LoanOfferServiceImpl {
      * Method creates a list of 4 preliminary loan offers
      * @return list of 4 preliminary loan offers
      */
+    @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -37,8 +38,8 @@ public class LoanOfferServiceImpl {
 
         if (loanOffers != null && !loanOffers.isEmpty()) {
 
-            Client client = clientServiceImpl.createAndSaveClient(loanStatementRequestDto);
-            Statement statement = statementServiceImpl.createAndSaveStatement(client);
+            Client client = clientService.createAndSaveClient(loanStatementRequestDto);
+            Statement statement = statementService.createAndSaveStatement(client);
 
             log.info("**** Final LoanOfferDto list: ****");
 

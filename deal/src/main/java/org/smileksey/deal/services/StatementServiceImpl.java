@@ -13,11 +13,12 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class StatementServiceImpl {
+public class StatementServiceImpl implements StatementService {
 
     private final StatementRepository statementRepository;
 
     @Transactional
+    @Override
     public Statement createAndSaveStatement(Client client) {
 
         Statement statement = Statement.builder()
