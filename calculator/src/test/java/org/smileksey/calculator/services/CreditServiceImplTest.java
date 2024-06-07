@@ -50,7 +50,7 @@ class CreditServiceImplTest {
         EmploymentDto employmentDto = new EmploymentDto();
         employmentDto.setEmploymentStatus(EmploymentStatus.EMPLOYED);
         employmentDto.setSalary(new BigDecimal("100000.00"));
-        employmentDto.setPosition(Position.EMPLOYEE);
+        employmentDto.setPosition(Position.WORKER);
         employmentDto.setWorkExperienceTotal(50);
         employmentDto.setWorkExperienceCurrent(12);
 
@@ -58,7 +58,7 @@ class CreditServiceImplTest {
         scoringDataDto.setTerm(12);
         scoringDataDto.setGender(Gender.MALE);
         scoringDataDto.setBirthdate(LocalDate.of(2004, 1, 1));
-        scoringDataDto.setMaritalStatus(MaritalStatus.NOT_MARRIED);
+        scoringDataDto.setMaritalStatus(MaritalStatus.SINGLE);
         scoringDataDto.setIsInsuranceEnabled(false);
         scoringDataDto.setIsSalaryClient(false);
         scoringDataDto.setEmployment(employmentDto);
@@ -144,7 +144,7 @@ class CreditServiceImplTest {
     @Test
     void getCreditDtoMiddleManagerShouldReduceRateBy1() {
 
-        scoringDataDto.getEmployment().setPosition(Position.MIDDLE_MANAGER);
+        scoringDataDto.getEmployment().setPosition(Position.MID_MANAGER);
 
         when(creditParamsCalculator.calculateRate(any(), any(), any())).thenReturn(baseRate);
 

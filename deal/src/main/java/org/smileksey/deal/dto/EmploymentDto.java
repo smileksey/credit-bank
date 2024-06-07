@@ -1,6 +1,7 @@
 package org.smileksey.deal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
+@Builder
 public class EmploymentDto {
     @NotNull(message = "'employmentStatus' is not specified")
     @Schema(

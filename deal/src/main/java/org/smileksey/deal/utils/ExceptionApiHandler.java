@@ -2,6 +2,7 @@ package org.smileksey.deal.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
+import org.smileksey.deal.exceptions.StatementNotFoundException;
 import org.smileksey.deal.exceptions.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,17 @@ public class ExceptionApiHandler {
         log.error("Prescoring error: {}", message);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /** This method intercepts StatementNotFoundException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleStatementNotFoundException(StatementNotFoundException e) {
+
+        ErrorResponse response = new ErrorResponse(e.getMessage());
+
+        log.error("Error: {}", e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 //

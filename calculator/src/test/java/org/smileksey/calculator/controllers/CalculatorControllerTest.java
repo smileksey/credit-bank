@@ -155,7 +155,7 @@ class CalculatorControllerTest {
         EmploymentDto employmentDto = new EmploymentDto();
         employmentDto.setEmploymentStatus(EmploymentStatus.EMPLOYED);
         employmentDto.setSalary(new BigDecimal("100000.00"));
-        employmentDto.setPosition(Position.EMPLOYEE);
+        employmentDto.setPosition(Position.WORKER);
         employmentDto.setWorkExperienceTotal(50);
         employmentDto.setWorkExperienceCurrent(12);
         employmentDto.setEmployerINN("1234567890");
@@ -172,7 +172,7 @@ class CalculatorControllerTest {
         scoringDataDto.setDependentAmount(0);
         scoringDataDto.setGender(Gender.MALE);
         scoringDataDto.setBirthdate(LocalDate.of(2004, 1, 1));
-        scoringDataDto.setMaritalStatus(MaritalStatus.NOT_MARRIED);
+        scoringDataDto.setMaritalStatus(MaritalStatus.SINGLE);
         scoringDataDto.setIsInsuranceEnabled(false);
         scoringDataDto.setIsSalaryClient(false);
         scoringDataDto.setEmployment(employmentDto);

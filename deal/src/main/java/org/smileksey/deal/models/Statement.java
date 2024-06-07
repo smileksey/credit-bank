@@ -29,13 +29,16 @@ public class Statement {
 
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "client_id")
+    @ToString.Exclude
     private Client client;
 
     @OneToOne
     @JoinColumn(name = "credit_id", referencedColumnName = "credit_id")
+    @ToString.Exclude
     private Credit credit;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
     @Column(name = "creation_date")

@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class FinishRegistrationRequestDto {
 
     @NotNull(message = "'gender' is not specified")

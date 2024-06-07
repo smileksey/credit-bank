@@ -1,6 +1,7 @@
 package org.smileksey.deal.models;
 
 import lombok.*;
+import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.dto.enums.ChangeType;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class StatusHistory {
-    private String status;
+    private ApplicationStatus status;
     private LocalDateTime time;
     private ChangeType changeType;
 }

@@ -2,8 +2,11 @@ package org.smileksey.deal.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.services.ClientServiceImpl;
+import org.smileksey.deal.services.CreditService;
 import org.smileksey.deal.services.LoanOfferServiceImpl;
+import org.smileksey.deal.services.StatementService;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.deal.dto.LoanOfferDto;
 import org.smileksey.deal.dto.LoanStatementRequestDto;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/deal")
@@ -24,6 +28,8 @@ public class DealController {
 
     private final LoanStatementRequestValidator loanStatementRequestValidator;
     private final LoanOfferServiceImpl loanOfferServiceImpl;
+    private final StatementService statementService;
+    private final CreditService creditService;
 
 
     @PostMapping("/statement")
@@ -43,19 +49,32 @@ public class DealController {
     }
 
 
-    //TODO
     @PostMapping("/offer/select")
     public void selectOffer(@RequestBody @Valid LoanOfferDto loanOfferDto, BindingResult bindingResult) {
 
-        log.info("select offer");
+        log.info("Input data to /deal/offer/select: {}", loanOfferDto);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = ValidationErrorMessage.createMessage(bindingResult.getFieldErrors());
+            throw new ValidationException(errorMessage);
+        }
+
+        statementService.updateStatementWithSelectedOffer(loanOfferDto);
     }
 
 
-    //TODO
+    //FIXME
     @PostMapping("/calculate/{statementId}")
-    public void calculateCreditDetails(@PathVariable int statementId, @RequestBody @Valid FinishRegistrationRequestDto finishRegistrationRequestDto,
+    public void calculateCreditDetails(@PathVariable UUID statementId, @RequestBody @Valid FinishRegistrationRequestDto finishRegistrationRequestDto,
                                        BindingResult bindingResult) {
 
-        log.info("calculate credit details");
+        log.info("Input data to /deal/calculate/{}: {}", statementId, finishRegistrationRequestDto);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = ValidationErrorMessage.createMessage(bindingResult.getFieldErrors());
+            throw new ValidationException(errorMessage);
+        }
+
+        creditService.calculateCreditAndFinishRegistration(statementId, finishRegistrationRequestDto);
     }
 }

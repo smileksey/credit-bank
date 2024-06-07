@@ -151,7 +151,7 @@ public class CreditServiceImpl implements CreditService{
         log.info("employmentStatus = {}, new rate = {} %", employmentStatus, rate);
 
         switch (position) {
-            case MIDDLE_MANAGER:
+            case MID_MANAGER:
                 rate = rate.subtract(new BigDecimal("2.00"));
                 break;
             case TOP_MANAGER:
@@ -165,7 +165,7 @@ public class CreditServiceImpl implements CreditService{
             case MARRIED:
                 rate = rate.subtract(new BigDecimal("3.00"));
                 break;
-            case NOT_MARRIED:
+            case SINGLE:
                 rate = rate.add(new BigDecimal("1.00"));
                 break;
         }

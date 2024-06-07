@@ -1,13 +1,11 @@
 package org.smileksey.deal.repositories;
 
-import org.smileksey.deal.models.Client;
+import org.smileksey.deal.models.Credit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ClientRepository extends JpaRepository<Client, UUID> {
-    Optional<Client> findByEmail(String email);
+public interface CreditRepository extends JpaRepository<Credit, UUID> {
 }
