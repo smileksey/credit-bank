@@ -28,7 +28,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
         } else if (response.getStatusCode().is4xxClientError()) {
             //Handle CLIENT_ERROR
             if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                log.info("Loan was refused by 'calculator'");
+                log.info("Response status is 404");
             }
         }
     }

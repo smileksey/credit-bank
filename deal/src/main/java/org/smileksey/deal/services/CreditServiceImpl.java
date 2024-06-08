@@ -78,6 +78,7 @@ public class CreditServiceImpl implements CreditService {
         } else if (creditDtoFromCC.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatement(statement, false);
+            log.info("Loan was refused by 'calculator'");
 
         } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
 

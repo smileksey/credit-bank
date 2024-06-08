@@ -1,9 +1,12 @@
 package org.smileksey.deal.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.smileksey.deal.models.Statement;
-import org.smileksey.deal.services.ClientServiceImpl;
 import org.smileksey.deal.services.CreditService;
 import org.smileksey.deal.services.LoanOfferServiceImpl;
 import org.smileksey.deal.services.StatementService;
@@ -32,6 +35,13 @@ public class DealController {
     private final CreditService creditService;
 
 
+    @Operation(summary = "Calculate 4 credit options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "4 credit options generated",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = org.smileksey.deal.dto.LoanOfferDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid field values")
+            })
     @PostMapping("/statement")
     public List<LoanOfferDto> calculateOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                               BindingResult bindingResult) {
@@ -49,6 +59,12 @@ public class DealController {
     }
 
 
+    @Operation(summary = "Select one of the 4 offered credit options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Option selected"),
+            @ApiResponse(responseCode = "400", description = "Invalid field values"),
+            @ApiResponse(responseCode = "404", description = "Statement was not found")
+            })
     @PostMapping("/offer/select")
     public void selectOffer(@RequestBody @Valid LoanOfferDto loanOfferDto, BindingResult bindingResult) {
 
@@ -63,7 +79,11 @@ public class DealController {
     }
 
 
-    //FIXME
+    @Operation(summary = "Calculate credit details and finish registration")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Credit details calculated, registration is finished"),
+            @ApiResponse(responseCode = "400", description = "Invalid field values")
+            })
     @PostMapping("/calculate/{statementId}")
     public void calculateCreditDetails(@PathVariable UUID statementId, @RequestBody @Valid FinishRegistrationRequestDto finishRegistrationRequestDto,
                                        BindingResult bindingResult) {
