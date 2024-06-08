@@ -21,5 +21,4 @@ public class Employment {
     private EmploymentPosition position;
     private Integer workExperienceTotal;
     private Integer workExperienceCurrent;
-
 }

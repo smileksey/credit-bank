@@ -21,6 +21,11 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
 
 
+    /**
+     * Method creates a new Client entity and saves it to database
+     * @param loanStatementRequestDto - input data from client
+     * @return Client entity saved to database
+     */
     @Transactional
     @Override
     public Client createAndSaveClient(LoanStatementRequestDto loanStatementRequestDto) {
@@ -47,6 +52,10 @@ public class ClientServiceImpl implements ClientService {
     }
 
 
+    /**
+     * Method checks if a Client entity with same email or passport data was already saved to the database
+     * @param loanStatementRequestDto - input data from client
+     */
     private void checkIfClientAlreadyExists(LoanStatementRequestDto loanStatementRequestDto) {
 
         if (clientRepository.findByEmail(loanStatementRequestDto.getEmail()).isPresent()) {
