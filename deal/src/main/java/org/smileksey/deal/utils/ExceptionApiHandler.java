@@ -1,6 +1,7 @@
 package org.smileksey.deal.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.smileksey.deal.exceptions.ClientAlreadyExistsException;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.exceptions.StatementNotFoundException;
 import org.smileksey.deal.exceptions.ValidationException;
@@ -23,7 +24,7 @@ public class ExceptionApiHandler {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
-        log.error("Validation error: {}", e.getMessage());
+        log.error("Validation ERROR: {}", e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -35,7 +36,7 @@ public class ExceptionApiHandler {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
-        log.error("Error: {}", e.getMessage());
+        log.error("ERROR: {}", e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -48,10 +49,11 @@ public class ExceptionApiHandler {
         String message = "Birthdate must be in yyyy-mm-dd format";
         ErrorResponse response = new ErrorResponse(message);
 
-        log.error("Prescoring error: {}", message);
+        log.error("Prescoring ERROR: {}", message);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 
     /** This method intercepts StatementNotFoundException and returns an error response to a client  */
     @ExceptionHandler
@@ -59,23 +61,22 @@ public class ExceptionApiHandler {
 
         ErrorResponse response = new ErrorResponse(e.getMessage());
 
-        log.error("Error: {}", e.getMessage());
+        log.error("ERROR: {}", e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-//
-//    /** This method intercepts LoanRefusedException in case of loan refusal and returns an error response to a client */
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleLoanRefusedException(LoanRefusedException e) {
-//
-//        String message = "Loan refused";
-//        ErrorResponse response = new ErrorResponse(message);
-//
-//        log.error(message);
-//
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
+
+    /** This method intercepts ClientAlreadyExistsException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleClientAlreadyExistsException(ClientAlreadyExistsException e) {
+
+        ErrorResponse response = new ErrorResponse(e.getMessage());
+
+        log.error("ERROR: {}", e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
 
     /** This method intercepts HttpMessageNotReadableException in case of invalid ENUM input and returns an error response to a client */

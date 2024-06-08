@@ -42,7 +42,7 @@ public class Credit {
     @Column(name = "psk")
     private BigDecimal psk;
 
-    @Column(name = "payment_schedule")
+    @Column(name = "payment_schedule", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private List<PaymentScheduleElementDto> paymentSchedule;
 

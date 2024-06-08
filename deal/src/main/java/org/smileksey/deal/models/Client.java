@@ -53,11 +53,11 @@ public class Client {
     @Column(name = "dependent_amount")
     private Integer dependentAmount;
 
-    @Column(name = "passport_id")
+    @Column(name = "passport_id", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private Passport passport;
 
-    @Column(name = "employment_id")
+    @Column(name = "employment_id", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private Employment employment;
 

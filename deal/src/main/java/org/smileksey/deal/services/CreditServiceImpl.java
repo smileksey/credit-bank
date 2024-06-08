@@ -73,13 +73,13 @@ public class CreditServiceImpl implements CreditService {
 
                 log.info("Credit: {}", savedCredit);
 
-            } else throw new InvalidMSResponseException("ERROR: CreditDto from 'calculator' == null");
+            } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
 
         } else if (creditDtoFromCC.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatement(statement, false);
 
-        } else throw new InvalidMSResponseException("ERROR: Failed to get CreditDto from 'calculator'");
+        } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
 
         log.info("Updated statement: {}", statement);
     }

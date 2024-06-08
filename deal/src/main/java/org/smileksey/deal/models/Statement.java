@@ -44,7 +44,7 @@ public class Statement {
     @Column(name = "creation_date")
     private LocalDate creationDate;
 
-    @Column(name = "applied_offer")
+    @Column(name = "applied_offer", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private LoanOfferDto appliedOffer;
 
@@ -54,7 +54,7 @@ public class Statement {
     @Column(name = "ses_code")
     private String sesCode;
 
-    @Column(name = "status_history")
+    @Column(name = "status_history", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private List<StatusHistory> statusHistory;
 }

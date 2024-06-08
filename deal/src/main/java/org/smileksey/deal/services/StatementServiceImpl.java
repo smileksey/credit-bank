@@ -26,7 +26,7 @@ public class StatementServiceImpl implements StatementService {
 
     private final StatementRepository statementRepository;
 
-    //TODO разобраться, что делать, если заявка уже оформлялась ранее
+
     @Transactional
     @Override
     public Statement createAndSaveStatement(Client client) {
@@ -42,6 +42,7 @@ public class StatementServiceImpl implements StatementService {
 
         return statementRepository.save(statement);
     }
+
 
     @Transactional
     @Override

@@ -3,13 +3,13 @@ package org.smileksey.deal.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.LoanStatementRequestDto;
+import org.smileksey.deal.exceptions.ClientAlreadyExistsException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Passport;
 import org.smileksey.deal.repositories.ClientRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,7 +25,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client createAndSaveClient(LoanStatementRequestDto loanStatementRequestDto) {
 
-        //TODO разобраться, что делать, если клиент уже есть в базе
+        checkIfClientAlreadyExists(loanStatementRequestDto);
+
         Client client = Client.builder()
                 .clientId(UUID.randomUUID())
                 .lastName(loanStatementRequestDto.getLastName())
@@ -45,7 +46,17 @@ public class ClientServiceImpl implements ClientService {
         return clientRepository.save(client);
     }
 
-    private Optional<Client> findClientByEmail(String email) {
-        return clientRepository.findByEmail(email);
+
+    private void checkIfClientAlreadyExists(LoanStatementRequestDto loanStatementRequestDto) {
+
+        if (clientRepository.findByEmail(loanStatementRequestDto.getEmail()).isPresent()) {
+            throw new ClientAlreadyExistsException("Client with given email already exists");
+        }
+
+        if (clientRepository.findByPassportSeriesAndNumber(loanStatementRequestDto.getPassportSeries(), loanStatementRequestDto.getPassportNumber()).isPresent()) {
+
+            throw new ClientAlreadyExistsException("Client with given passport series and number already exists");
+        }
     }
+
 }
