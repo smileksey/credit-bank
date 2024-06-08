@@ -1,6 +1,5 @@
 package org.smileksey.deal.services;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.*;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
@@ -12,6 +11,9 @@ import org.smileksey.deal.models.Credit;
 import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.models.StatusHistory;
 import org.smileksey.deal.repositories.CreditRepository;
+import org.smileksey.deal.utils.RestTemplateResponseErrorHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,33 +21,76 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
 public class CreditServiceImpl implements CreditService {
 
     private final StatementService statementService;
     private final CreditRepository creditRepository;
 
-    private final String CALC_URL = "http://localhost:8080/calculator/calc";
+    private final RestTemplate restTemplate;
+
+    private final String CC_CALC_URL = "http://localhost:8080/calculator/calc";
+
+    @Autowired
+    public CreditServiceImpl(RestTemplateBuilder restTemplateBuilder, StatementService statementService, CreditRepository creditRepository) {
+        this.statementService = statementService;
+        this.creditRepository = creditRepository;
+
+        this.restTemplate = restTemplateBuilder
+                .errorHandler(new RestTemplateResponseErrorHandler())
+                .build();
+    }
 
     @Transactional
     @Override
     public void calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
 
-        //FIXME разобраться, что делать в случае отказа в кредите, разделить метод
-
         Statement statement = statementService.getStatementById(statementId);
-        Client client = statement.getClient();
-        LoanOfferDto appliedOffer = statement.getAppliedOffer();
 
         log.info("Statement: {}", statement);
 
-        ScoringDataDto scoringDataDto = ScoringDataDto.builder()
+        ScoringDataDto scoringDataDto = buildScoringDataDto(finishRegistrationRequestDto, statement.getAppliedOffer(), statement.getClient());
+
+        log.info("Sending ScoringDataDto to 'calculator': {}", scoringDataDto);
+
+        ResponseEntity<CreditDto> creditDtoFromCC = restTemplate.exchange(CC_CALC_URL, HttpMethod.POST, createHttpRequest(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
+
+        if(creditDtoFromCC.getStatusCode() == HttpStatus.OK) {
+
+            CreditDto creditDto = creditDtoFromCC.getBody();
+
+            log.info("CreditDto received from 'calculator': {}", creditDto);
+
+            if (creditDto != null) {
+
+                Credit credit = buildCredit(creditDto);
+
+                log.info("Credit: {}", credit);
+
+                Credit savedCredit = creditRepository.save(credit);
+
+                statement.setCredit(savedCredit);
+                updateStatement(statement, true);
+
+            } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
+
+        } else if (creditDtoFromCC.getStatusCode() == HttpStatus.NOT_FOUND) {
+
+            updateStatement(statement, false);
+
+        } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
+
+        log.info("Updated statement: {}", statement);
+
+    }
+
+    private ScoringDataDto buildScoringDataDto(FinishRegistrationRequestDto finishRegistrationRequestDto, LoanOfferDto appliedOffer, Client client) {
+
+        return ScoringDataDto.builder()
                 .amount(appliedOffer.getRequestedAmount())
                 .term(appliedOffer.getTerm())
                 .firstName(client.getFirstName())
@@ -71,35 +116,30 @@ public class CreditServiceImpl implements CreditService {
                 .isInsuranceEnabled(appliedOffer.getIsInsuranceEnabled())
                 .isSalaryClient(appliedOffer.getIsSalaryClient())
                 .build();
+    }
 
-        RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<CreditDto> response = restTemplate.exchange(CALC_URL, HttpMethod.POST, createHttpEntity(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
+    private Credit buildCredit(CreditDto creditDto) {
 
-        CreditDto creditDto = response.getBody();
+        return Credit.builder()
+                .creditId(UUID.randomUUID())
+                .amount(creditDto.getAmount())
+                .term(creditDto.getTerm())
+                .monthlyPayment(creditDto.getMonthlyPayment())
+                .rate(creditDto.getRate())
+                .psk(creditDto.getPsk())
+                .paymentSchedule(creditDto.getPaymentSchedule())
+                .isInsuranceEnabled(creditDto.getIsInsuranceEnabled())
+                .isSalaryClient(creditDto.getIsSalaryClient())
+                .creditStatus(CreditStatus.CALCULATED)
+                .build();
+    }
 
-        if (creditDto != null) {
 
-            Credit credit = Credit.builder()
-                    .creditId(UUID.randomUUID())
-                    .amount(creditDto.getAmount())
-                    .term(creditDto.getTerm())
-                    .monthlyPayment(creditDto.getMonthlyPayment())
-                    .rate(creditDto.getRate())
-                    .psk(creditDto.getPsk())
-                    .paymentSchedule(creditDto.getPaymentSchedule())
-                    .isInsuranceEnabled(creditDto.getIsInsuranceEnabled())
-                    .isSalaryClient(creditDto.getIsSalaryClient())
-                    .creditStatus(CreditStatus.CALCULATED)
-                    .build();
+    private void updateStatement(Statement statement, boolean isApproved) {
 
-            log.info("Credit: {}", credit);
-
-            Credit savedCredit = creditRepository.save(credit);
-
+        if (isApproved) {
             statement.setStatus(ApplicationStatus.CC_APPROVED);
-            statement.setCredit(savedCredit);
-
             statement.getStatusHistory().add(StatusHistory.builder()
                     .status(ApplicationStatus.CC_APPROVED)
                     .time(LocalDateTime.now())
@@ -107,14 +147,19 @@ public class CreditServiceImpl implements CreditService {
                     .build()
             );
 
-
         } else {
-            throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
+            statement.setStatus(ApplicationStatus.CC_DENIED);
+            statement.getStatusHistory().add(StatusHistory.builder()
+                    .status(ApplicationStatus.CC_DENIED)
+                    .time(LocalDateTime.now())
+                    .changeType(ChangeType.AUTOMATIC)
+                    .build()
+            );
         }
     }
 
 
-    private HttpEntity<ScoringDataDto> createHttpEntity(ScoringDataDto scoringDataDto) {
+    private HttpEntity<ScoringDataDto> createHttpRequest(ScoringDataDto scoringDataDto) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
