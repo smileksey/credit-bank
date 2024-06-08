@@ -50,11 +50,9 @@ public class CreditServiceImpl implements CreditService {
     public void calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
 
         Statement statement = statementService.getStatementById(statementId);
-
-        log.info("Statement: {}", statement);
-
         ScoringDataDto scoringDataDto = buildScoringDataDto(finishRegistrationRequestDto, statement.getAppliedOffer(), statement.getClient());
 
+        log.info("Statement: {}", statement);
         log.info("Sending ScoringDataDto to 'calculator': {}", scoringDataDto);
 
         ResponseEntity<CreditDto> creditDtoFromCC = restTemplate.exchange(CC_CALC_URL, HttpMethod.POST, createHttpRequest(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
@@ -68,25 +66,24 @@ public class CreditServiceImpl implements CreditService {
             if (creditDto != null) {
 
                 Credit credit = buildCredit(creditDto);
-
-                log.info("Credit: {}", credit);
-
                 Credit savedCredit = creditRepository.save(credit);
 
                 statement.setCredit(savedCredit);
                 updateStatement(statement, true);
 
-            } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
+                log.info("Credit: {}", savedCredit);
+
+            } else throw new InvalidMSResponseException("ERROR: CreditDto from 'calculator' == null");
 
         } else if (creditDtoFromCC.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatement(statement, false);
 
-        } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
+        } else throw new InvalidMSResponseException("ERROR: Failed to get CreditDto from 'calculator'");
 
         log.info("Updated statement: {}", statement);
-
     }
+
 
     private ScoringDataDto buildScoringDataDto(FinishRegistrationRequestDto finishRegistrationRequestDto, LoanOfferDto appliedOffer, Client client) {
 
