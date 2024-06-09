@@ -7,6 +7,7 @@ import org.smileksey.deal.dto.LoanStatementRequestDto;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
+import org.smileksey.deal.utils.HttpEntityConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,12 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     private final ClientService clientService;
     private final StatementService statementService;
 
-    private final String OFFERS_URL = "http://localhost:8080/calculator/offers";
+    /** URL of the 'calculator' endpoint */
+    private final String CC_OFFERS_URL = "http://localhost:8080/calculator/offers";
+
 
     /**
-     * Method creates a list of 4 preliminary loan offers
+     * Method creates a list of 4 preliminary loan offers by requesting 'calculator' microservice
      * @return list of 4 preliminary loan offers
      */
     @Override
@@ -33,7 +36,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<List<LoanOfferDto>> response = restTemplate.exchange(OFFERS_URL, HttpMethod.POST, createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
+        ResponseEntity<List<LoanOfferDto>> response = restTemplate.exchange(CC_OFFERS_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
         List<LoanOfferDto> loanOffers = response.getBody();
 
         if (loanOffers != null && !loanOffers.isEmpty()) {
@@ -54,15 +57,5 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         return loanOffers;
     }
-
-
-    private HttpEntity<LoanStatementRequestDto> createHttpEntity(LoanStatementRequestDto loanStatementRequestDto) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        return new HttpEntity<>(loanStatementRequestDto ,httpHeaders);
-    }
-
-
 
 }

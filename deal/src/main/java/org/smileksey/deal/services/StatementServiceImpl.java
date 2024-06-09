@@ -27,6 +27,11 @@ public class StatementServiceImpl implements StatementService {
     private final StatementRepository statementRepository;
 
 
+    /**
+     * Method creates a new Statement entity associated with the Client and saves it to the database
+     * @param client - associated Client entity
+     * @return Statement entity saved to the database
+     */
     @Transactional
     @Override
     public Statement createAndSaveStatement(Client client) {
@@ -44,6 +49,10 @@ public class StatementServiceImpl implements StatementService {
     }
 
 
+    /**
+     * Method updates the Statement entity data with a chosen LoanOfferDto data
+     * @param loanOfferDto - loan offer chosen by the client
+     */
     @Transactional
     @Override
     public void updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto) {
@@ -63,7 +72,11 @@ public class StatementServiceImpl implements StatementService {
         log.info("Updated statement: {}", statement);
     }
 
-
+    /**
+     * Method gets the Statement entity from the database by its ID
+     * @param statementId - ID of the Statement entity
+     * @return Statement entity with required ID else throws StatementNotFoundException
+     */
     @Override
     public Statement getStatementById(UUID statementId) {
 

@@ -22,9 +22,9 @@ public class ClientServiceImpl implements ClientService {
 
 
     /**
-     * Method creates a new Client entity and saves it to database
+     * Method creates a new Client entity and saves it to the database
      * @param loanStatementRequestDto - input data from client
-     * @return Client entity saved to database
+     * @return Client entity saved to the database
      */
     @Transactional
     @Override

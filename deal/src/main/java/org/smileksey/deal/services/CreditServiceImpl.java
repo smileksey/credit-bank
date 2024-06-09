@@ -8,6 +8,7 @@ import org.smileksey.deal.dto.enums.CreditStatus;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.*;
 import org.smileksey.deal.repositories.CreditRepository;
+import org.smileksey.deal.utils.HttpEntityConstructor;
 import org.smileksey.deal.utils.RestTemplateResponseErrorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -30,6 +31,7 @@ public class CreditServiceImpl implements CreditService {
 
     private final RestTemplate restTemplate;
 
+    /** URL of the 'calculator' endpoint */
     private final String CC_CALC_URL = "http://localhost:8080/calculator/calc";
 
 
@@ -45,7 +47,7 @@ public class CreditServiceImpl implements CreditService {
 
 
     /**
-     * Method calculates personal credit details, saves the Credit entity to the database and updates Statement and Client entities
+     * Method calculates personal credit details by requesting 'calculator' microservice, saves the Credit entity to the database and updates Statement and Client entities
      * @param statementId - statement identification
      * @param finishRegistrationRequestDto - input data from client
      */
@@ -64,7 +66,7 @@ public class CreditServiceImpl implements CreditService {
         log.info("Updated Client: {}", client);
         log.info("Sending ScoringDataDto to 'calculator': {}", scoringDataDto);
 
-        ResponseEntity<CreditDto> creditDtoFromCC = restTemplate.exchange(CC_CALC_URL, HttpMethod.POST, createHttpRequest(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
+        ResponseEntity<CreditDto> creditDtoFromCC = restTemplate.exchange(CC_CALC_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
 
         if(creditDtoFromCC.getStatusCode() == HttpStatus.OK) {
 
@@ -93,6 +95,7 @@ public class CreditServiceImpl implements CreditService {
 
         log.info("Updated statement: {}", statement);
     }
+
 
     /**
      * Method builds a ScoringDataDto object
@@ -155,7 +158,7 @@ public class CreditServiceImpl implements CreditService {
 
 
     /**
-     * Method updates status data in Statement object
+     * Method updates status data in a Statement object
      * @param isApproved - is loan approved or denied by 'calculator'
      */
     private void updateStatementData(Statement statement, boolean isApproved) {
@@ -182,7 +185,7 @@ public class CreditServiceImpl implements CreditService {
 
 
     /**
-     * Method adds missing data to Client object from FinishRegistrationRequestDto object
+     * Method adds missing data to the Client object from FinishRegistrationRequestDto object
      * @param client - client to be updated
      * @param finishRegistrationRequestDto - input data from client with additional data
      */
@@ -205,16 +208,4 @@ public class CreditServiceImpl implements CreditService {
                 .build());
     }
 
-
-    /**
-     * Util method for HttpEntity building
-     * @param scoringDataDto - input data for credit details calculation by 'calculator'
-     * @return filled HttpEntity object
-     */
-    private HttpEntity<ScoringDataDto> createHttpRequest(ScoringDataDto scoringDataDto) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        return new HttpEntity<>(scoringDataDto ,httpHeaders);
-    }
 }

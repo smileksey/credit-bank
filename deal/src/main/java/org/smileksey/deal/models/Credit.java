@@ -53,6 +53,7 @@ public class Credit {
     private Boolean isSalaryClient;
 
     @Column(name = "credit_status")
+    @Enumerated(EnumType.STRING)
     private CreditStatus creditStatus;
 
     @OneToOne(mappedBy = "credit")
