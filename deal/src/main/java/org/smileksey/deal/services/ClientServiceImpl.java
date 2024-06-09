@@ -63,7 +63,6 @@ public class ClientServiceImpl implements ClientService {
         }
 
         if (clientRepository.findByPassportSeriesAndNumber(loanStatementRequestDto.getPassportSeries(), loanStatementRequestDto.getPassportNumber()).isPresent()) {
-
             throw new ClientAlreadyExistsException("Client with given passport series and number already exists");
         }
     }

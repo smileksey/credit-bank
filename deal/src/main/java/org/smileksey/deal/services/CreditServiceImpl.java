@@ -66,18 +66,17 @@ public class CreditServiceImpl implements CreditService {
         log.info("Updated Client: {}", client);
         log.info("Sending ScoringDataDto to 'calculator': {}", scoringDataDto);
 
-        ResponseEntity<CreditDto> creditDtoFromCC = restTemplate.exchange(CC_CALC_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
+        ResponseEntity<CreditDto> creditDtoResponseFromCC = restTemplate.exchange(CC_CALC_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
 
-        if(creditDtoFromCC.getStatusCode() == HttpStatus.OK) {
+        if(creditDtoResponseFromCC.getStatusCode() == HttpStatus.OK) {
 
-            CreditDto creditDto = creditDtoFromCC.getBody();
+            CreditDto creditDto = creditDtoResponseFromCC.getBody();
 
             log.info("CreditDto received from 'calculator': {}", creditDto);
 
             if (creditDto != null) {
 
-                Credit credit = buildCredit(creditDto);
-                Credit savedCredit = creditRepository.save(credit);
+                Credit savedCredit = creditRepository.save(buildCredit(creditDto));
 
                 statement.setCredit(savedCredit);
                 updateStatementData(statement, true);
@@ -86,7 +85,7 @@ public class CreditServiceImpl implements CreditService {
 
             } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
 
-        } else if (creditDtoFromCC.getStatusCode() == HttpStatus.NOT_FOUND) {
+        } else if (creditDtoResponseFromCC.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatementData(statement, false);
             log.info("Loan was refused by 'calculator'");

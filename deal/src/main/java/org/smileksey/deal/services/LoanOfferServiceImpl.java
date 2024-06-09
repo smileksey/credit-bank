@@ -36,8 +36,8 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<List<LoanOfferDto>> response = restTemplate.exchange(CC_OFFERS_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
-        List<LoanOfferDto> loanOffers = response.getBody();
+        ResponseEntity<List<LoanOfferDto>> LoanOffersResponseFromCC = restTemplate.exchange(CC_OFFERS_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
+        List<LoanOfferDto> loanOffers = LoanOffersResponseFromCC.getBody();
 
         if (loanOffers != null && !loanOffers.isEmpty()) {
 
