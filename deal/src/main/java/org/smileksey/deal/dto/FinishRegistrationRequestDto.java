@@ -28,7 +28,7 @@ public class FinishRegistrationRequestDto {
 
     @NotNull(message = "'maritalStatus' is not specified")
     @Schema(
-            description = "Martial status",
+            description = "Marital status",
             example = "MARRIED")
     private MaritalStatus maritalStatus;
 

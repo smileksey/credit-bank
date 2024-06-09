@@ -40,8 +40,8 @@ public class DealController {
             @ApiResponse(responseCode = "200", description = "4 credit options generated",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = org.smileksey.deal.dto.LoanOfferDto.class)) }),
-            @ApiResponse(responseCode = "400", description = "Invalid field values")
-            })
+            @ApiResponse(responseCode = "400", description = "Invalid field values",
+                    content = @Content)})
     @PostMapping("/statement")
     public List<LoanOfferDto> calculateOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                               BindingResult bindingResult) {
@@ -81,7 +81,7 @@ public class DealController {
 
     @Operation(summary = "Calculate credit details and finish registration")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Credit details calculated, registration is finished"),
+            @ApiResponse(responseCode = "200", description = "Credit details have been calculated, registration is finished"),
             @ApiResponse(responseCode = "400", description = "Invalid field values")
             })
     @PostMapping("/calculate/{statementId}")
