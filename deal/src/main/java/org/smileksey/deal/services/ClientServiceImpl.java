@@ -58,11 +58,11 @@ public class ClientServiceImpl implements ClientService {
      */
     private void checkIfClientAlreadyExists(LoanStatementRequestDto loanStatementRequestDto) {
 
-        if (clientRepository.findByEmail(loanStatementRequestDto.getEmail()).isPresent()) {
+        if (clientRepository.findFirstByEmail(loanStatementRequestDto.getEmail()).isPresent()) {
             throw new ClientAlreadyExistsException("Client with given email already exists");
         }
 
-        if (clientRepository.findByPassportSeriesAndNumber(loanStatementRequestDto.getPassportSeries(), loanStatementRequestDto.getPassportNumber()).isPresent()) {
+        if (clientRepository.findFirstByPassportSeriesAndNumber(loanStatementRequestDto.getPassportSeries(), loanStatementRequestDto.getPassportNumber()).isPresent()) {
             throw new ClientAlreadyExistsException("Client with given passport series and number already exists");
         }
     }

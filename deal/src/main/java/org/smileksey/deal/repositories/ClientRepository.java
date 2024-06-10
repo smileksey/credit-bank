@@ -10,8 +10,8 @@ import java.util.UUID;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
-    Optional<Client> findByEmail(String email);
+    Optional<Client> findFirstByEmail(String email);
 
-    @Query(value = "SELECT * FROM client WHERE passport_id ->> 'series' = ?1 AND passport_id ->> 'number' = ?2", nativeQuery = true)
-    Optional<Client> findByPassportSeriesAndNumber(String series, String number);
+    @Query(value = "SELECT * FROM client WHERE passport_id ->> 'series' = ?1 AND passport_id ->> 'number' = ?2 LIMIT 1", nativeQuery = true)
+    Optional<Client> findFirstByPassportSeriesAndNumber(String series, String number);
 }
