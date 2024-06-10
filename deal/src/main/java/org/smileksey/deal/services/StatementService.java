@@ -10,7 +10,7 @@ public interface StatementService {
 
     Statement createAndSaveStatement(Client client);
 
-    void updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto);
+    Statement updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto);
 
     Statement getStatementById(UUID statementId);
 }

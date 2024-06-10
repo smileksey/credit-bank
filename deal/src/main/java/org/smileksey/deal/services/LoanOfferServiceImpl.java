@@ -22,6 +22,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
     private final ClientService clientService;
     private final StatementService statementService;
+    private final RestTemplate restTemplate;
 
     /** URL of the 'calculator' endpoint */
     private final String CC_OFFERS_URL = "http://localhost:8080/calculator/offers";
@@ -34,9 +35,12 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 
-        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<List<LoanOfferDto>> LoanOffersResponseFromCC = restTemplate.exchange(
+                CC_OFFERS_URL,
+                HttpMethod.POST,
+                HttpEntityConstructor.createHttpEntity(loanStatementRequestDto),
+                new ParameterizedTypeReference<List<LoanOfferDto>>() {});
 
-        ResponseEntity<List<LoanOfferDto>> LoanOffersResponseFromCC = restTemplate.exchange(CC_OFFERS_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
         List<LoanOfferDto> loanOffers = LoanOffersResponseFromCC.getBody();
 
         if (loanOffers != null && !loanOffers.isEmpty()) {

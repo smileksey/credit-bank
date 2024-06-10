@@ -51,11 +51,13 @@ public class StatementServiceImpl implements StatementService {
 
     /**
      * Method updates the Statement entity data with a chosen LoanOfferDto data
+     *
      * @param loanOfferDto - loan offer chosen by the client
+     * @return updated Statement
      */
     @Transactional
     @Override
-    public void updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto) {
+    public Statement updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto) {
 
         Statement statement = getStatementById(loanOfferDto.getStatementId());
 
@@ -70,6 +72,8 @@ public class StatementServiceImpl implements StatementService {
         statement.setAppliedOffer(loanOfferDto);
 
         log.info("Updated statement: {}", statement);
+
+        return statement;
     }
 
     /**

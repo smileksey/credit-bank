@@ -48,12 +48,16 @@ public class CreditServiceImpl implements CreditService {
 
     /**
      * Method calculates personal credit details by requesting 'calculator' microservice, saves the Credit entity to the database and updates Statement and Client entities
-     * @param statementId - statement identification
+     *
+     * @param statementId                  - statement identification
      * @param finishRegistrationRequestDto - input data from client
+     * @return calculated Credit entity
      */
     @Transactional
     @Override
-    public void calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
+    public Credit calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
+
+        Credit savedCredit = null;
 
         Statement statement = statementService.getStatementById(statementId);
         Client client = statement.getClient();
@@ -76,7 +80,7 @@ public class CreditServiceImpl implements CreditService {
 
             if (creditDto != null) {
 
-                Credit savedCredit = creditRepository.save(buildCredit(creditDto));
+                savedCredit = creditRepository.save(buildCredit(creditDto));
 
                 statement.setCredit(savedCredit);
                 updateStatementData(statement, true);
@@ -93,6 +97,8 @@ public class CreditServiceImpl implements CreditService {
         } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
 
         log.info("Updated statement: {}", statement);
+
+        return savedCredit;
     }
 
 
