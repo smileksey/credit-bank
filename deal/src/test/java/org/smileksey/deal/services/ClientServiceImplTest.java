@@ -33,7 +33,7 @@ class ClientServiceImplTest {
 
         when(clientRepository.findFirstByEmail(any())).thenReturn(Optional.of(new Client()));
 
-        assertThrows(ClientAlreadyExistsException.class, () -> {clientServiceImpl.createAndSaveClient(new LoanStatementRequestDto());});
+        assertThrows(ClientAlreadyExistsException.class, () -> clientServiceImpl.createAndSaveClient(new LoanStatementRequestDto()));
     }
 
     @Test
@@ -41,35 +41,14 @@ class ClientServiceImplTest {
 
         when(clientRepository.findFirstByPassportSeriesAndNumber(any(), any())).thenReturn(Optional.of(new Client()));
 
-        assertThrows(ClientAlreadyExistsException.class, () -> {clientServiceImpl.createAndSaveClient(new LoanStatementRequestDto());});
+        assertThrows(ClientAlreadyExistsException.class, () -> clientServiceImpl.createAndSaveClient(new LoanStatementRequestDto()));
     }
 
     @Test
     void createAndSaveClientShouldReturnFilledObject() {
 
-        LoanStatementRequestDto loanStatementRequestDto = LoanStatementRequestDto.builder()
-                .term(12)
-                .firstName("Ivan")
-                .lastName("Ivanov")
-                .middleName("Ivanovich")
-                .email("ivanov@gmail.com")
-                .birthdate(LocalDate.of(1990, 1, 1))
-                .passportSeries("1111")
-                .passportNumber("222222")
-                .build();
-
-        Client mockClient = Client.builder()
-                .lastName(loanStatementRequestDto.getLastName())
-                .firstName(loanStatementRequestDto.getFirstName())
-                .middleName(loanStatementRequestDto.getMiddleName())
-                .birthDate(loanStatementRequestDto.getBirthdate())
-                .email(loanStatementRequestDto.getEmail())
-                .passport(Passport.builder()
-                        .series(loanStatementRequestDto.getPassportSeries())
-                        .number(loanStatementRequestDto.getPassportNumber())
-                        .build())
-                .build();
-
+        LoanStatementRequestDto loanStatementRequestDto = createLoanStatementRequestDto();
+        Client mockClient = createClient(loanStatementRequestDto);
 
         when(clientRepository.findFirstByEmail(any())).thenReturn(Optional.empty());
         when(clientRepository.findFirstByPassportSeriesAndNumber(any(), any())).thenReturn(Optional.empty());
@@ -88,5 +67,34 @@ class ClientServiceImplTest {
         assertEquals(mockClient.getBirthDate(), savedClient.getBirthDate());
         assertEquals(mockClient.getPassport().getSeries(), savedClient.getPassport().getSeries());
         assertEquals(mockClient.getPassport().getNumber(), savedClient.getPassport().getNumber());
+    }
+
+
+    private LoanStatementRequestDto createLoanStatementRequestDto() {
+        return LoanStatementRequestDto.builder()
+                .term(12)
+                .firstName("Ivan")
+                .lastName("Ivanov")
+                .middleName("Ivanovich")
+                .email("ivanov@gmail.com")
+                .birthdate(LocalDate.of(1990, 1, 1))
+                .passportSeries("1111")
+                .passportNumber("222222")
+                .build();
+    }
+
+
+    private Client createClient(LoanStatementRequestDto loanStatementRequestDto) {
+        return Client.builder()
+                .lastName(loanStatementRequestDto.getLastName())
+                .firstName(loanStatementRequestDto.getFirstName())
+                .middleName(loanStatementRequestDto.getMiddleName())
+                .birthDate(loanStatementRequestDto.getBirthdate())
+                .email(loanStatementRequestDto.getEmail())
+                .passport(Passport.builder()
+                        .series(loanStatementRequestDto.getPassportSeries())
+                        .number(loanStatementRequestDto.getPassportNumber())
+                        .build())
+                .build();
     }
 }

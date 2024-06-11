@@ -1,6 +1,5 @@
 package org.smileksey.deal.utils;
 
-import org.smileksey.deal.dto.LoanStatementRequestDto;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

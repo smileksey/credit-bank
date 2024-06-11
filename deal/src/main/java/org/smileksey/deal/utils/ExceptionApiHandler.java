@@ -18,7 +18,7 @@ import java.time.format.DateTimeParseException;
 @Slf4j
 public class ExceptionApiHandler {
 
-    /** This method intercepts PrescoringException and returns an error response to a client  */
+    /** This method intercepts ValidationException and returns an error response to a client  */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleValidationException(ValidationException e) {
 

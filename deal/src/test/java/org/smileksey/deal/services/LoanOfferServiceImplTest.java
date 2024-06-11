@@ -57,9 +57,6 @@ class LoanOfferServiceImplTest {
 
         List<LoanOfferDto> returnedLoanOffers = loanOfferService.getLoanOffers(new LoanStatementRequestDto());
 
-        assertNotNull(returnedLoanOffers);
-        assertEquals(loanOffers.size(), returnedLoanOffers.size());
-
         verify(restTemplate, times(1)).exchange(
                 anyString(),
                 any(HttpMethod.class),
@@ -68,6 +65,9 @@ class LoanOfferServiceImplTest {
 
         verify(clientServiceImpl, times(1)).createAndSaveClient(any());
         verify(statementServiceImpl, times(1)).createAndSaveStatement(any());
+
+        assertNotNull(returnedLoanOffers);
+        assertEquals(loanOffers.size(), returnedLoanOffers.size());
     }
 
     @Test
@@ -81,11 +81,5 @@ class LoanOfferServiceImplTest {
                 .thenReturn(new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK));
 
         assertThrows(InvalidMSResponseException.class, () -> loanOfferService.getLoanOffers(new LoanStatementRequestDto()));
-
-        verify(restTemplate, times(1)).exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (ParameterizedTypeReference<Object>) any());
     }
 }

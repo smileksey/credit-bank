@@ -1,5 +1,6 @@
 package org.smileksey.deal.services;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.*;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
@@ -9,9 +10,6 @@ import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.*;
 import org.smileksey.deal.repositories.CreditRepository;
 import org.smileksey.deal.utils.HttpEntityConstructor;
-import org.smileksey.deal.utils.RestTemplateResponseErrorHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Slf4j
 public class CreditServiceImpl implements CreditService {
 
@@ -35,17 +35,6 @@ public class CreditServiceImpl implements CreditService {
     private final String CC_CALC_URL = "http://localhost:8080/calculator/calc";
 
 
-    @Autowired
-    public CreditServiceImpl(RestTemplateBuilder restTemplateBuilder, StatementService statementService, CreditRepository creditRepository) {
-        this.statementService = statementService;
-        this.creditRepository = creditRepository;
-
-        this.restTemplate = restTemplateBuilder
-                .errorHandler(new RestTemplateResponseErrorHandler())
-                .build();
-    }
-
-
     /**
      * Method calculates personal credit details by requesting 'calculator' microservice, saves the Credit entity to the database and updates Statement and Client entities
      *
@@ -55,14 +44,14 @@ public class CreditServiceImpl implements CreditService {
      */
     @Transactional
     @Override
-    public Credit calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
+    public Optional<Credit> calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
 
         Credit savedCredit = null;
 
         Statement statement = statementService.getStatementById(statementId);
         Client client = statement.getClient();
 
-        ScoringDataDto scoringDataDto = buildScoringDataDto(finishRegistrationRequestDto, statement.getAppliedOffer(), statement.getClient());
+        ScoringDataDto scoringDataDto = buildScoringDataDto(finishRegistrationRequestDto, statement.getAppliedOffer(), client);
 
         updateClientData(client, finishRegistrationRequestDto);
 
@@ -98,7 +87,7 @@ public class CreditServiceImpl implements CreditService {
 
         log.info("Updated statement: {}", statement);
 
-        return savedCredit;
+        return Optional.ofNullable(savedCredit);
     }
 
 

@@ -16,7 +16,6 @@ import org.smileksey.deal.repositories.StatementRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -72,9 +71,8 @@ class StatementServiceImplTest {
 
         Statement updatedStatement = statementServiceImpl.updateStatementWithSelectedOffer(loanOfferDto);
 
-        assertNotNull(updatedStatement);
         verify(statementRepository, times(1)).findById(any());
-
+        assertNotNull(updatedStatement);
         assertEquals(ApplicationStatus.PREAPPROVAL, updatedStatement.getStatus());
         assertEquals(ApplicationStatus.PREAPPROVAL, updatedStatement.getStatusHistory().get(0).getStatus());
         assertEquals(LocalDateTime.now().toLocalDate(), updatedStatement.getStatusHistory().get(0).getTime().toLocalDate());

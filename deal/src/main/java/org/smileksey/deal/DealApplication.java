@@ -1,5 +1,6 @@
 package org.smileksey.deal;
 
+import org.smileksey.deal.utils.RestTemplateResponseErrorHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -15,7 +16,7 @@ public class DealApplication {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+        return builder.errorHandler(new RestTemplateResponseErrorHandler()).build();
     }
 
 }

@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -98,6 +99,7 @@ class DealControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+
     @Test
     void selectOfferShouldReturn200() throws Exception {
 
@@ -156,7 +158,7 @@ class DealControllerTest {
 
         String body = objectMapper.writeValueAsString(validFinishRegistrationRequestDto);
 
-        when(creditService.calculateCreditAndFinishRegistration(any(), any())).thenReturn(new Credit());
+        when(creditService.calculateCreditAndFinishRegistration(any(), any())).thenReturn(Optional.of(new Credit()));
 
         mockMvc.perform(post("/deal/calculate/04cd382d-d411-4f40-8efb-712f568acf32")
                         .contentType(MediaType.APPLICATION_JSON)
