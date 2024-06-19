@@ -76,12 +76,6 @@
             <artifactId>hypersistence-utils-hibernate-55</artifactId>
             <version>${hypersistence.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.smileksey</groupId>
-            <artifactId>calculator</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
 
     </dependencies>
 
