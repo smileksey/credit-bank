@@ -56,7 +56,4 @@ public class Credit {
     @Column(name = "credit_status")
     @Enumerated(EnumType.STRING)
     private CreditStatus creditStatus;
-
-    @OneToOne(mappedBy = "credit")
-    private Statement statement;
 }

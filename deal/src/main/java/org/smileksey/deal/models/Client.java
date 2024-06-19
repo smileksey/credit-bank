@@ -64,10 +64,4 @@ public class Client {
 
     @Column(name = "account_number")
     private String accountNumber;
-
-    @OneToOne(mappedBy = "client")
-    private Statement statement;
-
-
-
 }

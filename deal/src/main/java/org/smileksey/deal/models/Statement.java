@@ -29,12 +29,12 @@ public class Statement {
     private UUID statementId;
 
     @OneToOne
-    @JoinColumn(name = "client_id", referencedColumnName = "client_id")
+    @JoinColumn(name = "client_id")
     @ToString.Exclude
     private Client client;
 
     @OneToOne
-    @JoinColumn(name = "credit_id", referencedColumnName = "credit_id")
+    @JoinColumn(name = "credit_id")
     @ToString.Exclude
     private Credit credit;
 
