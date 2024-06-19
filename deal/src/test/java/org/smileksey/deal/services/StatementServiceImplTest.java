@@ -42,7 +42,7 @@ class StatementServiceImplTest {
         Statement mockStatement = Statement.builder()
                 .statementId(UUID.randomUUID())
                 .client(client)
-                .creationDate(LocalDate.now())
+                .creationDate(LocalDateTime.now())
                 .statusHistory(new ArrayList<>())
                 .build();
 

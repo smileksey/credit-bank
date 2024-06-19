@@ -2,13 +2,14 @@ package org.smileksey.deal.models;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.smileksey.deal.dto.LoanOfferDto;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,14 +44,16 @@ public class Statement {
     private ApplicationStatus status;
 
     @Column(name = "creation_date")
-    private LocalDate creationDate;
+    @CreationTimestamp
+    private LocalDateTime creationDate;
 
     @Column(name = "applied_offer", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     private LoanOfferDto appliedOffer;
 
     @Column(name = "sign_date")
-    private LocalDate signDate;
+    @CreationTimestamp
+    private LocalDateTime signDate;
 
     @Column(name = "ses_code")
     private String sesCode;
