@@ -128,7 +128,6 @@ public class CreditServiceImpl implements CreditService {
     private Credit buildCredit(CreditDto creditDto) {
 
         return Credit.builder()
-                .creditId(UUID.randomUUID())
                 .amount(creditDto.getAmount())
                 .term(creditDto.getTerm())
                 .monthlyPayment(creditDto.getMonthlyPayment())

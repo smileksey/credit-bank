@@ -24,6 +24,7 @@ import java.util.UUID;
 public class Client {
 
     @Id
+    @GeneratedValue
     @Column(name = "client_id")
     private UUID clientId;
 

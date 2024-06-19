@@ -33,7 +33,6 @@ public class ClientServiceImpl implements ClientService {
         checkIfClientAlreadyExists(loanStatementRequestDto);
 
         Client client = Client.builder()
-                .clientId(UUID.randomUUID())
                 .lastName(loanStatementRequestDto.getLastName())
                 .firstName(loanStatementRequestDto.getFirstName())
                 .middleName(loanStatementRequestDto.getMiddleName())

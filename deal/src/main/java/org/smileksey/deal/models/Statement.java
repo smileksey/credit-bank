@@ -24,6 +24,7 @@ import java.util.UUID;
 public class Statement {
 
     @Id
+    @GeneratedValue
     @Column(name = "statement_id")
     private UUID statementId;
 

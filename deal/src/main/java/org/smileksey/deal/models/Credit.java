@@ -24,6 +24,7 @@ import java.util.UUID;
 public class Credit {
 
     @Id
+    @GeneratedValue
     @Column(name = "credit_id")
     private UUID creditId;
 

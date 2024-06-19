@@ -36,7 +36,6 @@ public class StatementServiceImpl implements StatementService {
     public Statement createAndSaveStatement(Client client) {
 
         Statement statement = Statement.builder()
-                .statementId(UUID.randomUUID())
                 .client(client)
                 .creationDate(LocalDate.now())
                 .statusHistory(new ArrayList<>())
