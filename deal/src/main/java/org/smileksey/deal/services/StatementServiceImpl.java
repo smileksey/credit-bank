@@ -72,6 +72,7 @@ public class StatementServiceImpl implements StatementService {
         return statement;
     }
 
+
     /**
      * Method gets the Statement entity from the database by its ID
      * @param statementId - ID of the Statement entity

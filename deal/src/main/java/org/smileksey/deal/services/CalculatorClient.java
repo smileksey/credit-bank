@@ -1,7 +1,6 @@
 package org.smileksey.deal.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.CreditDto;
 import org.smileksey.deal.dto.LoanOfferDto;
 import org.smileksey.deal.dto.LoanStatementRequestDto;
@@ -17,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class CalculatorClient {
 
@@ -33,19 +31,21 @@ public class CalculatorClient {
     /** Path to the '/calculator/offers' endpoint */
     private static final String OFFERS_PATH = "/calculator/offers";
 
+
     /**
-     * Method requests 'calculator' microservice and returns its response with CreditDto entity
-     * @param scoringDataDto - entity required by the calculator microservice
+     * Method makes a request to the 'calculator' microservice and returns its response with CreditDto entity
+     * @param scoringDataDto - request body
      * @return ResponseEntity containing a CreditDto entity
      */
     public ResponseEntity<CreditDto> getCreditDtoResponse(ScoringDataDto scoringDataDto) {
         return restTemplate.exchange(calculatorUrl + CALC_PATH, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
     }
 
+
     /**
-     * Method requests 'calculator' microservice and returns its response with a list of LoanOfferDtos
-     * @param loanStatementRequestDto - entity required by the calculator microservice
-     * @return ResponseEntity containing a list of LoanOfferDtos
+     * Method makes a request to the 'calculator' microservice and returns its response with a list of LoanOfferDtos
+     * @param loanStatementRequestDto - request body
+     * @return ResponseEntity containing a list of LoanOfferDto entities
      */
     public ResponseEntity<List<LoanOfferDto>> getLoanOffersResponse(LoanStatementRequestDto loanStatementRequestDto) {
         return restTemplate.exchange(calculatorUrl + OFFERS_PATH, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
