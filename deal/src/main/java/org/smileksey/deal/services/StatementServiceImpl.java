@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class StatementServiceImpl implements StatementService {
