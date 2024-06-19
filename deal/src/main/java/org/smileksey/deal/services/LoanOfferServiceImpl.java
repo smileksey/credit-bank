@@ -7,11 +7,8 @@ import org.smileksey.deal.dto.LoanStatementRequestDto;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
-import org.smileksey.deal.utils.HttpEntityConstructor;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -22,10 +19,7 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
     private final ClientService clientService;
     private final StatementService statementService;
-    private final RestTemplate restTemplate;
-
-    /** URL of the 'calculator' endpoint */
-    private final String CC_OFFERS_URL = "http://localhost:8080/calculator/offers";
+    private final CalculatorClient calculatorClient;
 
 
     /**
@@ -35,13 +29,9 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 
-        ResponseEntity<List<LoanOfferDto>> LoanOffersResponseFromCC = restTemplate.exchange(
-                CC_OFFERS_URL,
-                HttpMethod.POST,
-                HttpEntityConstructor.createHttpEntity(loanStatementRequestDto),
-                new ParameterizedTypeReference<List<LoanOfferDto>>() {});
+        ResponseEntity<List<LoanOfferDto>> loanOffersResponse = calculatorClient.getLoanOffersResponse(loanStatementRequestDto);
 
-        List<LoanOfferDto> loanOffers = LoanOffersResponseFromCC.getBody();
+        List<LoanOfferDto> loanOffers = loanOffersResponse.getBody();
 
         if (loanOffers != null && !loanOffers.isEmpty()) {
 

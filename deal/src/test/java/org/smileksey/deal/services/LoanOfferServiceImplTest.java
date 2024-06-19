@@ -9,12 +9,8 @@ import org.smileksey.deal.dto.LoanOfferDto;
 import org.smileksey.deal.dto.LoanStatementRequestDto;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.Statement;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +30,7 @@ class LoanOfferServiceImplTest {
     private StatementServiceImpl statementServiceImpl;
 
     @Mock
-    private RestTemplate restTemplate;
+    private CalculatorClient calculatorClient;
 
     @InjectMocks
     private LoanOfferServiceImpl loanOfferService;
@@ -47,22 +43,11 @@ class LoanOfferServiceImplTest {
         List<LoanOfferDto> loanOffers = Arrays.asList(new LoanOfferDto(), new LoanOfferDto(), new LoanOfferDto(), new LoanOfferDto());
 
         when(statementServiceImpl.createAndSaveStatement(any())).thenReturn(new Statement());
-
-        lenient().when(restTemplate.exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (ParameterizedTypeReference<Object>) any()))
-                .thenReturn(new ResponseEntity<>(loanOffers, HttpStatus.OK));
+        when(calculatorClient.getLoanOffersResponse(any())).thenReturn(new ResponseEntity<>(loanOffers, HttpStatus.OK));
 
         List<LoanOfferDto> returnedLoanOffers = loanOfferService.getLoanOffers(new LoanStatementRequestDto());
 
-        verify(restTemplate, times(1)).exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (ParameterizedTypeReference<Object>) any());
-
+        verify(calculatorClient, times(1)).getLoanOffersResponse(any());
         verify(clientServiceImpl, times(1)).createAndSaveClient(any());
         verify(statementServiceImpl, times(1)).createAndSaveStatement(any());
 
@@ -73,12 +58,7 @@ class LoanOfferServiceImplTest {
     @Test
     void getLoanOffersWhenCCResponseIsInvalid() {
 
-        lenient().when(restTemplate.exchange(
-                        anyString(),
-                        any(HttpMethod.class),
-                        any(HttpEntity.class),
-                        (ParameterizedTypeReference<Object>) any()))
-                .thenReturn(new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK));
+        when(calculatorClient.getLoanOffersResponse(any())).thenReturn(new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK));
 
         assertThrows(InvalidMSResponseException.class, () -> loanOfferService.getLoanOffers(new LoanStatementRequestDto()));
     }

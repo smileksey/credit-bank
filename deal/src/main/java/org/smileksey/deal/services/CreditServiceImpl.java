@@ -9,12 +9,9 @@ import org.smileksey.deal.dto.enums.CreditStatus;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.*;
 import org.smileksey.deal.repositories.CreditRepository;
-import org.smileksey.deal.utils.HttpEntityConstructor;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -28,16 +25,11 @@ public class CreditServiceImpl implements CreditService {
 
     private final StatementService statementService;
     private final CreditRepository creditRepository;
-
-    private final RestTemplate restTemplate;
-
-    /** URL of the 'calculator' endpoint */
-    private final String CC_CALC_URL = "http://localhost:8080/calculator/calc";
+    private final CalculatorClient calculatorClient;
 
 
     /**
      * Method calculates personal credit details by requesting 'calculator' microservice, saves the Credit entity to the database and updates Statement and Client entities
-     *
      * @param statementId                  - statement identification
      * @param finishRegistrationRequestDto - input data from client
      * @return calculated Credit entity
@@ -59,11 +51,11 @@ public class CreditServiceImpl implements CreditService {
         log.info("Updated Client: {}", client);
         log.info("Sending ScoringDataDto to 'calculator': {}", scoringDataDto);
 
-        ResponseEntity<CreditDto> creditDtoResponseFromCC = restTemplate.exchange(CC_CALC_URL, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
+        ResponseEntity<CreditDto> creditDtoResponse = calculatorClient.getCreditDtoResponse(scoringDataDto);
 
-        if(creditDtoResponseFromCC.getStatusCode() == HttpStatus.OK) {
+        if(creditDtoResponse.getStatusCode() == HttpStatus.OK) {
 
-            CreditDto creditDto = creditDtoResponseFromCC.getBody();
+            CreditDto creditDto = creditDtoResponse.getBody();
 
             log.info("CreditDto received from 'calculator': {}", creditDto);
 
@@ -78,7 +70,7 @@ public class CreditServiceImpl implements CreditService {
 
             } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
 
-        } else if (creditDtoResponseFromCC.getStatusCode() == HttpStatus.NOT_FOUND) {
+        } else if (creditDtoResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatementData(statement, false);
             log.info("Loan was refused by 'calculator'");

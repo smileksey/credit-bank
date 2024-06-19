@@ -13,12 +13,8 @@ import org.smileksey.deal.models.Credit;
 import org.smileksey.deal.models.Passport;
 import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.repositories.CreditRepository;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,7 +24,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +36,7 @@ class CreditServiceImplTest {
     private CreditRepository creditRepository;
 
     @Mock
-    private RestTemplate restTemplate;
+    private CalculatorClient calculatorClient;
 
     @InjectMocks
     private CreditServiceImpl creditServiceImpl;
@@ -55,13 +50,7 @@ class CreditServiceImplTest {
 
         when(statementService.getStatementById(any())).thenReturn(createStatement(createLoanOfferDto()));
         when(creditRepository.save(any())).thenReturn(createCredit(createCreditDto()));
-
-        lenient().when(restTemplate.exchange(
-                        anyString(),
-                        any(HttpMethod.class),
-                        any(HttpEntity.class),
-                        (ParameterizedTypeReference<Object>) any()))
-                .thenReturn(new ResponseEntity<>(new CreditDto(), HttpStatus.OK));
+        when(calculatorClient.getCreditDtoResponse(any())).thenReturn(new ResponseEntity<>(new CreditDto(), HttpStatus.OK));
 
         Optional<Credit> creditOptional = creditServiceImpl.calculateCreditAndFinishRegistration(UUID.randomUUID(), validFinishRegistrationRequestDto);
 
@@ -73,11 +62,7 @@ class CreditServiceImplTest {
 
         verify(statementService, times(1)).getStatementById(any());
         verify(creditRepository, times(1)).save(any());
-        verify(restTemplate, times(1)).exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (ParameterizedTypeReference<Object>) any());
+        verify(calculatorClient, times(1)).getCreditDtoResponse(any());
     }
 
 
@@ -87,13 +72,7 @@ class CreditServiceImplTest {
         FinishRegistrationRequestDto validFinishRegistrationRequestDto = createFinishRegistrationRequestDto();
 
         when(statementService.getStatementById(any())).thenReturn(createStatement(createLoanOfferDto()));
-
-        lenient().when(restTemplate.exchange(
-                        anyString(),
-                        any(HttpMethod.class),
-                        any(HttpEntity.class),
-                        (ParameterizedTypeReference<Object>) any()))
-                .thenReturn(new ResponseEntity<>(new CreditDto(), HttpStatus.NOT_FOUND));
+        when(calculatorClient.getCreditDtoResponse(any())).thenReturn(new ResponseEntity<>(new CreditDto(), HttpStatus.NOT_FOUND));
 
         Optional<Credit> creditOptional = creditServiceImpl.calculateCreditAndFinishRegistration(UUID.randomUUID(), validFinishRegistrationRequestDto);
 
@@ -110,13 +89,7 @@ class CreditServiceImplTest {
         FinishRegistrationRequestDto validFinishRegistrationRequestDto = createFinishRegistrationRequestDto();
 
         when(statementService.getStatementById(any())).thenReturn(createStatement(createLoanOfferDto()));
-
-        lenient().when(restTemplate.exchange(
-                        anyString(),
-                        any(HttpMethod.class),
-                        any(HttpEntity.class),
-                        (ParameterizedTypeReference<Object>) any()))
-                .thenReturn(new ResponseEntity<>(new CreditDto(), HttpStatus.BAD_REQUEST));
+        when(calculatorClient.getCreditDtoResponse(any())).thenReturn(new ResponseEntity<>(new CreditDto(), HttpStatus.BAD_REQUEST));
 
         assertThrows(InvalidMSResponseException.class, () -> creditServiceImpl.calculateCreditAndFinishRegistration(UUID.randomUUID(), validFinishRegistrationRequestDto));
     }
