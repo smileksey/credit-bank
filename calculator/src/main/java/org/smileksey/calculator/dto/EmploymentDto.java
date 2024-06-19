@@ -37,7 +37,7 @@ public class EmploymentDto {
     @NotNull(message = "'position' is not specified")
     @Schema(
             description = "Job position",
-            example = "MIDDLE_MANAGER")
+            example = "MID_MANAGER")
     private Position position;
 
     @NotNull(message = "'workExperienceTotal' is not specified")
