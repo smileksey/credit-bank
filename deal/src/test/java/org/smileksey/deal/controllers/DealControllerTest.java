@@ -2,7 +2,7 @@ package org.smileksey.deal.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.smileksey.calculator.dto.LoanStatementRequestDto;
+import org.smileksey.deal.dto.LoanStatementRequestDto;
 import org.smileksey.deal.dto.EmploymentDto;
 import org.smileksey.deal.dto.FinishRegistrationRequestDto;
 import org.smileksey.deal.dto.LoanOfferDto;
