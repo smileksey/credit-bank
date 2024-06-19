@@ -39,7 +39,7 @@ public class DealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "4 credit options generated",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = org.smileksey.deal.dto.LoanOfferDto.class)) }),
+                            schema = @Schema(implementation = LoanOfferDto.class)) }),
             @ApiResponse(responseCode = "400", description = "Invalid field values",
                     content = @Content)})
     @PostMapping("/statement")
