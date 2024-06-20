@@ -1,5 +1,10 @@
 package org.smileksey.statement.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.statement.dto.LoanOfferDto;
@@ -27,6 +32,13 @@ public class StatementController {
     private final LoanOfferService loanOfferService;
 
 
+    @Operation(summary = "Calculate 4 credit options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "4 credit options generated",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoanOfferDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid field values",
+                    content = @Content)})
     @PostMapping
     public List<LoanOfferDto> calculateOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
                                               BindingResult bindingResult) {
@@ -44,6 +56,11 @@ public class StatementController {
     }
 
 
+    @Operation(summary = "Select one of the 4 offered credit options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Option selected"),
+            @ApiResponse(responseCode = "400", description = "Invalid field values")
+    })
     @PostMapping("/offer")
     public void selectOffer(@RequestBody @Valid LoanOfferDto loanOfferDto, BindingResult bindingResult) {
 
