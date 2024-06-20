@@ -47,6 +47,14 @@ public class StatementController {
     @PostMapping("/offer")
     public void selectOffer(@RequestBody @Valid LoanOfferDto loanOfferDto, BindingResult bindingResult) {
 
+        log.info("Input data to /statement/offer: {}", loanOfferDto);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = ValidationErrorMessage.createMessage(bindingResult.getFieldErrors());
+            throw new ValidationException(errorMessage);
+        }
+
+        loanOfferService.selectOffer(loanOfferDto);
     }
 
 

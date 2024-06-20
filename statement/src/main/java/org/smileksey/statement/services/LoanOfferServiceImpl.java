@@ -17,15 +17,15 @@ public class LoanOfferServiceImpl implements LoanOfferService {
 
     private final DealClient dealClient;
 
-
     /**
-     * Method creates a list of 4 preliminary loan offers by requesting 'calculator' microservice
+     * Method creates a list of 4 preliminary loan offers by requesting 'deal' microservice
      * @return list of 4 preliminary loan offers
      */
     @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 
         ResponseEntity<List<LoanOfferDto>> loanOffersResponse = dealClient.getLoanOffersResponse(loanStatementRequestDto);
+        log.info("Response status: {}", loanOffersResponse.getStatusCode());
 
         List<LoanOfferDto> loanOffers = loanOffersResponse.getBody();
 
@@ -42,5 +42,16 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         }
 
         return loanOffers;
+    }
+
+
+    /**
+     * Method sends selected LoanOfferDto entity to 'deal' microservice
+     * @param loanOfferDto - selected LoanOfferDto entity
+     */
+    @Override
+    public void selectOffer(LoanOfferDto loanOfferDto) {
+        ResponseEntity<Void> response = dealClient.sendSelectedOffer(loanOfferDto);
+        log.info("Response status: {}", response.getStatusCode());
     }
 }

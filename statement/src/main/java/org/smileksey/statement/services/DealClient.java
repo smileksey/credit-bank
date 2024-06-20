@@ -1,6 +1,7 @@
 package org.smileksey.statement.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.smileksey.statement.dto.LoanOfferDto;
 import org.smileksey.statement.dto.LoanStatementRequestDto;
 import org.smileksey.statement.utils.HttpEntityConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DealClient {
 
     private final RestTemplate restTemplate;
@@ -36,16 +38,18 @@ public class DealClient {
      * @return ResponseEntity containing a list of LoanOfferDto entities
      */
     public ResponseEntity<List<LoanOfferDto>> getLoanOffersResponse(LoanStatementRequestDto loanStatementRequestDto) {
+        log.info("Sending request to {}{}", dealUrl, STATEMENT_PATH);
         return restTemplate.exchange(dealUrl + STATEMENT_PATH, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanStatementRequestDto), new ParameterizedTypeReference<List<LoanOfferDto>>() {});
     }
 
 
-    //    /**
-//     * Method makes a request to the 'calculator' microservice and returns its response with CreditDto entity
-//     * @param scoringDataDto - request body
-//     * @return ResponseEntity containing a CreditDto entity
-//     */
-//    public ResponseEntity<CreditDto> getCreditDtoResponse(ScoringDataDto scoringDataDto) {
-//        return restTemplate.exchange(dealUrl + STATEMENT_PATH, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(scoringDataDto), new ParameterizedTypeReference<CreditDto>() {});
-//    }
+    /**
+     * Method makes a request to the 'deal' microservice and returns its response
+     * @param loanOfferDto - request body
+     * @return ResponseEntity with empty body
+     */
+    public ResponseEntity<Void> sendSelectedOffer(LoanOfferDto loanOfferDto) {
+        log.info("Sending request to {}{}", dealUrl, OFFER_SELECT_PATH);
+        return restTemplate.exchange(dealUrl + OFFER_SELECT_PATH, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanOfferDto), Void.class);
+    }
 }

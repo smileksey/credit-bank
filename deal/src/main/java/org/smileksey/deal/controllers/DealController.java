@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.services.CreditService;
-import org.smileksey.deal.services.LoanOfferServiceImpl;
+import org.smileksey.deal.services.LoanOfferService;
 import org.smileksey.deal.services.StatementService;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.deal.dto.LoanOfferDto;
@@ -30,7 +30,7 @@ import java.util.UUID;
 public class DealController {
 
     private final LoanStatementRequestValidator loanStatementRequestValidator;
-    private final LoanOfferServiceImpl loanOfferServiceImpl;
+    private final LoanOfferService loanOfferService;
     private final StatementService statementService;
     private final CreditService creditService;
 
@@ -55,7 +55,7 @@ public class DealController {
             throw new ValidationException(errorMessage);
         }
 
-        return loanOfferServiceImpl.getLoanOffers(loanStatementRequestDto);
+        return loanOfferService.getLoanOffers(loanStatementRequestDto);
     }
 
 

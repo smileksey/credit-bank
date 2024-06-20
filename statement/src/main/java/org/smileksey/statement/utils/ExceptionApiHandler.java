@@ -53,30 +53,6 @@ public class ExceptionApiHandler {
     }
 
 
-//    /** This method intercepts StatementNotFoundException and returns an error response to a client  */
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleStatementNotFoundException(StatementNotFoundException e) {
-//
-//        ErrorResponse response = new ErrorResponse(e.getMessage());
-//
-//        log.error("ERROR: {}", e.getMessage());
-//
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
-
-
-//    /** This method intercepts ClientAlreadyExistsException and returns an error response to a client  */
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleClientAlreadyExistsException(ClientAlreadyExistsException e) {
-//
-//        ErrorResponse response = new ErrorResponse(e.getMessage());
-//
-//        log.error("ERROR: {}", e.getMessage());
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-
-
     /** This method intercepts HttpMessageNotReadableException in case of invalid ENUM input and returns an error response to a client */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
