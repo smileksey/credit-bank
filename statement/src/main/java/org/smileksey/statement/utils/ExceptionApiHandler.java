@@ -1,6 +1,7 @@
 package org.smileksey.statement.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.smileksey.statement.exceptions.InvalidMSResponseException;
 import org.smileksey.statement.exceptions.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +28,16 @@ public class ExceptionApiHandler {
     }
 
 
-//    /** This method intercepts InvalidMSResponseException and returns an error response to a client  */
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleInvalidMsResponseException(InvalidMSResponseException e) {
-//
-//        ErrorResponse response = new ErrorResponse(e.getMessage());
-//
-//        log.error("ERROR: {}", e.getMessage());
-//
-//        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    /** This method intercepts InvalidMSResponseException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleInvalidMsResponseException(InvalidMSResponseException e) {
+
+        ErrorResponse response = new ErrorResponse(e.getMessage());
+
+        log.error("ERROR: {}", e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 
     /** This method intercepts DateTimeParseException in case of invalid date input and returns an error response to a client */
