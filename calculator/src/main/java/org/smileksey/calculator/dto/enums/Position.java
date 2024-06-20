@@ -2,7 +2,7 @@ package org.smileksey.calculator.dto.enums;
 
 public enum Position {
     WORKER,
-    EMPLOYEE,
-    MIDDLE_MANAGER,
-    TOP_MANAGER
+    MID_MANAGER,
+    TOP_MANAGER,
+    OWNER
 }

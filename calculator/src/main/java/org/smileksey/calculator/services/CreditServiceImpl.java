@@ -30,31 +30,31 @@ public class CreditServiceImpl implements CreditService{
     private String baseRate;
 
     /** Minimum acceptable loan rate */
-    private final BigDecimal MIN_RATE = new BigDecimal("9.00");
+    private static final BigDecimal MIN_RATE = new BigDecimal("9.00");
 
     /** Minimum acceptable age */
-    private final int MIN_AGE = 20;
+    private static final int MIN_AGE = 20;
 
     /** Maximum acceptable age */
-    private final int MAX_AGE = 65;
+    private static final int MAX_AGE = 65;
 
     /** Minimum acceptable total experience */
-    private final int MIN_EXP_TOTAL = 18;
+    private static final int MIN_EXP_TOTAL = 18;
 
     /** Minimum acceptable current experience */
-    private final int MIN_EXP_CURRENT = 3;
+    private static final int MIN_EXP_CURRENT = 3;
 
     /** Minimum eligible female age */
-    private final int FEMALE_MIN_ELIGIBLE_AGE = 32;
+    private static final int FEMALE_MIN_ELIGIBLE_AGE = 32;
 
     /** Maximum eligible female age */
-    private final int FEMALE_MAX_ELIGIBLE_AGE = 60;
+    private static final int FEMALE_MAX_ELIGIBLE_AGE = 60;
 
     /** Minimum eligible male age */
-    private final int MALE_MIN_ELIGIBLE_AGE = 30;
+    private static final int MALE_MIN_ELIGIBLE_AGE = 30;
 
     /** Maximum eligible male age */
-    private final int MALE_MAX_ELIGIBLE_AGE = 55;
+    private static final int MALE_MAX_ELIGIBLE_AGE = 55;
 
     private final CreditParamsCalculator creditParamsCalculator;
 
@@ -151,7 +151,7 @@ public class CreditServiceImpl implements CreditService{
         log.info("employmentStatus = {}, new rate = {} %", employmentStatus, rate);
 
         switch (position) {
-            case MIDDLE_MANAGER:
+            case MID_MANAGER:
                 rate = rate.subtract(new BigDecimal("2.00"));
                 break;
             case TOP_MANAGER:
@@ -165,7 +165,7 @@ public class CreditServiceImpl implements CreditService{
             case MARRIED:
                 rate = rate.subtract(new BigDecimal("3.00"));
                 break;
-            case NOT_MARRIED:
+            case SINGLE:
                 rate = rate.add(new BigDecimal("1.00"));
                 break;
         }

@@ -31,7 +31,7 @@ public class LoanStatementRequestValidator implements Validator {
         int age = Period.between(birthdate, LocalDate.now()).getYears();
 
         if (age < 18) {
-            errors.rejectValue("birthdate", "", "Возраст должен быть не менее 18 лет");
+            errors.rejectValue("birthdate", "", "Minimum age is 18");
         }
 
     }

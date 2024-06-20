@@ -37,7 +37,7 @@ public class EmploymentDto {
     @NotNull(message = "'position' is not specified")
     @Schema(
             description = "Job position",
-            example = "MIDDLE_MANAGER")
+            example = "MID_MANAGER")
     private Position position;
 
     @NotNull(message = "'workExperienceTotal' is not specified")
@@ -50,7 +50,7 @@ public class EmploymentDto {
     @NotNull(message = "'workExperienceCurrent' is not specified")
     @PositiveOrZero
     @Schema(
-            description = "Work experience at current job, months",
+            description = "Work experience at the current job, months",
             example = "5")
     private Integer workExperienceCurrent;
 }
