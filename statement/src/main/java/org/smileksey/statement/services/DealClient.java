@@ -46,7 +46,7 @@ public class DealClient {
     /**
      * Method makes a request to the 'deal' microservice and returns its response
      * @param loanOfferDto - request body
-     * @return ResponseEntity with empty body
+     * @return ResponseEntity with void body
      */
     public ResponseEntity<Void> sendSelectedOffer(LoanOfferDto loanOfferDto) {
         log.info("Sending request to {}{}", dealUrl, OFFER_SELECT_PATH);
