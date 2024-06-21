@@ -50,6 +50,6 @@ public class DealClient {
      */
     public ResponseEntity<Void> sendSelectedOffer(LoanOfferDto loanOfferDto) {
         log.info("Sending request to {}{}", dealUrl, OFFER_SELECT_PATH);
-        return restTemplate.exchange(dealUrl + OFFER_SELECT_PATH, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanOfferDto), Void.class);
+        return restTemplate.exchange(dealUrl + OFFER_SELECT_PATH, HttpMethod.POST, HttpEntityConstructor.createHttpEntity(loanOfferDto), new ParameterizedTypeReference<Void>() {});
     }
 }
