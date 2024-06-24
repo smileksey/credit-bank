@@ -9,5 +9,5 @@ public interface LoanOfferService {
 
     List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto);
 
-    public void selectOffer(LoanOfferDto loanOfferDto);
+    void selectOffer(LoanOfferDto loanOfferDto);
 }

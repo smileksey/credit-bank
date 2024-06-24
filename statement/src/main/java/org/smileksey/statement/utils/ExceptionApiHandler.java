@@ -67,7 +67,7 @@ public class ExceptionApiHandler {
     }
 
 
-    /** This method intercepts StatementNotFoundException and returns an error response to a client  */
+    /** This method intercepts EntityNotFoundException and returns an error response to a client  */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
 
