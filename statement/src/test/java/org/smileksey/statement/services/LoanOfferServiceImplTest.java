@@ -45,7 +45,7 @@ class LoanOfferServiceImplTest {
 
 
     @Test
-    void getLoanOffersWhenCCResponseIsInvalid() {
+    void getLoanOffersShouldThrowExceptionWhenCCResponseIsInvalid() {
 
         when(dealClient.getLoanOffersResponse(any())).thenReturn(new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK));
 
