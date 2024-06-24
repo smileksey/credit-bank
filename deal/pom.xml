@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <openapi.version>1.8.0</openapi.version>
         <hypersistence.version>3.7.0</hypersistence.version>
+        <liquibase.version>4.28.0</liquibase.version>
     </properties>
 
     <dependencies>
@@ -76,6 +77,13 @@
             <artifactId>hypersistence-utils-hibernate-55</artifactId>
             <version>${hypersistence.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+
 
     </dependencies>
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-statement-table" author="smileksey">
+        <createTable tableName="statement">
+            <column name="statement_id" type="uuid" autoIncrement="false">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="client_id" type="uuid">
+                <constraints foreignKeyName="statement_client_id_client_client_id" references="client(client_id)"/>
+            </column>
+            <column name="credit_id" type="uuid">
+                <constraints foreignKeyName="statement_credit_id_credit_credit_id" references="credit(credit_id)"/>
+            </column>
+            <column name="status" type="varchar"/>
+            <column name="creation_date" type="timestamp"/>
+            <column name="applied_offer" type="jsonb"/>
+            <column name="sign_date" type="timestamp"/>
+            <column name="ses_code" type="varchar"/>
+            <column name="status_history" type="jsonb"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
