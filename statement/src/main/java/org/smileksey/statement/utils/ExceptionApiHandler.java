@@ -2,6 +2,7 @@ package org.smileksey.statement.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.statement.exceptions.InvalidMSResponseException;
+import org.smileksey.statement.exceptions.EntityNotFoundException;
 import org.smileksey.statement.exceptions.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,6 +64,18 @@ public class ExceptionApiHandler {
         log.error(message);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+
+    /** This method intercepts StatementNotFoundException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
+
+        ErrorResponse response = new ErrorResponse(e.getMessage());
+
+        log.error("ERROR: {}", e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

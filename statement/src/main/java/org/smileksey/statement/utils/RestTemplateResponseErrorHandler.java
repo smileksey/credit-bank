@@ -2,6 +2,7 @@ package org.smileksey.statement.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.statement.exceptions.InvalidMSResponseException;
+import org.smileksey.statement.exceptions.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
             }
 
             if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new InvalidMSResponseException("Error when requesting another microservice: " + response.getStatusCode());
+                throw new EntityNotFoundException("Entity was not found by another microservice: " + response.getStatusCode());
             }
         }
     }
