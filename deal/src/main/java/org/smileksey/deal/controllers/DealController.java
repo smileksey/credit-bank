@@ -97,4 +97,23 @@ public class DealController {
 
         creditService.calculateCreditAndFinishRegistration(statementId, finishRegistrationRequestDto);
     }
+
+
+    @PostMapping("/document/{statementId}/send")
+    public void sendDocuments(@PathVariable UUID statementId) {
+
+    }
+
+
+    @PostMapping("/document/{statementId}/sign")
+    public void sendSignRequest(@PathVariable UUID statementId) {
+
+    }
+
+
+    @PostMapping("/document/{statementId}/code")
+    public void sendCode(@PathVariable UUID statementId) {
+
+    }
+
 }
