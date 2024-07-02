@@ -7,7 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.smileksey.deal.dto.EmailMessage;
+import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.services.CreditService;
+import org.smileksey.deal.services.KafkaProducer;
 import org.smileksey.deal.services.LoanOfferService;
 import org.smileksey.deal.services.StatementService;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
@@ -33,6 +36,7 @@ public class DealController {
     private final LoanOfferService loanOfferService;
     private final StatementService statementService;
     private final CreditService creditService;
+    private final KafkaProducer kafkaProducer;
 
 
     @Operation(summary = "Calculate 4 credit options")
@@ -76,6 +80,12 @@ public class DealController {
         }
 
         statementService.updateStatementWithSelectedOffer(loanOfferDto);
+
+        kafkaProducer.sendFinishRegistrationMessage(
+                EmailMessage.builder()
+                        .statementId(loanOfferDto.getStatementId().getMostSignificantBits())
+                        .theme(Theme.FINISH_REGISTRATION)
+                .build());
     }
 
 
@@ -100,20 +110,26 @@ public class DealController {
 
 
     @PostMapping("/document/{statementId}/send")
-    public void sendDocuments(@PathVariable UUID statementId) {
+    public void createDocuments(@PathVariable UUID statementId) {
 
     }
 
 
     @PostMapping("/document/{statementId}/sign")
-    public void sendSignRequest(@PathVariable UUID statementId) {
+    public void signDocuments(@PathVariable UUID statementId) {
 
     }
 
 
     @PostMapping("/document/{statementId}/code")
-    public void sendCode(@PathVariable UUID statementId) {
+    public void verifySESCode(@PathVariable UUID statementId) {
 
     }
+
+//    //FIXME
+//    @PostMapping("/publish/{message}")
+//    public void testKafkaMessage(@PathVariable String message) {
+//        kafkaProducer.sendMessage(message);
+//    }
 
 }
