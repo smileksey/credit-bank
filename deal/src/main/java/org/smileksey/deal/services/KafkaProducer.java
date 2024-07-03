@@ -15,6 +15,31 @@ public class KafkaProducer {
 
     public void sendFinishRegistrationMessage(EmailMessage emailMessage) {
         kafkaTemplate.send("finish-registration", emailMessage);
-        log.info("Sent message = [{}]", emailMessage);
+        log.info("Sent message = [{}] | topic = [finish-registration]", emailMessage);
+    }
+
+    public void sendCreateDocumentsMessage(EmailMessage emailMessage) {
+        kafkaTemplate.send("create-documents", emailMessage);
+        log.info("Sent message = [{}] | topic = [create-documents]", emailMessage);
+    }
+
+    public void sendSendDocumentsMessage(EmailMessage emailMessage) {
+        kafkaTemplate.send("send-documents", emailMessage);
+        log.info("Sent message = [{}] | topic = [send-documents]", emailMessage);
+    }
+
+    public void sendSendSESMessage(EmailMessage emailMessage) {
+        kafkaTemplate.send("send-ses", emailMessage);
+        log.info("Sent message = [{}] | topic = [send-ses]", emailMessage);
+    }
+
+    public void sendCreditIssuedMessage(EmailMessage emailMessage) {
+        kafkaTemplate.send("credit-issued", emailMessage);
+        log.info("Sent message = [{}] | topic = [credit-issued]", emailMessage);
+    }
+
+    public void sendStatementDeniedMessage(EmailMessage emailMessage) {
+        kafkaTemplate.send("statement-denied", emailMessage);
+        log.info("Sent message = [{}] | topic = [statement-denied]", emailMessage);
     }
 }

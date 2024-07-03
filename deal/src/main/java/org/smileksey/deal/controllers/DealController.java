@@ -7,12 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.smileksey.deal.dto.EmailMessage;
-import org.smileksey.deal.dto.enums.Theme;
-import org.smileksey.deal.services.CreditService;
-import org.smileksey.deal.services.KafkaProducer;
-import org.smileksey.deal.services.LoanOfferService;
-import org.smileksey.deal.services.StatementService;
+import org.smileksey.deal.services.*;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.deal.dto.LoanOfferDto;
 import org.smileksey.deal.dto.LoanStatementRequestDto;
@@ -36,8 +31,7 @@ public class DealController {
     private final LoanOfferService loanOfferService;
     private final StatementService statementService;
     private final CreditService creditService;
-    private final KafkaProducer kafkaProducer;
-
+    private final DocumentsService documentsService;
 
     @Operation(summary = "Calculate 4 credit options")
     @ApiResponses(value = {
@@ -80,12 +74,6 @@ public class DealController {
         }
 
         statementService.updateStatementWithSelectedOffer(loanOfferDto);
-
-        kafkaProducer.sendFinishRegistrationMessage(
-                EmailMessage.builder()
-                        .statementId(loanOfferDto.getStatementId().getMostSignificantBits())
-                        .theme(Theme.FINISH_REGISTRATION)
-                .build());
     }
 
 
@@ -109,27 +97,25 @@ public class DealController {
     }
 
 
+    //TODO add status update 'DOCUMENT_CREATED' when dossier create documents (create PUT endpoint).
     @PostMapping("/document/{statementId}/send")
-    public void createDocuments(@PathVariable UUID statementId) {
-
+    public void sendDocuments(@PathVariable UUID statementId) {
+        documentsService.handleSendDocuments(statementId);
     }
 
 
+    //ses code формируется на этом этапе
     @PostMapping("/document/{statementId}/sign")
     public void signDocuments(@PathVariable UUID statementId) {
-
+        documentsService.handleSignDocuments(statementId);
     }
 
 
+    //проверка ses кода
     @PostMapping("/document/{statementId}/code")
-    public void verifySESCode(@PathVariable UUID statementId) {
-
+    public void verifySESCode(@PathVariable UUID statementId, @RequestBody String sesCode) {
+        documentsService.handleVerifySESCode(statementId, sesCode);
     }
 
-//    //FIXME
-//    @PostMapping("/publish/{message}")
-//    public void testKafkaMessage(@PathVariable String message) {
-//        kafkaProducer.sendMessage(message);
-//    }
 
 }

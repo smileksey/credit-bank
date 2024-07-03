@@ -6,6 +6,7 @@ import org.smileksey.deal.dto.*;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.dto.enums.ChangeType;
 import org.smileksey.deal.dto.enums.CreditStatus;
+import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.*;
 import org.smileksey.deal.repositories.CreditRepository;
@@ -25,6 +26,7 @@ public class CreditServiceImpl implements CreditService {
     private final StatementService statementService;
     private final CreditRepository creditRepository;
     private final CalculatorClient calculatorClient;
+    private final KafkaProducer kafkaProducer;
 
 
     /**
@@ -67,12 +69,28 @@ public class CreditServiceImpl implements CreditService {
 
                 log.info("Credit: {}", savedCredit);
 
+                //TODO Kafka message
+                kafkaProducer.sendCreateDocumentsMessage(
+                        EmailMessage.builder()
+                                .address(client.getEmail())
+                                .theme(Theme.CREATE_DOCUMENTS)
+                                .statementId(statementId.getMostSignificantBits())
+                                .build());
+
             } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
 
         } else if (creditDtoResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatementData(statement, false);
             log.info("Loan was refused by 'calculator'");
+
+            //TODO kafka message
+            kafkaProducer.sendStatementDeniedMessage(
+                    EmailMessage.builder()
+                            .address(client.getEmail())
+                            .theme(Theme.STATEMENT_DENIED)
+                            .statementId(statementId.getMostSignificantBits())
+                            .build());
 
         } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
 

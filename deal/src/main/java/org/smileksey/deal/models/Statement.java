@@ -52,7 +52,6 @@ public class Statement {
     private LoanOfferDto appliedOffer;
 
     @Column(name = "sign_date")
-    @CreationTimestamp
     private LocalDateTime signDate;
 
     @Column(name = "ses_code")

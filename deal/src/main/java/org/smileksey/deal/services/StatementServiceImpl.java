@@ -2,9 +2,11 @@ package org.smileksey.deal.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.smileksey.deal.dto.EmailMessage;
 import org.smileksey.deal.dto.LoanOfferDto;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.dto.enums.ChangeType;
+import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.exceptions.StatementNotFoundException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class StatementServiceImpl implements StatementService {
 
     private final StatementRepository statementRepository;
+    private final KafkaProducer kafkaProducer;
 
 
     /**
@@ -68,6 +71,13 @@ public class StatementServiceImpl implements StatementService {
         statement.setAppliedOffer(loanOfferDto);
 
         log.info("Updated statement: {}", statement);
+
+        kafkaProducer.sendFinishRegistrationMessage(
+                EmailMessage.builder()
+                        .address(statement.getClient().getEmail())
+                        .theme(Theme.FINISH_REGISTRATION)
+                        .statementId(loanOfferDto.getStatementId().getMostSignificantBits())
+                        .build());
 
         return statement;
     }
