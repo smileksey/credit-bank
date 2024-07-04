@@ -3,6 +3,8 @@ package org.smileksey.deal.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.EmailMessage;
+import org.smileksey.deal.dto.EmailMessageWithSES;
+import org.smileksey.deal.dto.SESCodeDto;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.dto.enums.ChangeType;
 import org.smileksey.deal.dto.enums.Theme;
@@ -58,15 +60,18 @@ public class DocumentsService {
         Statement statement = statementService.getStatementById(statementId);
 
         if (statement.getStatus() == ApplicationStatus.DOCUMENT_CREATED) {
+            String sesCode = UUID.randomUUID().toString();
+
+            statement.setSesCode(sesCode);
+
             kafkaProducer.sendSendSESMessage(
-                    EmailMessage.builder()
+                    EmailMessageWithSES.builder()
                             .address(statement.getClient().getEmail())
                             .theme(Theme.SEND_SES)
                             .statementId(statementId.getMostSignificantBits())
+                            .sesCode(sesCode)
                             .build());
 
-            //FIXME create normal code generation and new DTO to send code via Kafka
-            statement.setSesCode("java");
             log.info("Generated SES code for Statement with ID [{}]: {}", statement.getStatementId(), statement.getSesCode());
 
         } else {
@@ -76,11 +81,11 @@ public class DocumentsService {
 
 
     @Transactional
-    public void handleVerifySESCode(UUID statementId, String sesCode) {
+    public void handleVerifySESCode(UUID statementId, SESCodeDto sesCodeDto) {
         Statement statement = statementService.getStatementById(statementId);
 
         if (statement.getStatus() == ApplicationStatus.DOCUMENT_CREATED) {
-            if(statement.getSesCode().equals(sesCode.trim())) {
+            if(statement.getSesCode().equals(sesCodeDto.getSesCode().trim())) {
                 kafkaProducer.sendCreditIssuedMessage(
                         EmailMessage.builder()
                                 .address(statement.getClient().getEmail())
@@ -104,7 +109,7 @@ public class DocumentsService {
 
                 log.info("Updated statement: {}", statement);
             } else {
-                throw new InvalidSesCodeException("Invalid SesCode: " + sesCode);
+                throw new InvalidSesCodeException("Invalid SesCode: " + sesCodeDto.getSesCode());
             }
         } else {
             throw new StatementStatusException("Statement has inappropriate status for this action: [" + statement.getStatus() + "]");

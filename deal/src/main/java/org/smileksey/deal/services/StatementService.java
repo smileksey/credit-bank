@@ -1,6 +1,7 @@
 package org.smileksey.deal.services;
 
 import org.smileksey.deal.dto.LoanOfferDto;
+import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
 
@@ -13,4 +14,6 @@ public interface StatementService {
     Statement updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto);
 
     Statement getStatementById(UUID statementId);
+
+    void updateStatementStatus(UUID statementId);
 }

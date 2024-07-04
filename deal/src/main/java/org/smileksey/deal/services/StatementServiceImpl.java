@@ -8,6 +8,7 @@ import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.dto.enums.ChangeType;
 import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.exceptions.StatementNotFoundException;
+import org.smileksey.deal.exceptions.StatementStatusException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.models.StatusHistory;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 @Service
@@ -39,7 +41,15 @@ public class StatementServiceImpl implements StatementService {
 
         Statement statement = Statement.builder()
                 .client(client)
-                .statusHistory(new ArrayList<>())
+                .status(ApplicationStatus.PREAPPROVAL)
+                .statusHistory(new ArrayList<>(Arrays.asList(
+                        StatusHistory
+                                .builder()
+                                .status(ApplicationStatus.PREAPPROVAL)
+                                .time(LocalDateTime.now())
+                                .changeType(ChangeType.AUTOMATIC)
+                                .build()
+                )))
                 .build();
 
         log.info("Created statement: {}", statement);
@@ -60,10 +70,10 @@ public class StatementServiceImpl implements StatementService {
 
         Statement statement = getStatementById(loanOfferDto.getStatementId());
 
-        statement.setStatus(ApplicationStatus.PREAPPROVAL);
+        statement.setStatus(ApplicationStatus.APPROVED);
         statement.getStatusHistory().add(StatusHistory
                 .builder()
-                .status(ApplicationStatus.PREAPPROVAL)
+                .status(ApplicationStatus.APPROVED)
                 .time(LocalDateTime.now())
                 .changeType(ChangeType.AUTOMATIC)
                 .build());
@@ -93,6 +103,25 @@ public class StatementServiceImpl implements StatementService {
 
         return statementRepository.findById(statementId)
                 .orElseThrow(() -> new StatementNotFoundException("Statement with ID " + statementId + " was NOT found"));
+    }
+
+
+    /**
+     * Method updates the Statement status
+     * @param statementId - ID of the Statement entity
+     */
+    @Transactional
+    @Override
+    public void updateStatementStatus(UUID statementId) {
+        Statement statement = getStatementById(statementId);
+
+        if (statement.getStatus() == ApplicationStatus.PREPARE_DOCUMENTS) {
+            statement.setStatus(ApplicationStatus.DOCUMENT_CREATED);
+            log.info("Updated status for Statement with ID [{}]: {}", statement.getStatementId(), statement.getStatus());
+        } else {
+            throw new StatementStatusException("Statement has inappropriate status for this action: [" + statement.getStatus() + "]");
+        }
+
     }
 
 }

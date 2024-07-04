@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.smileksey.deal.dto.SESCodeDto;
+import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.services.*;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.deal.dto.LoanOfferDto;
@@ -97,7 +99,6 @@ public class DealController {
     }
 
 
-    //TODO add status update 'DOCUMENT_CREATED' when dossier create documents (create PUT endpoint).
     @PostMapping("/document/{statementId}/send")
     public void sendDocuments(@PathVariable UUID statementId) {
         documentsService.handleSendDocuments(statementId);
@@ -113,8 +114,21 @@ public class DealController {
 
     //проверка ses кода
     @PostMapping("/document/{statementId}/code")
-    public void verifySESCode(@PathVariable UUID statementId, @RequestBody String sesCode) {
-        documentsService.handleVerifySESCode(statementId, sesCode);
+    public void verifySESCode(@PathVariable UUID statementId, @RequestBody @Valid SESCodeDto sesCodeDto,
+                              BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = ValidationErrorMessage.createMessage(bindingResult.getFieldErrors());
+            throw new ValidationException(errorMessage);
+        }
+
+        documentsService.handleVerifySESCode(statementId, sesCodeDto);
+    }
+
+    //TODO add status update 'DOCUMENT_CREATED' when dossier create documents (create PUT endpoint).
+    @PutMapping("/admin/statement/{statementId}/status")
+    public void updateStatementStatus(@PathVariable UUID statementId) {
+        statementService.updateStatementStatus(statementId);
     }
 
 
