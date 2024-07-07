@@ -29,6 +29,9 @@ class StatementServiceImplTest {
     @Mock
     private StatementRepository statementRepository;
 
+    @Mock
+    private KafkaProducer kafkaProducer;
+
     @InjectMocks
     private StatementServiceImpl statementServiceImpl;
 
@@ -65,6 +68,7 @@ class StatementServiceImplTest {
 
         when(statementRepository.findById(any())).thenReturn(Optional.of(Statement.builder()
                 .statusHistory(new ArrayList<>())
+                .client(new Client())
                 .build()));
 
         LoanOfferDto loanOfferDto = new LoanOfferDto();
@@ -73,8 +77,8 @@ class StatementServiceImplTest {
 
         verify(statementRepository, times(1)).findById(any());
         assertNotNull(updatedStatement);
-        assertEquals(ApplicationStatus.PREAPPROVAL, updatedStatement.getStatus());
-        assertEquals(ApplicationStatus.PREAPPROVAL, updatedStatement.getStatusHistory().get(0).getStatus());
+        assertEquals(ApplicationStatus.APPROVED, updatedStatement.getStatus());
+        assertEquals(ApplicationStatus.APPROVED, updatedStatement.getStatusHistory().get(0).getStatus());
         assertEquals(LocalDateTime.now().toLocalDate(), updatedStatement.getStatusHistory().get(0).getTime().toLocalDate());
         assertEquals(ChangeType.AUTOMATIC, updatedStatement.getStatusHistory().get(0).getChangeType());
         assertEquals(loanOfferDto, updatedStatement.getAppliedOffer());

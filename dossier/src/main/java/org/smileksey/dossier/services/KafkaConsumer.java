@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumer {
 
     private final EmailService emailService;
+    private final DealClient dealClient;
 
     @KafkaListener(topics = "finish-registration", groupId = "my_group")
     public void listenFinishRegistration(EmailMessage emailMessage) {
@@ -28,11 +29,10 @@ public class KafkaConsumer {
         emailService.sendEmail(emailMessage.getTheme().toString(), "Заявка одобрена. Можно отправить запрос на формирование документов.");
     }
 
-    //TODO develop sending PUT request to 'deal' to update Statement status
     @KafkaListener(topics = "send-documents", groupId = "my_group")
     public void listenSendDocuments(EmailMessage emailMessage) {
         log.info("Received message: [{}] | topic = [send-documents]", emailMessage);
-
+        dealClient.sendUpdateStatementStatus(emailMessage.getStatementId());
         emailService.sendEmail(emailMessage.getTheme().toString(), "Ваши документы готовы. Для подписания отправьте запрос на получение ПЭП.");
     }
 

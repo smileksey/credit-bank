@@ -42,14 +42,14 @@ public class StatementServiceImpl implements StatementService {
         Statement statement = Statement.builder()
                 .client(client)
                 .status(ApplicationStatus.PREAPPROVAL)
+                .creationDate(LocalDateTime.now())
                 .statusHistory(new ArrayList<>(Arrays.asList(
                         StatusHistory
                                 .builder()
                                 .status(ApplicationStatus.PREAPPROVAL)
                                 .time(LocalDateTime.now())
                                 .changeType(ChangeType.AUTOMATIC)
-                                .build()
-                )))
+                                .build())))
                 .build();
 
         log.info("Created statement: {}", statement);
@@ -69,15 +69,7 @@ public class StatementServiceImpl implements StatementService {
     public Statement updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto) {
 
         Statement statement = getStatementById(loanOfferDto.getStatementId());
-
-        statement.setStatus(ApplicationStatus.APPROVED);
-        statement.getStatusHistory().add(StatusHistory
-                .builder()
-                .status(ApplicationStatus.APPROVED)
-                .time(LocalDateTime.now())
-                .changeType(ChangeType.AUTOMATIC)
-                .build());
-
+        updateStatementStatus(statement, ApplicationStatus.APPROVED);
         statement.setAppliedOffer(loanOfferDto);
 
         log.info("Updated statement: {}", statement);
@@ -86,7 +78,7 @@ public class StatementServiceImpl implements StatementService {
                 EmailMessage.builder()
                         .address(statement.getClient().getEmail())
                         .theme(Theme.FINISH_REGISTRATION)
-                        .statementId(loanOfferDto.getStatementId().getMostSignificantBits())
+                        .statementId(loanOfferDto.getStatementId())
                         .build());
 
         return statement;
@@ -107,21 +99,49 @@ public class StatementServiceImpl implements StatementService {
 
 
     /**
-     * Method updates the Statement status
+     * Method updates the Statement status to DOCUMENT_CREATED
      * @param statementId - ID of the Statement entity
      */
     @Transactional
     @Override
-    public void updateStatementStatus(UUID statementId) {
+    public void updateToDocumentCreated(UUID statementId) {
         Statement statement = getStatementById(statementId);
 
         if (statement.getStatus() == ApplicationStatus.PREPARE_DOCUMENTS) {
-            statement.setStatus(ApplicationStatus.DOCUMENT_CREATED);
+
+            updateStatementStatus(statement, ApplicationStatus.DOCUMENT_CREATED);
+
             log.info("Updated status for Statement with ID [{}]: {}", statement.getStatementId(), statement.getStatus());
         } else {
             throw new StatementStatusException("Statement has inappropriate status for this action: [" + statement.getStatus() + "]");
         }
+    }
 
+
+    /**
+     * Method updates given Statement entity
+     * @param statement - the Statement entity to be updated
+     */
+    @Transactional
+    @Override
+    public void updateStatement(Statement statement) {
+        statementRepository.save(statement);
+    }
+
+    /**
+     * Method updates the Statement status to DOCUMENT_CREATED
+     * @param statement - Statement entity to be updated
+     * @param newStatus - new status for the Statement entity
+     */
+    @Override
+    public void updateStatementStatus(Statement statement, ApplicationStatus newStatus) {
+        statement.setStatus(newStatus);
+        statement.getStatusHistory().add(StatusHistory
+                .builder()
+                .status(newStatus)
+                .time(LocalDateTime.now())
+                .changeType(ChangeType.AUTOMATIC)
+                .build());
     }
 
 }

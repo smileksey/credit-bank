@@ -6,14 +6,11 @@ import org.smileksey.deal.dto.EmailMessage;
 import org.smileksey.deal.dto.EmailMessageWithSES;
 import org.smileksey.deal.dto.SESCodeDto;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
-import org.smileksey.deal.dto.enums.ChangeType;
 import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.exceptions.InvalidSesCodeException;
 import org.smileksey.deal.exceptions.StatementStatusException;
 import org.smileksey.deal.models.Statement;
-import org.smileksey.deal.models.StatusHistory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -27,25 +24,20 @@ public class DocumentsService {
     private final KafkaProducer kafkaProducer;
 
 
-    @Transactional
     public void handleSendDocuments(UUID statementId) {
         Statement statement = statementService.getStatementById(statementId);
 
         if (statement.getStatus() == ApplicationStatus.CC_APPROVED) {
+
+            statementService.updateStatementStatus(statement, ApplicationStatus.PREPARE_DOCUMENTS);
+            statementService.updateStatement(statement);
+
             kafkaProducer.sendSendDocumentsMessage(
                     EmailMessage.builder()
                             .address(statement.getClient().getEmail())
                             .theme(Theme.SEND_DOCUMENTS)
-                            .statementId(statementId.getMostSignificantBits())
+                            .statementId(statementId)
                             .build());
-
-            statement.setStatus(ApplicationStatus.PREPARE_DOCUMENTS);
-            statement.getStatusHistory().add(StatusHistory
-                    .builder()
-                    .status(ApplicationStatus.PREPARE_DOCUMENTS)
-                    .time(LocalDateTime.now())
-                    .changeType(ChangeType.AUTOMATIC)
-                    .build());
 
             log.info("Updated statement: {}", statement);
 
@@ -55,7 +47,6 @@ public class DocumentsService {
     }
 
 
-    @Transactional
     public void handleSignDocuments(UUID statementId) {
         Statement statement = statementService.getStatementById(statementId);
 
@@ -63,12 +54,13 @@ public class DocumentsService {
             String sesCode = UUID.randomUUID().toString();
 
             statement.setSesCode(sesCode);
+            statementService.updateStatement(statement);
 
             kafkaProducer.sendSendSESMessage(
                     EmailMessageWithSES.builder()
                             .address(statement.getClient().getEmail())
                             .theme(Theme.SEND_SES)
-                            .statementId(statementId.getMostSignificantBits())
+                            .statementId(statementId)
                             .sesCode(sesCode)
                             .build());
 
@@ -80,32 +72,23 @@ public class DocumentsService {
     }
 
 
-    @Transactional
     public void handleVerifySESCode(UUID statementId, SESCodeDto sesCodeDto) {
         Statement statement = statementService.getStatementById(statementId);
 
         if (statement.getStatus() == ApplicationStatus.DOCUMENT_CREATED) {
             if(statement.getSesCode().equals(sesCodeDto.getSesCode().trim())) {
+
+                statementService.updateStatementStatus(statement, ApplicationStatus.DOCUMENT_SIGNED);
+                statementService.updateStatementStatus(statement, ApplicationStatus.CREDIT_ISSUED);
+                statement.setSignDate(LocalDateTime.now());
+                statementService.updateStatement(statement);
+
                 kafkaProducer.sendCreditIssuedMessage(
                         EmailMessage.builder()
                                 .address(statement.getClient().getEmail())
                                 .theme(Theme.CREDIT_ISSUED)
-                                .statementId(statementId.getMostSignificantBits())
+                                .statementId(statementId)
                                 .build());
-
-                statement.setStatus(ApplicationStatus.CREDIT_ISSUED);
-                statement.getStatusHistory().add(StatusHistory
-                        .builder()
-                        .status(ApplicationStatus.DOCUMENT_SIGNED)
-                        .time(LocalDateTime.now())
-                        .changeType(ChangeType.AUTOMATIC)
-                        .build());
-                statement.getStatusHistory().add(StatusHistory
-                        .builder()
-                        .status(ApplicationStatus.CREDIT_ISSUED)
-                        .time(LocalDateTime.now())
-                        .changeType(ChangeType.AUTOMATIC)
-                        .build());
 
                 log.info("Updated statement: {}", statement);
             } else {
@@ -115,5 +98,8 @@ public class DocumentsService {
             throw new StatementStatusException("Statement has inappropriate status for this action: [" + statement.getStatus() + "]");
         }
     }
+
+
+
 
 }

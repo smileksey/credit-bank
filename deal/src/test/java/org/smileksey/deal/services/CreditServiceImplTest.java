@@ -38,6 +38,9 @@ class CreditServiceImplTest {
     @Mock
     private CalculatorClient calculatorClient;
 
+    @Mock
+    private KafkaProducer kafkaProducer;
+
     @InjectMocks
     private CreditServiceImpl creditServiceImpl;
 

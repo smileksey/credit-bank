@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.dossier.utils.HttpEntityConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,14 +21,17 @@ public class DealClient {
     @Value("${deal.url}")
     private String dealUrl;
 
-    //FIXME
+
     /**
-     * Method makes a request to the 'deal' microservice and returns its response
+     * Method executes a PUT request to the 'deal' microservice to update a Statement entity
      * @param statementId - ID of the Statement entity to be updated
-     * @return ResponseEntity with void body
      */
-    public ResponseEntity<Void> sendUpdateStatementStatus(Long statementId) {
-//        log.info("Sending request to {}{}", dealUrl, OFFER_SELECT_PATH);
-        return restTemplate.exchange(dealUrl + "/admin/statement/" + statementId + "/status", HttpMethod.PUT, HttpEntityConstructor.createHttpEntity(null), new ParameterizedTypeReference<Void>() {});
+    public void sendUpdateStatementStatus(UUID statementId) {
+        String url = dealUrl + "/deal/admin/statement/" + statementId + "/status";
+        restTemplate.exchange(
+                url,
+                HttpMethod.PUT, HttpEntityConstructor.createHttpEntity(null),
+                Void.class);
+        log.info("Sending PUT request to {}", url);
     }
 }

@@ -13,6 +13,7 @@ import org.smileksey.deal.dto.enums.MaritalStatus;
 import org.smileksey.deal.models.Credit;
 import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.services.CreditService;
+import org.smileksey.deal.services.DocumentsService;
 import org.smileksey.deal.services.LoanOfferServiceImpl;
 import org.smileksey.deal.services.StatementService;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
@@ -55,6 +56,9 @@ class DealControllerTest {
 
     @MockBean
     private RestTemplate restTemplate;
+
+    @MockBean
+    private DocumentsService documentsService;
 
 
     @Test

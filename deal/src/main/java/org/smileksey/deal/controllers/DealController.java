@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.SESCodeDto;
-import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.services.*;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.deal.dto.LoanOfferDto;
@@ -101,21 +100,22 @@ public class DealController {
 
     @PostMapping("/document/{statementId}/send")
     public void sendDocuments(@PathVariable UUID statementId) {
+        log.info("Getting request to /document/{}/send", statementId);
         documentsService.handleSendDocuments(statementId);
     }
 
 
-    //ses code формируется на этом этапе
     @PostMapping("/document/{statementId}/sign")
     public void signDocuments(@PathVariable UUID statementId) {
+        log.info("Getting request to /document/{}/sign", statementId);
         documentsService.handleSignDocuments(statementId);
     }
 
 
-    //проверка ses кода
     @PostMapping("/document/{statementId}/code")
     public void verifySESCode(@PathVariable UUID statementId, @RequestBody @Valid SESCodeDto sesCodeDto,
                               BindingResult bindingResult) {
+        log.info("Getting request to /document/{}/code", statementId);
 
         if (bindingResult.hasErrors()) {
             String errorMessage = ValidationErrorMessage.createMessage(bindingResult.getFieldErrors());
@@ -125,10 +125,11 @@ public class DealController {
         documentsService.handleVerifySESCode(statementId, sesCodeDto);
     }
 
-    //TODO add status update 'DOCUMENT_CREATED' when dossier create documents (create PUT endpoint).
+
     @PutMapping("/admin/statement/{statementId}/status")
     public void updateStatementStatus(@PathVariable UUID statementId) {
-        statementService.updateStatementStatus(statementId);
+        log.info("Getting request to /admin/statement/{}/status", statementId);
+        statementService.updateToDocumentCreated(statementId);
     }
 
 

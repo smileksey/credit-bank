@@ -74,7 +74,7 @@ public class CreditServiceImpl implements CreditService {
                         EmailMessage.builder()
                                 .address(client.getEmail())
                                 .theme(Theme.CREATE_DOCUMENTS)
-                                .statementId(statementId.getMostSignificantBits())
+                                .statementId(statementId)
                                 .build());
 
             } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
@@ -89,7 +89,7 @@ public class CreditServiceImpl implements CreditService {
                     EmailMessage.builder()
                             .address(client.getEmail())
                             .theme(Theme.STATEMENT_DENIED)
-                            .statementId(statementId.getMostSignificantBits())
+                            .statementId(statementId)
                             .build());
 
         } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");

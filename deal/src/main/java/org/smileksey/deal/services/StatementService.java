@@ -15,5 +15,9 @@ public interface StatementService {
 
     Statement getStatementById(UUID statementId);
 
-    void updateStatementStatus(UUID statementId);
+    void updateToDocumentCreated(UUID statementId);
+
+    void updateStatement(Statement statement);
+
+    void updateStatementStatus(Statement statement, ApplicationStatus newStatus);
 }

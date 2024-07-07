@@ -3,6 +3,8 @@ package org.smileksey.dossier.dto;
 import lombok.*;
 import org.smileksey.dossier.dto.enums.Theme;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @ToString
@@ -12,6 +14,6 @@ import org.smileksey.dossier.dto.enums.Theme;
 public class EmailMessageWithSES {
     private String address;
     private Theme theme;
-    private Long statementId;
+    private UUID statementId;
     private String sesCode;
 }
