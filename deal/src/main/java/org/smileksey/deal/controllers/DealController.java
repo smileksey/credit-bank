@@ -36,7 +36,7 @@ public class DealController {
 
     @Operation(summary = "Calculate 4 credit options")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "4 credit options generated",
+            @ApiResponse(responseCode = "200", description = "4 credit options have been generated",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = LoanOfferDto.class)) }),
             @ApiResponse(responseCode = "400", description = "Invalid field values",
@@ -60,9 +60,9 @@ public class DealController {
 
     @Operation(summary = "Select one of the 4 offered credit options")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Option selected"),
+            @ApiResponse(responseCode = "200", description = "Option has been selected"),
             @ApiResponse(responseCode = "400", description = "Invalid field values"),
-            @ApiResponse(responseCode = "404", description = "Statement was not found")
+            @ApiResponse(responseCode = "404", description = "Statement is not found")
             })
     @PostMapping("/offer/select")
     public void selectOffer(@RequestBody @Valid LoanOfferDto loanOfferDto, BindingResult bindingResult) {
@@ -98,6 +98,12 @@ public class DealController {
     }
 
 
+    @Operation(summary = "Request documents to be sent")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents have been sent"),
+            @ApiResponse(responseCode = "400", description = "Statement has inappropriate status for this action"),
+            @ApiResponse(responseCode = "404", description = "Statement is not found")
+    })
     @PostMapping("/document/{statementId}/send")
     public void sendDocuments(@PathVariable UUID statementId) {
         log.info("Getting request to /document/{}/send", statementId);
@@ -105,6 +111,12 @@ public class DealController {
     }
 
 
+    @Operation(summary = "Request SES code to sign documents")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SES code has been sent"),
+            @ApiResponse(responseCode = "400", description = "Statement has inappropriate status for this action"),
+            @ApiResponse(responseCode = "404", description = "Statement is not found")
+    })
     @PostMapping("/document/{statementId}/sign")
     public void signDocuments(@PathVariable UUID statementId) {
         log.info("Getting request to /document/{}/sign", statementId);
@@ -112,6 +124,12 @@ public class DealController {
     }
 
 
+    @Operation(summary = "Sign documents with SES code")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents have been signed. Credit has been issued"),
+            @ApiResponse(responseCode = "400", description = "Statement has inappropriate status for this action OR SES code is invalid"),
+            @ApiResponse(responseCode = "404", description = "Statement is not found")
+    })
     @PostMapping("/document/{statementId}/code")
     public void verifySESCode(@PathVariable UUID statementId, @RequestBody @Valid SESCodeDto sesCodeDto,
                               BindingResult bindingResult) {
@@ -126,6 +144,12 @@ public class DealController {
     }
 
 
+    @Operation(summary = "Update Statement status when documents sent")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Statement status has been updated"),
+            @ApiResponse(responseCode = "400", description = "Statement has inappropriate status for this action"),
+            @ApiResponse(responseCode = "404", description = "Statement is not found")
+    })
     @PutMapping("/admin/statement/{statementId}/status")
     public void updateStatementStatus(@PathVariable UUID statementId) {
         log.info("Getting request to /admin/statement/{}/status", statementId);
