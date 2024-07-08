@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaConsumer {
 
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final DealClient dealClient;
 
 
