@@ -19,10 +19,6 @@ public class EmailServiceImpl implements EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
-    /** Address to send email to */
-    @Value("${mail.recipient}")
-    private String to;
-
 
     /**
      * Method sends an email with specified subject and text asynchronously
@@ -31,7 +27,7 @@ public class EmailServiceImpl implements EmailService {
      */
     @Async
     @Override
-    public void sendEmail(String subject, String text) {
+    public void sendEmail(String to, String subject, String text) {
 
         SimpleMailMessage message = new SimpleMailMessage();
 

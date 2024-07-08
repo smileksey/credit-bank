@@ -25,7 +25,10 @@ public class KafkaConsumer {
     public void listenFinishRegistration(EmailMessage emailMessage) {
         log.info("Received message: [{}] | topic = [finish-registration]", emailMessage);
 
-        emailService.sendEmail(emailMessage.getTheme().toString(), "Ваша заявка предварительно одобрена, завершите оформление.");
+        emailService.sendEmail(
+                emailMessage.getAddress(),
+                emailMessage.getTheme().toString(),
+                "Ваша заявка предварительно одобрена, завершите оформление.");
     }
 
 
@@ -38,7 +41,10 @@ public class KafkaConsumer {
     public void listenCreateDocuments(EmailMessage emailMessage) {
         log.info("Received message: [{}] | topic = [create-documents]", emailMessage);
 
-        emailService.sendEmail(emailMessage.getTheme().toString(), "Заявка одобрена. Можно отправить запрос на формирование документов.");
+        emailService.sendEmail(
+                emailMessage.getAddress(),
+                emailMessage.getTheme().toString(),
+                "Заявка одобрена. Можно отправить запрос на формирование документов.");
     }
 
 
@@ -51,8 +57,12 @@ public class KafkaConsumer {
     @KafkaListener(topics = "send-documents", groupId = "my_group")
     public void listenSendDocuments(EmailMessage emailMessage) {
         log.info("Received message: [{}] | topic = [send-documents]", emailMessage);
+
         dealClient.sendUpdateStatementStatus(emailMessage.getStatementId());
-        emailService.sendEmail(emailMessage.getTheme().toString(), "Ваши документы готовы. Для подписания отправьте запрос на получение ПЭП.");
+        emailService.sendEmail(
+                emailMessage.getAddress(),
+                emailMessage.getTheme().toString(),
+                "Ваши документы готовы. Для подписания отправьте запрос на получение ПЭП.");
     }
 
 
@@ -65,7 +75,10 @@ public class KafkaConsumer {
     public void listenSendSES(EmailMessageWithSES emailMessage) {
         log.info("Received message: [{}] | topic = [send-ses]", emailMessage);
 
-        emailService.sendEmail(emailMessage.getTheme().toString(), "Ваш код ПЭП: " + emailMessage.getSesCode());
+        emailService.sendEmail(
+                emailMessage.getAddress(),
+                emailMessage.getTheme().toString(),
+                "Ваш код ПЭП: " + emailMessage.getSesCode());
     }
 
 
@@ -78,7 +91,10 @@ public class KafkaConsumer {
     public void listenCreditIssued(EmailMessage emailMessage) {
         log.info("Received message: [{}] | topic = [credit-issued]", emailMessage);
 
-        emailService.sendEmail(emailMessage.getTheme().toString(), "Кредит оформлен.");
+        emailService.sendEmail(
+                emailMessage.getAddress(),
+                emailMessage.getTheme().toString(),
+                "Кредит оформлен.");
     }
 
 
@@ -91,7 +107,10 @@ public class KafkaConsumer {
     public void listenStatementDenied(EmailMessage emailMessage) {
         log.info("Received message: [{}] | topic = [statement-denied]", emailMessage);
 
-        emailService.sendEmail(emailMessage.getTheme().toString(), "В кредите отказано.");
+        emailService.sendEmail(
+                emailMessage.getAddress(),
+                emailMessage.getTheme().toString(),
+                "В кредите отказано.");
     }
 
 }
