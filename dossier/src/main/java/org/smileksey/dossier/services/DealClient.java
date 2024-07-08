@@ -21,7 +21,7 @@ public class DealClient {
     @Value("${deal.url}")
     private String dealUrl;
 
-    /** Path to the '/admin/statement/{statementId}/status' endpoint */
+    /** Path to the '/deal/admin/statement/{statementId}/status' endpoint */
     private static final String UPDATE_STATUS_PATH = "/deal/admin/statement/{statementId}/status";
 
 

@@ -55,7 +55,6 @@ public class KafkaConsumerConfig {
                 new JsonDeserializer<>(EmailMessageWithSES.class, false));
     }
 
-
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, EmailMessage> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, EmailMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();

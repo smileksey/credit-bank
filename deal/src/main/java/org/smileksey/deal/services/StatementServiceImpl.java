@@ -128,8 +128,9 @@ public class StatementServiceImpl implements StatementService {
         statementRepository.save(statement);
     }
 
+
     /**
-     * Method updates the Statement status to DOCUMENT_CREATED
+     * Method updates the Statement status to the one passed in the arguments
      * @param statement - Statement entity to be updated
      * @param newStatus - new status for the Statement entity
      */

@@ -24,6 +24,11 @@ public class DocumentsService {
     private final KafkaProducer kafkaProducer;
 
 
+    /**
+     * Method updates corresponding Statement entity with a new status
+     * when 'send documents' request is received from client
+     * @param statementId - ID of the Statement entity
+     */
     public void handleSendDocuments(UUID statementId) {
         Statement statement = statementService.getStatementById(statementId);
 
@@ -47,6 +52,11 @@ public class DocumentsService {
     }
 
 
+    /**
+     * Method updates corresponding Statement entity with a generated SES code
+     * when 'sign documents' request is received from client
+     * @param statementId - ID of the Statement entity
+     */
     public void handleSignDocuments(UUID statementId) {
         Statement statement = statementService.getStatementById(statementId);
 
@@ -72,6 +82,12 @@ public class DocumentsService {
     }
 
 
+    /**
+     * Method verifies the SES code received from client
+     * and updates corresponding Statement entity with a new status and sign date
+     * @param statementId - ID of the Statement entity
+     * @param sesCodeDto - dto containing the SES code
+     */
     public void handleVerifySESCode(UUID statementId, SESCodeDto sesCodeDto) {
         Statement statement = statementService.getStatementById(statementId);
 
@@ -98,8 +114,5 @@ public class DocumentsService {
             throw new StatementStatusException("Statement has inappropriate status for this action: [" + statement.getStatus() + "]");
         }
     }
-
-
-
 
 }

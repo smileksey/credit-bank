@@ -18,6 +18,10 @@ public class KafkaProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
 
+    /**
+     * Method generates and publishes a message to Kafka's 'finish-registration' topic
+     * @param emailMessage - object to be placed in the message
+     */
     public void sendFinishRegistrationMessage(EmailMessage emailMessage) {
         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("finish-registration", emailMessage);
 
@@ -35,6 +39,10 @@ public class KafkaProducer {
     }
 
 
+    /**
+     * Method generates and publishes a message to Kafka's 'create-documents' topic
+     * @param emailMessage - object to be placed in the message
+     */
     public void sendCreateDocumentsMessage(EmailMessage emailMessage) {
         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("create-documents", emailMessage);
 
@@ -52,6 +60,10 @@ public class KafkaProducer {
     }
 
 
+    /**
+     * Method generates and publishes a message to Kafka's 'send-documents' topic
+     * @param emailMessage - object to be placed in the message
+     */
     public void sendSendDocumentsMessage(EmailMessage emailMessage) {
         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("send-documents", emailMessage);
 
@@ -70,6 +82,10 @@ public class KafkaProducer {
     }
 
 
+    /**
+     * Method generates and publishes a message to Kafka's 'send-ses' topic
+     * @param emailMessage - object to be placed in the message
+     */
     public void sendSendSESMessage(EmailMessageWithSES emailMessage) {
         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("send-ses", emailMessage);
 
@@ -88,6 +104,10 @@ public class KafkaProducer {
     }
 
 
+    /**
+     * Method generates and publishes a message to Kafka's 'credit-issued' topic
+     * @param emailMessage - object to be placed in the message
+     */
     public void sendCreditIssuedMessage(EmailMessage emailMessage) {
         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("credit-issued", emailMessage);
 
@@ -105,6 +125,10 @@ public class KafkaProducer {
     }
 
 
+    /**
+     * Method generates and publishes a message to Kafka's 'statement-denied' topic
+     * @param emailMessage - object to be placed in the message
+     */
     public void sendStatementDeniedMessage(EmailMessage emailMessage) {
         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("statement-denied", emailMessage);
 
