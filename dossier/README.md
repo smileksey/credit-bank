@@ -15,4 +15,4 @@
 - `credit-issued` - уведомление об успешном оформлении кредита.
 - `statement-denied` - уведомление об отказе в кредите.
 
-После обработки сообщения из топика `send-documents` МС Досье отправлет PUT-запрос в МС Сделка на http://localhost:8081/deal/admin/statement/{statementId}/status для обновления статуса заявки (`Statement`)
+После обработки сообщения из топика `send-documents` МС Досье отправлет PUT-запрос в МС Сделка на http://localhost:8081/deal/admin/statement/{statementId}/status для обновления статуса заявки (`Statement`).
