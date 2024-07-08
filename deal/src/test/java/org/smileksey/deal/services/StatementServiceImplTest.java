@@ -13,7 +13,6 @@ import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.repositories.StatementRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
