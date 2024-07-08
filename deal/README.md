@@ -142,6 +142,7 @@
      "accountNumber": "123456789"
    }
     ```
+---
 
 4. `POST` http://localhost:8081/deal/document/{statementId}/send
 
@@ -151,6 +152,7 @@
    - Достаётся из БД заявка (`Statement`) по `statementId`.
    - Обновляется статус заявки, история статусов.
    - Через Kafka публикуется сообщение для МС Досье о необходимости отправки соответствующего email клиенту.
+---
   
 5. `POST` http://localhost:8081/deal/document/{statementId}/sign
 
@@ -160,6 +162,7 @@
    - Достаётся из БД заявка(`Statement`) по `statementId`.
    - Заявке присваивается уникальный код ПЭП, сохраняется в БД.
    - Через Kafka публикуется сообщение для МС Досье о необходимости отправки соответствующего email клиенту, содержащего код ПЭП.
+---
 
 6. `POST` http://localhost:8081/deal/document/{statementId}/code
 
@@ -182,6 +185,7 @@
     "sesCode": "3971e197-3bb6-4a9a-9266-ab396b8b1693"
    }
     ```
+---
 
 7. `PUT` http://localhost:8081/deal/admin/statement/{statementId}/status
 
