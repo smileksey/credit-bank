@@ -108,10 +108,8 @@ public class DocumentsService {
                 statementService.updateStatementStatus(statement, ApplicationStatus.DOCUMENT_SIGNED);
                 statementService.updateStatementStatus(statement, ApplicationStatus.CREDIT_ISSUED);
                 statement.setSignDate(LocalDateTime.now());
-                statementService.updateStatement(statement);
 
                 credit.setCreditStatus(CreditStatus.ISSUED);
-                creditService.updateCredit(credit);
                 log.info("Updated Credit status to: [{}]. Credit ID: {}", credit.getCreditStatus(), credit.getCreditId());
 
                 kafkaProducer.sendCreditIssuedMessage(
