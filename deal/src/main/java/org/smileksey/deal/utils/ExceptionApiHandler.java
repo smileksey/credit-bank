@@ -64,6 +64,18 @@ public class ExceptionApiHandler {
     }
 
 
+    /** This method intercepts CreditNotFoundException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleCreditNotFoundException(CreditNotFoundException e) {
+
+        ErrorResponse response = new ErrorResponse(e.getMessage());
+
+        log.error("ERROR: {}", e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+
     /** This method intercepts ClientAlreadyExistsException and returns an error response to a client  */
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleClientAlreadyExistsException(ClientAlreadyExistsException e) {

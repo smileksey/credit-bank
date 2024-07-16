@@ -6,11 +6,15 @@ import org.smileksey.deal.dto.EmailMessage;
 import org.smileksey.deal.dto.EmailMessageWithSES;
 import org.smileksey.deal.dto.SESCodeDto;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
+import org.smileksey.deal.dto.enums.CreditStatus;
 import org.smileksey.deal.dto.enums.Theme;
+import org.smileksey.deal.exceptions.CreditNotFoundException;
 import org.smileksey.deal.exceptions.InvalidSesCodeException;
 import org.smileksey.deal.exceptions.StatementStatusException;
+import org.smileksey.deal.models.Credit;
 import org.smileksey.deal.models.Statement;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,6 +25,7 @@ import java.util.UUID;
 public class DocumentsService {
 
     private final StatementService statementService;
+    private final CreditService creditService;
     private final KafkaProducer kafkaProducer;
 
 
@@ -88,8 +93,14 @@ public class DocumentsService {
      * @param statementId - ID of the Statement entity
      * @param sesCodeDto - dto containing the SES code
      */
+    @Transactional
     public void handleVerifySESCode(UUID statementId, SESCodeDto sesCodeDto) {
         Statement statement = statementService.getStatementById(statementId);
+        Credit credit = statement.getCredit();
+
+        if (credit == null) {
+            throw new CreditNotFoundException("Credit for Statement with ID " + statementId + " was NOT found");
+        }
 
         if (statement.getStatus() == ApplicationStatus.DOCUMENT_CREATED) {
             if(statement.getSesCode().equals(sesCodeDto.getSesCode().trim())) {
@@ -98,6 +109,10 @@ public class DocumentsService {
                 statementService.updateStatementStatus(statement, ApplicationStatus.CREDIT_ISSUED);
                 statement.setSignDate(LocalDateTime.now());
                 statementService.updateStatement(statement);
+
+                credit.setCreditStatus(CreditStatus.ISSUED);
+                creditService.updateCredit(credit);
+                log.info("Updated Credit status to: [{}]. Credit ID: {}", credit.getCreditStatus(), credit.getCreditId());
 
                 kafkaProducer.sendCreditIssuedMessage(
                         EmailMessage.builder()

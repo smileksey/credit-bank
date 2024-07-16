@@ -122,7 +122,6 @@ public class StatementServiceImpl implements StatementService {
      * Method updates given Statement entity
      * @param statement - the Statement entity to be updated
      */
-    @Transactional
     @Override
     public void updateStatement(Statement statement) {
         statementRepository.save(statement);

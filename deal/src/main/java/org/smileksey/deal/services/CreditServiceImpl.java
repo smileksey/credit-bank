@@ -97,6 +97,16 @@ public class CreditServiceImpl implements CreditService {
 
 
     /**
+     * Method updates given Credit entity
+     * @param credit - the Credit entity to be updated
+     */
+    @Override
+    public void updateCredit(Credit credit) {
+        creditRepository.save(credit);
+    }
+
+
+    /**
      * Method builds a ScoringDataDto object
      * @param finishRegistrationRequestDto - input data from client
      * @param appliedOffer - loan offer selected by client

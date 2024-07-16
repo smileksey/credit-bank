@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface CreditService {
 
     Optional<Credit> calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto);
+    void updateCredit(Credit credit);
 }
