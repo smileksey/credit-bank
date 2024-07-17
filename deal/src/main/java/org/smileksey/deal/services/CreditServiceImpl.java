@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.*;
 import org.smileksey.deal.dto.enums.ApplicationStatus;
-import org.smileksey.deal.dto.enums.ChangeType;
 import org.smileksey.deal.dto.enums.CreditStatus;
+import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.*;
 import org.smileksey.deal.repositories.CreditRepository;
@@ -13,7 +13,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +24,7 @@ public class CreditServiceImpl implements CreditService {
     private final StatementService statementService;
     private final CreditRepository creditRepository;
     private final CalculatorClient calculatorClient;
+    private final KafkaProducer kafkaProducer;
 
 
     /**
@@ -67,12 +67,26 @@ public class CreditServiceImpl implements CreditService {
 
                 log.info("Credit: {}", savedCredit);
 
+                kafkaProducer.sendCreateDocumentsMessage(
+                        EmailMessage.builder()
+                                .address(client.getEmail())
+                                .theme(Theme.CREATE_DOCUMENTS)
+                                .statementId(statementId)
+                                .build());
+
             } else throw new InvalidMSResponseException("CreditDto from 'calculator' == null");
 
         } else if (creditDtoResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatementData(statement, false);
             log.info("Loan was refused by 'calculator'");
+
+            kafkaProducer.sendStatementDeniedMessage(
+                    EmailMessage.builder()
+                            .address(client.getEmail())
+                            .theme(Theme.STATEMENT_DENIED)
+                            .statementId(statementId)
+                            .build());
 
         } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
 
@@ -148,22 +162,9 @@ public class CreditServiceImpl implements CreditService {
     private void updateStatementData(Statement statement, boolean isApproved) {
 
         if (isApproved) {
-            statement.setStatus(ApplicationStatus.CC_APPROVED);
-            statement.getStatusHistory().add(StatusHistory.builder()
-                    .status(ApplicationStatus.CC_APPROVED)
-                    .time(LocalDateTime.now())
-                    .changeType(ChangeType.AUTOMATIC)
-                    .build()
-            );
-
+            statementService.updateStatementStatus(statement, ApplicationStatus.CC_APPROVED);
         } else {
-            statement.setStatus(ApplicationStatus.CC_DENIED);
-            statement.getStatusHistory().add(StatusHistory.builder()
-                    .status(ApplicationStatus.CC_DENIED)
-                    .time(LocalDateTime.now())
-                    .changeType(ChangeType.AUTOMATIC)
-                    .build()
-            );
+            statementService.updateStatementStatus(statement, ApplicationStatus.CC_DENIED);
         }
     }
 

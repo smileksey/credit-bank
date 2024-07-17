@@ -44,7 +44,6 @@ public class Statement {
     private ApplicationStatus status;
 
     @Column(name = "creation_date")
-    @CreationTimestamp
     private LocalDateTime creationDate;
 
     @Column(name = "applied_offer", columnDefinition = "jsonb")
@@ -52,7 +51,6 @@ public class Statement {
     private LoanOfferDto appliedOffer;
 
     @Column(name = "sign_date")
-    @CreationTimestamp
     private LocalDateTime signDate;
 
     @Column(name = "ses_code")

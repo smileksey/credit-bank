@@ -1,5 +1,5 @@
 ## Микросервис "deal"
-### Данный микросервис имеет 3 эндпоинта:
+### Данный микросервис имеет 7 эндпоинтов:
 
 1. `POST` http://localhost:8081/deal/statement
 
@@ -82,9 +82,10 @@
    Выбор одного из предложений. Request - `LoanOfferDto`, response - `void`.
 
    - По API приходит `LoanOfferDto`.
-   - Из БД достается заявка(`Statement`) по statementId из `LoanOfferDto`.
+   - Из БД достается заявка (`Statement`) по statementId из `LoanOfferDto`.
    - В заявке обновляется статус, история статусов(`List<StatementStatusHistoryDto>`), принятое предложение `LoanOfferDto` устанавливается в поле `appliedOffer`.
    - Заявка сохраняется.
+   - Через Kafka публикуется сообщение для МС Досье о необходимости отправки соответствующего email клиенту.
 
    *Пример:*
 
@@ -106,15 +107,16 @@
 
 3. `POST` http://localhost:8081/deal/calculate/{statementId}
 
-   Завершение регистрации + полный подсчёт кредита. Request - `FinishRegistrationRequestDto`, param - `String`, response `void`.
+   Завершение регистрации + полный подсчёт кредита. Request - `FinishRegistrationRequestDto`, param - `String`, response - `void`.
 
    - По API приходит объект `FinishRegistrationRequestDto` и параметр `statementId` (String).
-   - Достаётся из БД заявка(`Statement`) по `statementId`.
+   - Достаётся из БД заявка (`Statement`) по `statementId`.
    - `ScoringDataDto` насыщается информацией из `FinishRegistrationRequestDto` и `Client`, который хранится в `Statement`.
    - Отправляется POST запрос на `/calculator/calc` (МС Калькулятор) с телом `ScoringDataDto` через RestTemplate.
    - На основе полученного из кредитного конвейера `CreditDto` создаётся сущность `Credit` и сохраняется в базу со статусом `CALCULATED`.
    - В заявке обновляется статус, история статусов.
    - Заявка сохраняется.
+   - Через Kafka публикуется сообщение для МС Досье о необходимости отправки соответствующего email клиенту.
 
     *Пример:*
 
@@ -140,3 +142,55 @@
      "accountNumber": "123456789"
    }
     ```
+---
+
+4. `POST` http://localhost:8081/deal/document/{statementId}/send
+
+   Запрос на отправку документов. Request - `void`, param - `String`, response - `void`.
+
+   - По API приходит запрос с параметром `statementId`.
+   - Достаётся из БД заявка (`Statement`) по `statementId`.
+   - Обновляется статус заявки, история статусов.
+   - Через Kafka публикуется сообщение для МС Досье о необходимости отправки соответствующего email клиенту.
+---
+  
+5. `POST` http://localhost:8081/deal/document/{statementId}/sign
+
+   Запрос на подписание документов. Request - `void`, param - `String`, response - `void`.
+
+   - По API приходит запрос с параметром `statementId`.
+   - Достаётся из БД заявка (`Statement`) по `statementId`.
+   - Заявке присваивается уникальный код ПЭП, сохраняется в БД.
+   - Через Kafka публикуется сообщение для МС Досье о необходимости отправки соответствующего email клиенту, содержащего код ПЭП.
+---
+
+6. `POST` http://localhost:8081/deal/document/{statementId}/code
+
+   Подписание документов с помощью кода ПЭП. Request - `SESCodeDto`, param - `String`, response - `void`.
+
+   - По API приходит объект `SESCodeDto` и параметр `statementId`.
+   - Достаётся из БД заявка (`Statement`) по `statementId`.
+   - Происходит проверка на соответсвие кода ПЭП из `SESCodeDto` и кода ПЭП в БД для данной заявки.
+   - Обновляется статус заявки, история статусов.
+   - Через Kafka публикуется сообщение для МС Досье о необходимости отправки соответствующего email клиенту.
+
+   *Пример:*
+
+    http://localhost:8081/deal/document/aec3bee4-ba63-497e-ad20-e145cd7d9943/code
+
+    Тело запроса `SESCodeDto`:
+
+   ```json
+   {
+    "sesCode": "3971e197-3bb6-4a9a-9266-ab396b8b1693"
+   }
+    ```
+---
+
+7. `PUT` http://localhost:8081/deal/admin/statement/{statementId}/status
+
+   Изменение статуса заявки (`Statement`) на `DOCUMENT_CREATED` после того, как МС Досье направил документы клиенту на почту. Request - `void`, param - `String`, response - `void`.
+
+   - По API приходит запрос с параметром `statementId`.
+   - Достаётся из БД заявка (`Statement`) по `statementId`.
+   - Обновляется статус заявки, история статусов.
