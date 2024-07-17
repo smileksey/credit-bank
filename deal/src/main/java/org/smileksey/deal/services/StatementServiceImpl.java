@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -95,6 +96,16 @@ public class StatementServiceImpl implements StatementService {
 
         return statementRepository.findById(statementId)
                 .orElseThrow(() -> new StatementNotFoundException("Statement with ID " + statementId + " was NOT found"));
+    }
+
+
+    /**
+     * Method gets all Statements from the database
+     * @return List of all Statement entities from the database
+     */
+    @Override
+    public List<Statement> getAllStatements() {
+        return statementRepository.findAll();
     }
 
 

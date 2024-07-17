@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.dto.SESCodeDto;
+import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.services.*;
 import org.smileksey.deal.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.deal.dto.LoanOfferDto;
@@ -106,7 +107,7 @@ public class DealController {
     })
     @PostMapping("/document/{statementId}/send")
     public void sendDocuments(@PathVariable UUID statementId) {
-        log.info("Getting request to /document/{}/send", statementId);
+        log.info("Getting request to /deal/document/{}/send", statementId);
         documentsService.handleSendDocuments(statementId);
     }
 
@@ -119,7 +120,7 @@ public class DealController {
     })
     @PostMapping("/document/{statementId}/sign")
     public void signDocuments(@PathVariable UUID statementId) {
-        log.info("Getting request to /document/{}/sign", statementId);
+        log.info("Getting request to /deal/document/{}/sign", statementId);
         documentsService.handleSignDocuments(statementId);
     }
 
@@ -133,7 +134,7 @@ public class DealController {
     @PostMapping("/document/{statementId}/code")
     public void verifySESCode(@PathVariable UUID statementId, @RequestBody @Valid SESCodeDto sesCodeDto,
                               BindingResult bindingResult) {
-        log.info("Getting request to /document/{}/code", statementId);
+        log.info("Getting request to /deal/document/{}/code", statementId);
 
         if (bindingResult.hasErrors()) {
             String errorMessage = ValidationErrorMessage.createMessage(bindingResult.getFieldErrors());
@@ -152,8 +153,31 @@ public class DealController {
     })
     @PutMapping("/admin/statement/{statementId}/status")
     public void updateStatementStatus(@PathVariable UUID statementId) {
-        log.info("Getting request to /admin/statement/{}/status", statementId);
+        log.info("Getting request to /deal/admin/statement/{}/status", statementId);
         statementService.updateToDocumentCreated(statementId);
+    }
+
+
+    @Operation(summary = "Get Statement by it's ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Statement is not found")
+    })
+    @GetMapping("/admin/statement/{statementId}")
+    public Statement getStatementById(@PathVariable UUID statementId) {
+        log.info("Getting request to /deal/admin/statement/{}", statementId);
+        return statementService.getStatementById(statementId);
+    }
+
+
+    @Operation(summary = "Get all Statements")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK")
+    })
+    @GetMapping("/admin/statement")
+    public List<Statement> getStatements() {
+        log.info("Getting request to /deal/admin/statement");
+        return statementService.getAllStatements();
     }
 
 
