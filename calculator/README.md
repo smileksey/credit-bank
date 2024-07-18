@@ -1,7 +1,7 @@
 ## Микросервис "calculator"
 ### Данный микросервис имеет 2 эндпоинта:
 
-1. `POST` http://localhost:8080/calculator/offers
+1. `POST` http://localhost:8084/calculator/offers
 
    Получение четырех предварительных кредитных предложения на основании всех возможных комбинаций булевских полей isInsuranceEnabled и isSalaryClient (false-false, false-true, true-false, true-true).
 
@@ -68,7 +68,7 @@
     ]
     ```
 
-2. `POST` http://localhost:8080/calculator/calc
+2. `POST` http://localhost:8084/calculator/calc
   
    Расчет итоговой ставки(rate), полной стоимости кредита(psk), размера ежемесячного платежа(monthlyPayment), графика ежемесячных платежей (List<PaymentScheduleElementDto>).
 

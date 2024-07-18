@@ -85,7 +85,8 @@ public class DealController {
     @Operation(summary = "Calculate credit details and finish registration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Credit details have been calculated, registration is finished"),
-            @ApiResponse(responseCode = "400", description = "Invalid field values")
+            @ApiResponse(responseCode = "400", description = "Invalid field values"),
+            @ApiResponse(responseCode = "404", description = "Loan was refused")
             })
     @PostMapping("/calculate/{statementId}")
     public void calculateCreditDetails(@PathVariable UUID statementId, @RequestBody @Valid FinishRegistrationRequestDto finishRegistrationRequestDto,
