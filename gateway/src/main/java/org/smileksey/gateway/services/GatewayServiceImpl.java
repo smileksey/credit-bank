@@ -67,9 +67,18 @@ public class GatewayServiceImpl {
                 new ParameterizedTypeReference<List<LoanOfferDto>>() {}
         );
 
+        List<LoanOfferDto> loanOfferDtos = response.getBody();
+
         log.info("Response status: {}", response.getStatusCode());
 
-        return response.getBody();
+        if (loanOfferDtos != null) {
+            log.info("**** Final LoanOfferDto list: ****");
+            for (LoanOfferDto loanOfferDto : loanOfferDtos) {
+                log.info(String.valueOf(loanOfferDto));
+            }
+        }
+
+        return loanOfferDtos;
     }
 
 
