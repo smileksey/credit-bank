@@ -1,8 +1,8 @@
 package org.smileksey.gateway.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.smileksey.gateway.exceptions.EntityNotFoundException;
 import org.smileksey.gateway.exceptions.BadRequestException;
+import org.smileksey.gateway.exceptions.EntityNotFoundException;
 import org.smileksey.gateway.exceptions.InvalidMSResponseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;

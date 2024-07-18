@@ -2,7 +2,6 @@ package org.smileksey.deal.models;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.smileksey.deal.dto.LoanOfferDto;

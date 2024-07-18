@@ -6,7 +6,6 @@ import lombok.*;
 import org.smileksey.gateway.dto.enums.Gender;
 import org.smileksey.gateway.dto.enums.MaritalStatus;
 
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

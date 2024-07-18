@@ -7,7 +7,10 @@ import org.smileksey.gateway.dto.LoanOfferDto;
 import org.smileksey.gateway.dto.LoanStatementRequestDto;
 import org.smileksey.gateway.dto.SESCodeDto;
 import org.smileksey.gateway.services.GatewayServiceImpl;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;

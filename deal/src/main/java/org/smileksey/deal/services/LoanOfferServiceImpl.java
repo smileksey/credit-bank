@@ -7,7 +7,7 @@ import org.smileksey.deal.dto.LoanStatementRequestDto;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

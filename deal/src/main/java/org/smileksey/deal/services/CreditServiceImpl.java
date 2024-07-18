@@ -7,9 +7,13 @@ import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.dto.enums.CreditStatus;
 import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
-import org.smileksey.deal.models.*;
+import org.smileksey.deal.models.Client;
+import org.smileksey.deal.models.Credit;
+import org.smileksey.deal.models.Employment;
+import org.smileksey.deal.models.Statement;
 import org.smileksey.deal.repositories.CreditRepository;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
