@@ -20,7 +20,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GatewayServiceImpl {
+public class GatewayServiceImpl implements GatewayService {
 
     private final RestTemplate restTemplate;
 
@@ -56,6 +56,7 @@ public class GatewayServiceImpl {
      * @param loanStatementRequestDto - request body
      * @return ResponseEntity containing a list of LoanOfferDto entities
      */
+    @Override
     public List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
         String url = statementUrl + STATEMENT_PATH;
         log.info("Sending request to {}", url);
@@ -86,6 +87,7 @@ public class GatewayServiceImpl {
      * Method makes a request to statement's '/statement/offer' endpoint
      * @param loanOfferDto - request body
      */
+    @Override
     public void selectOffer(LoanOfferDto loanOfferDto) {
         String url = statementUrl + OFFER_SELECT_PATH;
         log.info("Sending request to {}", url);
@@ -106,6 +108,7 @@ public class GatewayServiceImpl {
      * @param statementId - path variable representing Statement's ID
      * @param finishRegistrationRequestDto - input data from client
      */
+    @Override
     public void calculateCredit(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
         String url = dealUrl + CALCULATE_CREDIT_PATH + statementId;
         log.info("Sending request to {}", url);
@@ -124,6 +127,7 @@ public class GatewayServiceImpl {
      * Method makes a request to deal's '/deal/document/{statementId}/send' endpoint
      * @param statementId - path variable representing Statement's ID
      */
+    @Override
     public void sendDocuments(UUID statementId) {
         String url = dealUrl + SEND_DOCUMENTS_PATH.replace("{statementId}", statementId.toString());
         log.info("Sending request to {}", url);
@@ -143,6 +147,7 @@ public class GatewayServiceImpl {
      * Method makes a request to deal's '/deal/document/{statementId}/sign' endpoint
      * @param statementId - path variable representing Statement's ID
      */
+    @Override
     public void signDocuments(UUID statementId) {
         String url = dealUrl + SIGN_DOCUMENTS_PATH.replace("{statementId}", statementId.toString());
         log.info("Sending request to {}", url);
@@ -163,6 +168,7 @@ public class GatewayServiceImpl {
      * @param statementId - path variable representing Statement's ID
      * @param sesCodeDto - request body containing SES code
      */
+    @Override
     public void verifySesCode(UUID statementId, SESCodeDto sesCodeDto) {
         String url = dealUrl + VERIFY_SES_CODE_PATH.replace("{statementId}", statementId.toString());
         log.info("Sending request to {}", url);

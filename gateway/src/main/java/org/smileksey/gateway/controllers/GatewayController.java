@@ -11,7 +11,7 @@ import org.smileksey.gateway.dto.FinishRegistrationRequestDto;
 import org.smileksey.gateway.dto.LoanOfferDto;
 import org.smileksey.gateway.dto.LoanStatementRequestDto;
 import org.smileksey.gateway.dto.SESCodeDto;
-import org.smileksey.gateway.services.GatewayServiceImpl;
+import org.smileksey.gateway.services.GatewayService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Slf4j
 public class GatewayController {
 
-    private final GatewayServiceImpl gatewayService;
+    private final GatewayService gatewayService;
 
 
     @Operation(summary = "Calculate 4 credit options")
