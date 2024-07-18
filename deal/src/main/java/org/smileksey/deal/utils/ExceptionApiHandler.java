@@ -2,7 +2,9 @@ package org.smileksey.deal.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.smileksey.deal.exceptions.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +38,21 @@ public class ExceptionApiHandler {
         log.error("ERROR: {}", e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    /** This method intercepts LoanRefusedException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<String> handleLoanRefusedException(LoanRefusedException e) {
+
+        log.error("ERROR: {}", e.getMessage());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .headers(headers)
+                .body(e.getMessage());
     }
 
 

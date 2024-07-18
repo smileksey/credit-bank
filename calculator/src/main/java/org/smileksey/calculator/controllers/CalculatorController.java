@@ -81,7 +81,7 @@ public class CalculatorController {
             throw new PrescoringException(errorMessage);
         }
 
-        return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(LoanRefusedException::new);
+        return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(() -> new LoanRefusedException("Loan was refused"));
     }
 
 

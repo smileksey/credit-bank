@@ -3,8 +3,11 @@ package org.smileksey.gateway.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import org.smileksey.gateway.exceptions.EntityNotFoundException;
+import org.smileksey.gateway.exceptions.BadRequestException;
 import org.smileksey.gateway.exceptions.InvalidMSResponseException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,16 +21,48 @@ import java.time.format.DateTimeParseException;
 public class ExceptionApiHandler {
 
 
-
-    /** This method intercepts InvalidMSResponseException and returns an error response to a client  */
+    /** This method intercepts BadRequestException and returns an error response to a client  */
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleInvalidMsResponseException(InvalidMSResponseException e) {
-
-        ErrorResponse response = new ErrorResponse(e.getMessage());
+    private ResponseEntity<String> handleBadRequestExceptionException(BadRequestException e) {
 
         log.error("ERROR: {}", e.getMessage());
 
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(headers)
+                .body(e.getMessage());
+    }
+
+
+    /** This method intercepts EntityNotFoundException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException e) {
+
+        log.error("ERROR: {}", e.getMessage());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .headers(headers)
+                .body(e.getMessage());
+    }
+
+
+    /** This method intercepts InvalidMSResponseException and returns an error response to a client  */
+    @ExceptionHandler
+    private ResponseEntity<String> handleInvalidMsResponseException(InvalidMSResponseException e) {
+
+        log.error("ERROR: {}", e.getMessage());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .headers(headers)
+                .body(e.getMessage());
     }
 
 
@@ -56,16 +91,5 @@ public class ExceptionApiHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-
-    /** This method intercepts EntityNotFoundException and returns an error response to a client  */
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
-
-        ErrorResponse response = new ErrorResponse(e.getMessage());
-
-        log.error("ERROR: {}", e.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
 
 }
