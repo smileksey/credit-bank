@@ -1,9 +1,9 @@
 ## Микросервис "deal"
-### Данный микросервис имеет 7 эндпоинтов:
+### Данный микросервис имеет 9 эндпоинтов:
 
 1. `POST` http://localhost:8081/deal/statement
 
-     Расчёт возможных условий кредита. Request - `LoanStatementRequestDto`, response - `List<LoanOfferDto>`
+     Расчёт возможных условий кредита. Request - `LoanStatementRequestDto`, response - `List<LoanOfferDto>`.
 
     - Создается сущность `Client` и сохраняется в БД. 
     - Создаётся сущность `Statement` со связью на только что созданный `Client` и сохраняется в БД.
@@ -194,3 +194,23 @@
    - По API приходит запрос с параметром `statementId`.
    - Достаётся из БД заявка (`Statement`) по `statementId`.
    - Обновляется статус заявки, история статусов.
+
+---
+
+8. `GET` http://localhost:8081/deal/admin/statement/{statementId}
+
+   Получение заявки (`Statement`) по ID. Request - `void`, param - `String`, response - `Statement`.
+
+   - По API приходит запрос с параметром `statementId`.
+   - Достаётся из БД заявка (`Statement`) по `statementId`.
+   - Заявка (`Statement`) возвращается клиенту в виде ответа.
+   
+---
+
+9. `GET` http://localhost:8081/deal/admin/statement
+
+   Получение списка всех заявок (`Statement`) из базы данных. Request - `void`, response - `List<Statement>`.
+
+   - По API приходит запрос.
+   - Достаются все заявки (`Statement`) из БД.
+   - В виде ответа возвращается список всех заявок.

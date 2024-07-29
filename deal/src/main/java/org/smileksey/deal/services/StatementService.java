@@ -5,6 +5,7 @@ import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Statement;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface StatementService {
@@ -14,6 +15,8 @@ public interface StatementService {
     Statement updateStatementWithSelectedOffer(LoanOfferDto loanOfferDto);
 
     Statement getStatementById(UUID statementId);
+
+    List<Statement> getAllStatements();
 
     void updateToDocumentCreated(UUID statementId);
 

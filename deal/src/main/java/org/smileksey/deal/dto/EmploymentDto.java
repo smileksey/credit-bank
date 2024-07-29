@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.smileksey.deal.dto.enums.EmploymentStatus;
 import org.smileksey.deal.dto.enums.EmploymentPosition;
+import org.smileksey.deal.dto.enums.EmploymentStatus;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

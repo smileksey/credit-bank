@@ -15,11 +15,14 @@ import org.smileksey.calculator.exceptions.LoanRefusedException;
 import org.smileksey.calculator.exceptions.PrescoringException;
 import org.smileksey.calculator.services.CreditService;
 import org.smileksey.calculator.services.LoanOfferService;
-import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.calculator.utils.PrescoringErrorMessage;
+import org.smileksey.calculator.utils.validation.LoanStatementRequestValidator;
 import org.smileksey.calculator.utils.validation.ScoringDataDtoValidator;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -81,7 +84,7 @@ public class CalculatorController {
             throw new PrescoringException(errorMessage);
         }
 
-        return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(LoanRefusedException::new);
+        return creditServiceImpl.getCreditDto(scoringDataDto).orElseThrow(() -> new LoanRefusedException("Loan was refused"));
     }
 
 

@@ -45,10 +45,9 @@ public class ExceptionApiHandler {
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleLoanRefusedException(LoanRefusedException e) {
 
-        String message = "Loan refused";
-        ErrorResponse response = new ErrorResponse(message);
+        ErrorResponse response = new ErrorResponse(e.getMessage());
 
-        log.error(message);
+        log.error(e.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
