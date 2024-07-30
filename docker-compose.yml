@@ -1,0 +1,73 @@
+version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  calculator:
+    image: calculator
+    ports:
+      - 8084:8084
+
+  deal:
+    image: deal
+    depends_on:
+      - kafka
+    ports:
+      - 8081:8081
+    environment:
+      CALC_URL: http://calculator:8084
+      KAFKA_URL: http://kafka:9092
+    env_file:
+      - credentials.env
+
+  dossier:
+    image: dossier
+    depends_on:
+      - kafka
+      - deal
+    ports:
+      - 8083:8083
+    environment:
+      DEAL_URL: http://deal:8081
+      KAFKA_URL: http://kafka:9092
+    env_file:
+      - credentials.env
+
+  statement:
+    image: statement
+    depends_on:
+      - deal
+    ports:
+      - 8082:8082
+    environment:
+      DEAL_URL: http://deal:8081
+
+  gateway:
+    image: gateway
+    depends_on:
+      - deal
+      - statement
+    ports:
+      - 8080:8080
+    environment:
+      DEAL_URL: http://deal:8081
+      STATEMENT_URL: http://statement:8082
