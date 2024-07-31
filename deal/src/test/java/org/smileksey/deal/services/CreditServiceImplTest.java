@@ -11,6 +11,7 @@ import org.smileksey.deal.dto.FinishRegistrationRequestDto;
 import org.smileksey.deal.dto.LoanOfferDto;
 import org.smileksey.deal.dto.enums.*;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
+import org.smileksey.deal.exceptions.LoanRefusedException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Credit;
 import org.smileksey.deal.models.Passport;
@@ -73,17 +74,14 @@ class CreditServiceImplTest {
 
 
     @Test
-    void calculateCreditAndFinishRegistrationShouldReturnEmptyOptional() {
+    void calculateCreditAndFinishRegistrationShouldShouldThrowLoanRefusedException() {
 
         FinishRegistrationRequestDto validFinishRegistrationRequestDto = createFinishRegistrationRequestDto();
 
         when(statementService.getStatementById(any())).thenReturn(createStatement(createLoanOfferDto()));
         when(calculatorClient.getCreditDtoResponse(any())).thenReturn(new ResponseEntity<>(new CreditDto(), HttpStatus.NOT_FOUND));
 
-        Optional<Credit> creditOptional = creditServiceImpl.calculateCreditAndFinishRegistration(UUID.randomUUID(), validFinishRegistrationRequestDto);
-
-        assertNotNull(creditOptional);
-        assertFalse(creditOptional.isPresent());
+        assertThrows(LoanRefusedException.class, () -> creditServiceImpl.calculateCreditAndFinishRegistration(UUID.randomUUID(), validFinishRegistrationRequestDto));
 
         verify(creditRepository, times(0)).save(any());
     }
