@@ -22,24 +22,41 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  db:
+    container_name: database
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: credit_bank
+    ports:
+      - 5450:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
   calculator:
+    container_name: calculator
     image: calculator
     ports:
       - 8084:8084
 
   deal:
+    container_name: deal
     image: deal
     depends_on:
       - kafka
+      - db
     ports:
       - 8081:8081
     environment:
       CALC_URL: http://calculator:8084
       KAFKA_URL: http://kafka:9092
-    env_file:
-      - credentials.env
+      DB_URL: jdbc:postgresql://db:5432/credit_bank
+      DB_USERNAME: root
+      DB_PASSWORD: root
 
   dossier:
+    container_name: dossier
     image: dossier
     depends_on:
       - kafka
@@ -53,6 +70,7 @@ services:
       - credentials.env
 
   statement:
+    container_name: statement
     image: statement
     depends_on:
       - deal
@@ -62,6 +80,7 @@ services:
       DEAL_URL: http://deal:8081
 
   gateway:
+    container_name: gateway
     image: gateway
     depends_on:
       - deal
@@ -71,3 +90,6 @@ services:
     environment:
       DEAL_URL: http://deal:8081
       STATEMENT_URL: http://statement:8082
+
+volumes:
+  db-data:
