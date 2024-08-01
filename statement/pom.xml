@@ -73,6 +73,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <finalName>statement</finalName>
                 </configuration>
             </plugin>
         </plugins>
