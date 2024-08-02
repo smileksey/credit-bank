@@ -1,0 +1,1 @@
+[![codecov](https://codecov.io/gh/smileksey/credit-bank/graph/badge.svg?token=S57RLNZGDO)](https://codecov.io/gh/smileksey/credit-bank)
