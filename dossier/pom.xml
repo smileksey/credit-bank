@@ -73,6 +73,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <finalName>dossier</finalName>
                 </configuration>
             </plugin>
         </plugins>

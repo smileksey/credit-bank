@@ -60,6 +60,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<finalName>gateway</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

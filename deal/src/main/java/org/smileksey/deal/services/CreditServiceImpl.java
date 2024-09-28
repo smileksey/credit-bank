@@ -7,6 +7,7 @@ import org.smileksey.deal.dto.enums.ApplicationStatus;
 import org.smileksey.deal.dto.enums.CreditStatus;
 import org.smileksey.deal.dto.enums.Theme;
 import org.smileksey.deal.exceptions.InvalidMSResponseException;
+import org.smileksey.deal.exceptions.LoanRefusedException;
 import org.smileksey.deal.models.Client;
 import org.smileksey.deal.models.Credit;
 import org.smileksey.deal.models.Employment;
@@ -37,7 +38,7 @@ public class CreditServiceImpl implements CreditService {
      * @param finishRegistrationRequestDto - input data from client
      * @return calculated Credit entity
      */
-    @Transactional
+    @Transactional(noRollbackFor = LoanRefusedException.class)
     @Override
     public Optional<Credit> calculateCreditAndFinishRegistration(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
 
@@ -83,7 +84,6 @@ public class CreditServiceImpl implements CreditService {
         } else if (creditDtoResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
 
             updateStatementData(statement, false);
-            log.info("Loan was refused by 'calculator'");
 
             kafkaProducer.sendStatementDeniedMessage(
                     EmailMessage.builder()
@@ -91,6 +91,8 @@ public class CreditServiceImpl implements CreditService {
                             .theme(Theme.STATEMENT_DENIED)
                             .statementId(statementId)
                             .build());
+
+            throw new LoanRefusedException("Loan was refused");
 
         } else throw new InvalidMSResponseException("Failed to get CreditDto from 'calculator'");
 
